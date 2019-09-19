@@ -16,7 +16,7 @@ class CreateDetailSekunderTable extends Migration {
 		{
 			$table->increments('id');
 			$table->enum('tipe', array('SERIAL_NUMBER','IMEI'));
-			$table->integer('detail_id')->unsigned();
+			$table->integer('detail_id')->unsigned()->index('fk_detail_sekunder_detail_id_cd_detail_id');
 			$table->text('data', 65535);
 		});
 	}

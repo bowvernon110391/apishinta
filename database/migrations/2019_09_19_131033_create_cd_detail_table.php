@@ -15,8 +15,8 @@ class CreateCdDetailTable extends Migration {
 		Schema::create('cd_detail', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->set('kategori', ['HVG','Alat Telekomunikasi','Media Informasi']);
-			$table->integer('cd_id')->unsigned();
+			$table->set('kategori',['HVG','Alat Telekomunikasi','Media Informasi']);
+			$table->integer('cd_id')->unsigned()->index('fk_cd_detail_cd_id_cd_header_id');
 			$table->text('uraian', 65535);
 			$table->integer('jumlah_satuan')->unsigned();
 			$table->integer('jumlah_kemasan')->unsigned();

@@ -16,12 +16,13 @@ class CreateCdHeaderTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('no_dok')->unsigned();
-			$table->string('no_hp', 32);
+			$table->string('no_hp', 32)->default('');
 			$table->date('tgl_dok');
-			$table->string('npwp', 32);
-			$table->string('nib', 32);
+			$table->string('npwp', 32)->default('');
+			$table->integer('penumpang_id')->unsigned()->index('fk_cd_header_penumpang_id_penumpang_id');
+			$table->string('nib', 32)->default('');
 			$table->text('alamat', 65535);
-			$table->boolean('lokasi_id');
+			$table->integer('lokasi_id')->unsigned()->index('fk_cd_header_lokasi_id_lokasi_id');
 			$table->date('tgl_kedatangan');
 			$table->string('no_flight', 64);
 			$table->smallInteger('jml_anggota_keluarga')->unsigned()->default(0);
