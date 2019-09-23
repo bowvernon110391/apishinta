@@ -14,6 +14,7 @@ class AddForeignKeysToStDetailTable extends Migration {
 	{
 		Schema::table('st_detail', function(Blueprint $table)
 		{
+			$table->foreign('cd_detail_id', 'FK_st_detail_cd_detail')->references('id')->on('cd_detail')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('st_header_id', 'fk_st_detail_st_header_id_st_header_id')->references('id')->on('st_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
@@ -28,6 +29,7 @@ class AddForeignKeysToStDetailTable extends Migration {
 	{
 		Schema::table('st_detail', function(Blueprint $table)
 		{
+			$table->dropForeign('FK_st_detail_cd_detail');
 			$table->dropForeign('fk_st_detail_st_header_id_st_header_id');
 		});
 	}

@@ -15,7 +15,7 @@ class CreateCdDetailTable extends Migration {
 		Schema::create('cd_detail', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->set('kategori',['HVG','Alat Telekomunikasi','Media Informasi']);
+			$table->set('kategori',['HVG','Alat Telekomunikasi','Media Informasi'])->nullable();
 			$table->integer('cd_id')->unsigned()->index('fk_cd_detail_cd_id_cd_header_id');
 			$table->text('uraian', 65535);
 			$table->integer('jumlah_satuan')->unsigned();
@@ -26,6 +26,8 @@ class CreateCdDetailTable extends Migration {
 			$table->decimal('fob', 18, 4);
 			$table->decimal('freight', 18, 4);
 			$table->decimal('insurance', 18, 4);
+			$table->decimal('brutto', 18, 4);
+			$table->decimal('netto', 18, 4);
 			$table->string('kode_valuta', 8);
 			$table->decimal('nilai_valuta', 18, 4);
 			$table->timestamps();
