@@ -14,7 +14,7 @@ class CreateStatusDokTable extends Migration {
 	{
 		Schema::create('status_dok', function(Blueprint $table)
 		{
-			$table->increments('id');
+			$table->bigIncrements('id');
 			$table->string('status');
 			$table->integer('statusable_id')->unsigned()->index();
 			$table->string('statusable_type')->index();

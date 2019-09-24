@@ -14,7 +14,7 @@ class CreateLogTable extends Migration {
 	{
 		Schema::create('log', function(Blueprint $table)
 		{
-			$table->bigInteger('id', true)->unsigned();
+			$table->bigIncrements('id');
 			$table->enum('tipe', array('INFO','WARNING','ERROR'))->default('INFO');
 			$table->text('object', 65535)->nullable();
 			$table->text('message', 65535)->nullable();
