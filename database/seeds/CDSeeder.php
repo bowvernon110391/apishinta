@@ -28,7 +28,7 @@ class CDSeeder extends Seeder
             $p->alamat          = $faker->address;
             $p->lokasi_id       = $faker->numberBetween(1,3);
             $p->tgl_kedatangan  = $faker->date('Y-m-d');
-            $p->no_flight       = $faker->bothify("?? ####");
+            $p->no_flight       = strtoupper($faker->bothify("?? ####"));
             $p->jml_anggota_keluarga    = $faker->numberBetween(0, 5);
             $p->jml_bagasi_dibawa       = $faker->numberBetween(1, 5);
             $p->jml_bagasi_tdk_dibawa = $faker->numberBetween(0, 5);
