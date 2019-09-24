@@ -15,8 +15,8 @@ class CreateDetailSekunderTable extends Migration {
 		Schema::create('detail_sekunder', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->enum('tipe', array('SERIAL_NUMBER','IMEI'));
-			$table->integer('detail_id')->unsigned()->index('fk_detail_sekunder_detail_id_cd_detail_id');
+			$table->integer('jenis_detail_id')->index();
+			$table->integer('cd_detail_id')->unsigned()->index('fk_detail_sekunder_detail_id_cd_detail_id');
 			$table->text('data', 65535);
 		});
 	}

@@ -16,9 +16,9 @@ class CreateStatusDokTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('status');
-			$table->integer('header_id')->unsigned()->index('FK_foto_spmb_spmb_header');
-			$table->enum('jenis_dok', array('CD','ST','SPP','SPMB','IS','BC32'))->default('IS')->index('jenis_dok');
-			$table->dateTime('created_at')->nullable();
+			$table->integer('statusable_id')->unsigned()->index();
+			$table->string('statusable_type')->index();
+			$table->timestamps();
 		});
 	}
 

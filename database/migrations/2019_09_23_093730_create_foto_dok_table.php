@@ -17,9 +17,9 @@ class CreateFotoDokTable extends Migration {
 			$table->increments('id');
 			$table->string('judul_foto');
 			$table->string('filename')->unique('filename');
-			$table->integer('header_id')->unsigned()->index('FK_foto_spmb_spmb_header');
-			$table->enum('jenis_dok', array('CD','ST','SPP','SPMB','IS','BC32'))->default('IS')->index('jenis_dok');
-			$table->dateTime('created_at')->nullable();
+			$table->integer('imageable_id')->unsigned()->index();
+			$table->string('imageable_type')->index();
+			$table->timestamps();
 		});
 	}
 
