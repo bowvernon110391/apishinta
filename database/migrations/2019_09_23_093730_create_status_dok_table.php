@@ -16,6 +16,7 @@ class CreateStatusDokTable extends Migration {
 		{
 			$table->bigIncrements('id');
 			$table->string('status');
+			$table->integer('user_id')->unsigned()->nullable()->index();
 			$table->integer('statusable_id')->unsigned()->index();
 			$table->string('statusable_type')->index();
 			$table->timestamps();
