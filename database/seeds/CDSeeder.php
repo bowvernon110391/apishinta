@@ -34,16 +34,25 @@ class CDSeeder extends Seeder
             $p->jml_bagasi_tdk_dibawa = $faker->numberBetween(0, 5);
 
             $p->save();
-            //flag
-            $flagCount = random_int(0,9);
+
+            // isi data flag
+            $flagCount = random_int(0,6);
 
             $h = 0;
 
-            while($h++ < $flagCount){
-                $df = App\DeclareFlag::find(random_int(1,6));
+            // bikin preset flag
+            // declare_flag_id ada 6 [1..6]
+            // diacak dlu
+            $presetFlagId =  $faker->shuffle([1,2,3,4,5,6]);
+
+            // buang beberapa sekitar ~0..6 data dibuang dari depan
+            array_splice($presetFlagId, 0, random_int(0,6) );
+
+            // baru tambahkan jadi flag
+            foreach ($presetFlagId as $flagId) {
+                $df = App\DeclareFlag::find( $flagId );
                 $p->declareFlags()->save($df);
             }
-
 
             // create teh details
             $detailCount = random_int(0, 4);
