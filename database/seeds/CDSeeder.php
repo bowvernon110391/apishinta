@@ -1,5 +1,6 @@
 <?php
 
+use App\Lokasi;
 use Illuminate\Database\Seeder;
 
 class CDSeeder extends Seeder
@@ -19,14 +20,24 @@ class CDSeeder extends Seeder
         while($i++ < $jumlah) {
             // create a passenger
             $p = new App\CD(); 
-            $p->no_dok          = $faker->randomNumber(4);
+
+            // get fake timestamp between 2 years ago and now
+            $ts = $faker->dateTimeBetween('-2 years')->getTimestamp();
+            
             $p->no_hp           = $faker->e164PhoneNumber;
-            $p->tgl_dok         = $faker->date('Y-m-d');
+            $p->tgl_dok         = date('Y-m-d', $ts);       // use the faker generated timestamp
             $p->npwp            = $faker->numerify("###############");
             $p->penumpang_id    = $faker->numberBetween(1,30);
             $p->nib             = $faker->numerify("#############");
             $p->alamat          = $faker->address;
             $p->lokasi_id       = $faker->numberBetween(1,3);
+
+            // generate valid sequence using helper
+            $p->no_dok          = getSequence(
+                'CD/' . Lokasi::find($p->lokasi_id)->nama,  // grab its name
+                (int)date('Y', strtotime($p->tgl_dok))      // grab the year of tgl_dok
+            );
+
             $p->tgl_kedatangan  = $faker->date('Y-m-d');
             $p->no_flight       = strtoupper($faker->bothify("?? ####"));
             $p->jml_anggota_keluarga    = $faker->numberBetween(0, 5);
