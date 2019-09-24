@@ -16,7 +16,7 @@ class CreateCdDetailTable extends Migration {
 		{
 			$table->increments('id');
 			// $table->set('kategori',['HVG','Alat Telekomunikasi','Media Informasi'])->nullable();
-			$table->integer('cd_id')->unsigned()->index('fk_cd_detail_cd_id_cd_header_id');
+			$table->integer('cd_header_id')->unsigned()->index('fk_cd_detail_cd_id_cd_header_id');
 			$table->text('uraian', 65535);
 			$table->integer('jumlah_satuan')->unsigned();
 			$table->integer('jumlah_kemasan')->unsigned();
