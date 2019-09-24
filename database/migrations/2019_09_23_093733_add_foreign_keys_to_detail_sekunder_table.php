@@ -14,7 +14,7 @@ class AddForeignKeysToDetailSekunderTable extends Migration {
 	{
 		Schema::table('detail_sekunder', function(Blueprint $table)
 		{
-			$table->foreign('detail_id', 'fk_detail_sekunder_detail_id_cd_detail_id')->references('id')->on('cd_detail')->onUpdate('CASCADE')->onDelete('CASCADE');
+			$table->foreign('cd_detail_id', 'fk_detail_sekunder_detail_id_cd_detail_id')->references('id')->on('cd_detail')->onUpdate('CASCADE')->onDelete('CASCADE');
 		});
 	}
 
