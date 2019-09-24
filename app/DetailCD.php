@@ -16,4 +16,8 @@ class DetailCD extends Model
     public function kategoris(){
         return $this->belongsToMany('App\Kategori', 'cd_detail_kategori', 'cd_detail_id', 'kategori_id');
     }
+
+    public function detailSekunders(){
+        return $this->hasMany('App\DetailSekunder', 'cd_detail_id');
+    }
 }

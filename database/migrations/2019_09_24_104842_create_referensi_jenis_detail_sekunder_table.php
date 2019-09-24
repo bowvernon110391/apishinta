@@ -18,6 +18,14 @@ class CreateReferensiJenisDetailSekunderTable extends Migration
             $table->string('nama')->index();
             $table->timestamps();
         });
+
+        DB::table('referensi_jenis_detail_sekunder')->insert([
+            ['nama'=>'SERIAL NUMBER'],
+            ['nama'=>'IMEI'],
+            ['nama'=>'MAC ADDRESS'],
+            ['nama'=>'IMSI'],
+            ['nama'=>'INVOICE']
+        ]);
     }
 
     /**
