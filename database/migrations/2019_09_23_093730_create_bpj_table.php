@@ -14,7 +14,7 @@ class CreateBpjTable extends Migration {
 	{
 		Schema::create('bpj', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->integer('nomor')->nullable();
 			$table->date('tanggal')->nullable();
 			$table->string('penjamin')->nullable();

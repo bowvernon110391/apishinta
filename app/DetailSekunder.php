@@ -11,7 +11,7 @@ class DetailSekunder extends Model
 
     public $timestamps = false;
 
-    public function refrensiJenisDetailSekunder(){
+    public function referensiJenisDetailSekunder(){
         return $this->belongsTo('App\ReferensiJenisDetailSekunder', 'jenis_detail_sekunder_id');
     }
 
