@@ -14,7 +14,7 @@ class AddForeignKeysToStHeaderTable extends Migration {
 	{
 		Schema::table('st_header', function(Blueprint $table)
 		{
-			$table->foreign('cd_id', 'fk_st_header_cd_id_cd_header_id')->references('id')->on('cd_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('cd_header_id', 'fk_st_header_cd_id_cd_header_id')->references('id')->on('cd_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('lokasi_id', 'fk_st_header_lokasi_id_lokasi_id')->references('id')->on('lokasi')->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}

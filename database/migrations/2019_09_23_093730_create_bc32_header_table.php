@@ -15,7 +15,7 @@ class CreateBc32HeaderTable extends Migration {
 		Schema::create('bc32_header', function(Blueprint $table)
 		{
 			$table->integer('id')->unsigned()->primary();
-			$table->integer('cd_id')->unsigned();
+			$table->integer('cd_header_id')->unsigned();
 			$table->integer('no_dok')->unsigned();
 			$table->date('tgl_dok');
 			$table->enum('fl_wakil', array('ORANG LAIN','PERUSAHAAN'))->nullable();

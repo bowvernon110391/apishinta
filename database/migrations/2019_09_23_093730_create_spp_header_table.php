@@ -15,7 +15,7 @@ class CreateSppHeaderTable extends Migration {
 		Schema::create('spp_header', function(Blueprint $table)
 		{
 			$table->integer('id')->unsigned()->primary();
-			$table->integer('cd_id')->unsigned()->index('fk_st_header_cd_id_cd_header_id');
+			$table->integer('cd_header_id')->unsigned()->index('fk_st_header_cd_id_cd_header_id');
 			$table->integer('no_dok')->unsigned();
 			$table->date('tgl_dok');
 			$table->integer('lokasi_id')->unsigned()->index('fk_st_header_lokasi_id_lokasi_id');
