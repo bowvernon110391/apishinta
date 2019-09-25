@@ -16,6 +16,8 @@ class CDSeeder extends Seeder
 
         $jumlah= 30;
 
+        echo "generating random {$jumlah} Custom Declaration(s)...\n";
+
         $i = 0;
         while($i++ < $jumlah) {
             // create a passenger
@@ -27,7 +29,7 @@ class CDSeeder extends Seeder
             $p->no_hp           = $faker->e164PhoneNumber;
             $p->tgl_dok         = date('Y-m-d', $ts);       // use the faker generated timestamp
             $p->npwp            = $faker->numerify("###############");
-            $p->penumpang_id    = $faker->numberBetween(1,30);
+            $p->penumpang_id    = App\Penumpang::inRandomOrder()->first()->id;  // $faker->numberBetween(1,30);
             $p->nib             = $faker->numerify("#############");
             $p->alamat          = $faker->address;
             $p->lokasi_id       = $faker->numberBetween(1,3);
@@ -114,5 +116,7 @@ class CDSeeder extends Seeder
 
             
         }
+
+        echo "Custom Declarations data seeded.\n";
     }
 }

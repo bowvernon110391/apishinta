@@ -15,6 +15,8 @@ class PenumpangSeeder extends Seeder
 
         $jumlahPenumpang = 30;
 
+        echo "generating random {$jumlahPenumpang} passenger(s)...\n";
+
         $i = 0;
         while($i++ < $jumlahPenumpang) {
             // create a passenger
@@ -27,5 +29,7 @@ class PenumpangSeeder extends Seeder
 
             $p->save();
         }
+
+        echo "passenger data seeded.\n";
     }
 }
