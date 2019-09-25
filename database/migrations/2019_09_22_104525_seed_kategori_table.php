@@ -14,7 +14,7 @@ class SeedKategoriTable extends Migration
     public function up()
     {
         DB::table('kategori')->insert([
-            ['nama'=>'Hign Value Goods'],
+            ['nama'=>'High Value Goods'],
             ['nama'=>'Alat Telekomunikasi'],
             ['nama'=>'Media Informasi']
         ]);
