@@ -9,7 +9,7 @@ class DetailIS extends Model
     //
     protected $table = 'is_detail';
 
-    public function details(){
+    public function header(){
         return $this->belongsTo('App\IS', 'is_header_id');
     }
 
