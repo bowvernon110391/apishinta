@@ -31,6 +31,10 @@ class CD extends Model
     public function imporSementara(){
         return $this->hasOne('App\IS','cd_header_id');
     }
+
+    public function spmb(){
+        return $this->hasOne('App\SPMB','cd_header_id');
+    }
     
 
 }
