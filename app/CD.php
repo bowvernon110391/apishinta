@@ -23,6 +23,10 @@ class CD extends Model
     public function penumpang(){
         return $this->belongsTo('App\Penumpang', 'penumpang_id');
     }
+
+    public function sspcp(){
+        return $this->hasOne('App\SSPCP','cd_header_id');
+    }
     
 
 }

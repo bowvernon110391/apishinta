@@ -20,4 +20,9 @@ class DetailCD extends Model
     public function detailSekunders(){
         return $this->hasMany('App\DetailSekunder', 'cd_detail_id');
     }
+
+    public function detailSSPCP(){
+        return $this->hasOne('App\DetailSSPCP','cd_detail_id');
+    }
+    
 }
