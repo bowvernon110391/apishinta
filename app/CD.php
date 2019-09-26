@@ -27,6 +27,10 @@ class CD extends Model
     public function sspcp(){
         return $this->hasOne('App\SSPCP','cd_header_id');
     }
+
+    public function imporSementara(){
+        return $this->hasOne('App\IS','cd_header_id');
+    }
     
 
 }

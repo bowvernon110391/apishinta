@@ -38,15 +38,11 @@ class SSPCPSeed extends Seeder
             $sspcp->pemilik_barang =  $faker->name();
             $sspcp->ground_handler =  $faker->name();
             $sspcp->pejabat_id =  $faker->numberBetween(1,10);
-            // $sspcp->total_bm =  ceil($sspcp->total_nilai_pabean/1000 * 0.1)*1000;
-            // $sspcp->total_ppn =  ceil(($sspcp->total_nilai_pabean + $sspcp->total_bm)/1000 * 0.1)*1000;
-            // $sspcp->total_ppn =  ceil(($sspcp->total_nilai_pabean + $sspcp->total_bm)/1000 * 0.1)*1000;
+            
 
             $cd->sspcp()->save($sspcp);
 
-            $b = 0;
             foreach ($cd->details as $cdd) {
-                $cdd = $cd->details[$b];
 
                 $det = new App\DetailSSPCP([
                     'cd_detail_id'  => $cdd->id,
@@ -62,6 +58,7 @@ class SSPCPSeed extends Seeder
                     'trf_pph'  => $faker->randomElement([0.025, 0.075, 0.15]),
                     'bm'  => $faker->randomFloat(4,100,1000) * 1000,
                     'ppn'  =>  $faker->randomFloat(4,100,1000) * 1000,
+                    'ppnbm'  =>  $faker->randomFloat(4,100,1000) * 1000,
                     'pph'  =>  $faker->randomFloat(4,100,1000) * 1000,
                     'denda'=>  $faker->randomFloat(4,100,1000) * 1000,
                     'keterangan' => $faker->sentence(10),
@@ -76,6 +73,17 @@ class SSPCPSeed extends Seeder
                 
                 $sspcp->details()->save($det);
             }
+
+
+            $sspcp->total_bm =  ceil($sspcp->details()->sum('bm'));
+            $sspcp->total_ppn =   ceil($sspcp->details()->sum('ppn'));
+            $sspcp->total_ppnbm =   ceil($sspcp->details()->sum('ppnbm'));
+            $sspcp->total_pph =   ceil($sspcp->details()->sum('pph'));
+            $sspcp->total_denda =   ceil($sspcp->details()->sum('denda'));
+
+            $sspcp->update();
+
+
         }
 
         echo "SSPCP data seeded.\n";
