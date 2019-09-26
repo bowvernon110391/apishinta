@@ -11,6 +11,11 @@ class DetailSekunder extends Model
 
     public $timestamps = false;
 
+    // default relations to load
+    protected $with = [
+        'referensiJenisDetailSekunder'
+    ];
+
     public function referensiJenisDetailSekunder(){
         return $this->belongsTo('App\ReferensiJenisDetailSekunder', 'jenis_detail_sekunder_id');
     }
