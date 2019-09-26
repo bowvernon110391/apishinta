@@ -15,6 +15,8 @@ class SSPCPSeed extends Seeder
 
         $jumlah= 30;
 
+        echo "generating about {$jumlah} SSPCP(s)...\n";
+
         $a = 0;
 
         while($a++ < $jumlah){
@@ -75,6 +77,8 @@ class SSPCPSeed extends Seeder
                 $sspcp->details()->save($det);
             }
         }
+
+        echo "SSPCP data seeded.\n";
 
     }
 }
