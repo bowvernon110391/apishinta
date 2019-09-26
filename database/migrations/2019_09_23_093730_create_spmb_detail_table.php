@@ -14,7 +14,7 @@ class CreateSpmbDetailTable extends Migration {
 	{
 		Schema::create('spmb_detail', function(Blueprint $table)
 		{
-			$table->integer('id')->unsigned()->primary();
+			$table->increments('id');
 			$table->integer('spmb_header_id')->unsigned()->index('fk_st_detail_st_header_id_st_header_id');
 			$table->integer('cd_detail_id')->unsigned()->index('FK_spmb_detail_cd_detail');
 			$table->decimal('fob', 18, 4)->nullable();

@@ -14,7 +14,7 @@ class CreateStHeaderTable extends Migration {
 	{
 		Schema::create('st_header', function(Blueprint $table)
 		{
-			$table->integer('id')->unsigned()->primary();
+			$table->increments('id');
 			$table->integer('cd_header_id')->unsigned()->index('fk_st_header_cd_id_cd_header_id');
 			$table->integer('no_dok')->unsigned();
 			$table->date('tgl_dok');

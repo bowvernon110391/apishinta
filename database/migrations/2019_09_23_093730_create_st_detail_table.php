@@ -14,7 +14,7 @@ class CreateStDetailTable extends Migration {
 	{
 		Schema::create('st_detail', function(Blueprint $table)
 		{
-			$table->integer('id')->unsigned()->primary();
+			$table->increments('id');
 			$table->integer('st_header_id')->unsigned()->index('fk_st_detail_st_header_id_st_header_id');
 			$table->integer('cd_detail_id')->unsigned()->index('FK_st_detail_cd_detail');
 			$table->decimal('fob', 18, 4)->nullable();
