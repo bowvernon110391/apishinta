@@ -11,6 +11,7 @@ class KursTransformer extends TransformerAbstract {
             'id'            => (int) $kurs->id,
             'kode_valas'    => $kurs->kode_valas,
             'jenis'         => $kurs->jenis,
+            'nilai'         => (float) $kurs->kurs_idr,
             'tanggal_awal'  => (string) $kurs->tanggal_awal,
             'tanggal_akhir' => (string) $kurs->tanggal_akhir,
             'created_at'    => (string) $kurs->created_at

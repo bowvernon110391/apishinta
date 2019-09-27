@@ -17,7 +17,7 @@ class KursController extends ApiController
         $kurs = Kurs::find($id);
 
         if (!$kurs) {
-            return $this->errorNotFound("Cannot find kurs with that id");
+            return $this->errorNotFound("Gak nemu data kurs dengan id {$id}");
         }
 
         return $this->respondWithItem($kurs, new KursTransformer);
@@ -34,11 +34,11 @@ class KursController extends ApiController
         $qJenis = $request->get('jenis');
 
         // build query (use try-catch)
-        $query = Kurs::where('kode_valas', 'LIKE', '%'.$qKode_valas.'%')
-                ->where('tanggal_awal', '<=', $qTanggal)
-                ->where('tanggal_akhir', '>=', $qTanggal)
-                ->when($qJenis, function($query) use ($qJenis) {
-                    $query->where('jenis', '=', $qJenis);
+        $query = Kurs::where('kode_valas', 'LIKE', '%'.$qKode_valas.'%')    // kode_valas LIKE %%
+                ->where('tanggal_awal', '<=', $qTanggal)                    // $qTanggal BETWEEN tanggal_awal
+                ->where('tanggal_akhir', '>=', $qTanggal)                   //      AND tanggal_akhir
+                ->when($qJenis, function($query) use ($qJenis) {            // optional where:
+                    $query->where('jenis', '=', $qJenis);                   //      WHERE jenis = xxx
                 });
        
         

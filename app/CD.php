@@ -8,6 +8,12 @@ class CD extends Model
 {
     protected $table = 'cd_header';
 
+    // always loaded relations
+    protected $with = [
+        'lokasi',
+        'declareFlags'
+    ];
+
     public function details(){
         return $this->hasMany('App\DetailCD', 'cd_header_id');
     }
@@ -36,5 +42,31 @@ class CD extends Model
         return $this->hasOne('App\SPMB','cd_header_id');
     }
     
+    // COMPUTED PROPERTIES GO HERE!!
 
+    // ambil data tahun dok dari tgl
+    public function getTahunDokAttribute() {
+        return (int)substr($this->tgl_dok, 0, 4);
+    }
+
+    // nomor lengkap, e.g. 000001/CD/T2F/SH/2019
+    public function getNomorLengkapAttribute() {
+        $nomorLengkap = str_pad($this->no_dok, 6,"0", STR_PAD_LEFT)
+                        .'/CD/'
+                        .$this->lokasi->nama
+                        .'/SH/'
+                        .$this->tahun_dok;
+        return $nomorLengkap;
+    }
+
+    // extrak data declareflags dalam bentuk flat array
+    public function getFlatDeclareFlagsAttribute() {
+        $flags = [];
+
+        foreach ($this->declareFlags as $df) {
+            $flags[] = $df->nama;
+        }
+
+        return $flags;
+    }
 }

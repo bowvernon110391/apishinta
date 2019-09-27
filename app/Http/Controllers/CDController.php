@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\CD;
+use App\Transformers\CDTransformer;
 
-class CDController extends Controller
+class CDController extends ApiController
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of Customs Declaration, possibly with query strings for custom query
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $query = '';
     }
 
     /**
@@ -35,7 +37,13 @@ class CDController extends Controller
      */
     public function show($id)
     {
-        //
+        $cd = CD::find($id);
+
+        if (!$cd) {
+            return $this->errorNotFound("Gak nemu data CD dengan id {$id}");
+        }
+
+        return $this->respondWithItem($cd, new CDTransformer);
     }
 
     /**
