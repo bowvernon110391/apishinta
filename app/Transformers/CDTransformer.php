@@ -52,7 +52,7 @@ class CDTransformer extends TransformerAbstract {
         if ($cd->imporSementara) {
             $result['links'][] = [
                 'rel'   => 'cd.impor_sementara',
-                'uri'   => '/dokumen/is/' . $cd->sspcp->id
+                'uri'   => '/dokumen/is/' . $cd->imporSementara->id
             ];
         }
 

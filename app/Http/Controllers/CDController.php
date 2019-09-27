@@ -37,7 +37,8 @@ class CDController extends ApiController
      */
     public function show($id)
     {
-        // $this->fractal->parseIncludes('details');
+        $this->fractal->parseIncludes('details');
+
         $cd = CD::find($id);
 
         if (!$cd) {

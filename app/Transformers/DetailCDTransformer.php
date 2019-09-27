@@ -7,7 +7,7 @@ use App\DetailCD;
 class DetailCDTransformer extends TransformerAbstract {
     // default related transformable
     protected $defaultIncludes = [
-        // 'detailSekunder'
+        'detailSekunders'
     ];
 
     // just simple transform I guess
@@ -33,6 +33,11 @@ class DetailCDTransformer extends TransformerAbstract {
             'nilai_pabean'  => (float) $det->nilai_pabean,
             'kategori'  => $det->kategori_tags
         ];
+    }
+
+    // include data sekunder per detail
+    public function includeDetailSekunders(DetailCD $det) {
+        return $this->collection($det->detailSekunders, new DetailSekunderTransformer);
     }
 }
 
