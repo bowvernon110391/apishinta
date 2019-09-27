@@ -24,5 +24,29 @@ class DetailCD extends Model
     public function detailSSPCP(){
         return $this->hasOne('App\DetailSSPCP','cd_detail_id');
     }
+
+    //=================================================================================================
+    // COMPUTED PROPERTIES GO HERE!!
+    //=================================================================================================
+
+    // hitung cif
+    public function getCifAttribute() {
+        return (float) $this->fob + (float) $this->insurance + (float) $this->freight;
+    }
     
+    // hitung nilai pabean?
+    public function getNilaiPabeanAttribute() {
+        return (float) $this->nilai_valuta * $this->cif;
+    }
+
+    // ambil kategori (tag)
+    public function getKategoriTagsAttribute() {
+        $tags = [];
+
+        foreach ($this->kategoris as $k) {
+            $tags[] = $k->nama;
+        }
+
+        return $tags;
+    }
 }

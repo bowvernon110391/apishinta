@@ -12,7 +12,7 @@ class CDTransformer extends TransformerAbstract {
 
     // available relations, default relations not needed to apply
     protected $availableIncludes = [
-        
+        'details'
     ];
 
     // basic transformation, without any sweetener
@@ -31,11 +31,11 @@ class CDTransformer extends TransformerAbstract {
             'links' => [
                 [
                     'rel'   => 'self',
-                    'uri'   => '/dokumens/cd/' . $cd->id
+                    'uri'   => '/dokumen/cd/' . $cd->id
                 ],
                 [
                     'rel'   => 'cd.penumpang',
-                    'uri'   => '/penumpangs/' . $cd->penumpang->id
+                    'uri'   => '/penumpang/' . $cd->penumpang->id
                 ],
                 
             ]
@@ -45,14 +45,14 @@ class CDTransformer extends TransformerAbstract {
         if ($cd->sspcp) {
             $result['links'][] = [
                 'rel'   => 'cd.sspcp',
-                'uri'   => '/dokumens/sspcp/' . $cd->sspcp->id
+                'uri'   => '/dokumen/sspcp/' . $cd->sspcp->id
             ];
         }
 
         if ($cd->imporSementara) {
             $result['links'][] = [
                 'rel'   => 'cd.impor_sementara',
-                'uri'   => '/dokumens/is/' . $cd->sspcp->id
+                'uri'   => '/dokumen/is/' . $cd->sspcp->id
             ];
         }
 
@@ -64,6 +64,11 @@ class CDTransformer extends TransformerAbstract {
         $penumpang = $cd->penumpang;
         // cmn ada satu penumpang, perlakukan sbg item tunggal
         return $this->item($penumpang, new PenumpangTransformer);
+    }
+
+    // include details
+    public function includeDetails(CD $cd) {
+        return $this->collection($cd->details, new DetailCDTransformer);
     }
 }
 

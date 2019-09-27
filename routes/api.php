@@ -49,7 +49,7 @@ Route::get('/kurs/{id}', 'KursController@show')
 //====================================================================================================
 // CD subresource dari dokumens
 // GET /dokumens/cds/2  => ambil data cd + relasinya
-Route::get('/dokumens/cds/{id}', 'CDController@show')
+Route::get('/dokumen/cd/{id}', 'CDController@show')
         ->middleware($corsGroup['singleItem']);
 
 /* // untuk resource yang cuman boleh dibaca
