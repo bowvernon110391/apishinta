@@ -12,12 +12,12 @@ class CDTransformer extends TransformerAbstract {
 
     // available relations, default relations not needed to apply
     protected $availableIncludes = [
-        'penumpang'
+        
     ];
 
     // basic transformation, without any sweetener
     public function transform(CD $cd) {
-        return [
+        $result = [
             'id'        => (int) $cd->id,
             'no_dok'    => (int) $cd->no_dok,
             'tgl_dok'   => (string) $cd->tgl_dok,
@@ -34,12 +34,29 @@ class CDTransformer extends TransformerAbstract {
                     'uri'   => '/dokumens/cd/' . $cd->id
                 ],
                 [
-                    'rel'   => 'penumpang',
+                    'rel'   => 'cd.penumpang',
                     'uri'   => '/penumpangs/' . $cd->penumpang->id
                 ],
                 
             ]
         ];
+
+        // append additional links if available
+        if ($cd->sspcp) {
+            $result['links'][] = [
+                'rel'   => 'cd.sspcp',
+                'uri'   => '/dokumens/sspcp/' . $cd->sspcp->id
+            ];
+        }
+
+        if ($cd->imporSementara) {
+            $result['links'][] = [
+                'rel'   => 'cd.impor_sementara',
+                'uri'   => '/dokumens/is/' . $cd->sspcp->id
+            ];
+        }
+
+        return $result;
     }
 
     // include penumpang?

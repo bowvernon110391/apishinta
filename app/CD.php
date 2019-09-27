@@ -42,8 +42,9 @@ class CD extends Model
         return $this->hasOne('App\SPMB','cd_header_id');
     }
     
+    //=================================================================================================
     // COMPUTED PROPERTIES GO HERE!!
-
+    //=================================================================================================
     // ambil data tahun dok dari tgl
     public function getTahunDokAttribute() {
         return (int)substr($this->tgl_dok, 0, 4);
