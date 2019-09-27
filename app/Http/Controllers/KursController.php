@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use App\Kurs;
 use ErrorException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use InvalidArgumentException;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class KursController extends ApiController
 {
@@ -21,6 +23,63 @@ class KursController extends ApiController
         }
 
         return $this->respondWithItem($kurs, new KursTransformer);
+    }
+
+    // create new kurs data
+    public function store(Request $request) {
+        // only accept json request
+        if (!$request->isJson()) {
+            return $this->errorBadRequest("Cannot accept your request. Read the spec bitch!");
+        }
+
+        try {
+            // validate all data
+            // 1st, data must be complete
+            if (!$request->kode_valas 
+                || !$request->kurs_idr 
+                || !$request->jenis
+                || !$request->tanggal_awal) {
+                throw new BadRequestHttpException("Data either invalid or incomplete or both. Explain yerself!");
+            }
+            
+            // create kurs
+            $kurs = new Kurs;
+            $kurs->kode_valas   = $request->kode_valas;
+            $kurs->kurs_idr = (float) $request->kurs_idr;
+            $kurs->jenis    = $request->jenis;
+            $kurs->tanggal_awal = $request->tanggal_awal;
+            // tanggal akhir is optional
+            if ($request->tanggal_akhir) {
+                $kurs->tanggal_akhir= $request->tanggal_akhir;
+            }
+
+            // attempt to save
+            if (!$kurs->save()) {
+                return $this->errorBadRequest();
+            }
+
+            // well, saved. return its id
+            return $this->respondWithArray([
+                'kurs_id'   => $kurs->id
+            ]);
+        } catch (QueryException $e) {
+            // or the query 
+            if ($e->getCode() != 2002) {
+                // it's user's fault!
+                return $this->errorBadRequest("Fuck you! Your data is bad!");
+            }
+            return $this->errorInternalServer();
+        } catch (PDOException $e) {
+            // This would be server's down
+            return $this->errorInternalServer();
+        } catch (BadRequestHttpException $e) {
+            // user supply invalid data
+            return $this->errorBadRequest($e->getMessage());
+        } catch (\Exception $e) {
+            return $this->errorServiceUnavailable();
+        }
+
+        
     }
 
     // return all
