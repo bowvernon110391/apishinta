@@ -44,9 +44,13 @@ Route::get('/kurs', 'KursController@index')
 Route::get('/kurs/{id}', 'KursController@show')
         ->middleware($corsGroup['singleItem']);
 
-// POST /kurs   => tambah data kurs {kode_valas, kurs_idr, ,jenis, tanggal_awal, tanggal_akhir}
+// POST /kurs   => tambah data kurs {kode_valas, kurs_idr, jenis, tanggal_awal, tanggal_akhir}
 Route::post('/kurs', 'KursController@store')
         ->middleware($corsGroup['resourceGroup']);
+
+// PUT /kurs/{id}       => update/replace data kurs id {id} dengan format {kode_valas, kurs_idr, jenis, tanggal_awal, tanggal_akhir}
+Route::put('/kurs/{id}', 'KursController@update')
+        ->middleware($corsGroup['singleItem']);
 
 //====================================================================================================
 // ENDPOINTS CD

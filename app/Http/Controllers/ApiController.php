@@ -69,6 +69,11 @@ class ApiController extends Controller
         return $this->respondWithArray($rootData->toArray(), $headers);
     }
 
+    // default response for empty response (204, 200 PUT)
+    protected function respondWithEmptyBody(array $headers = []) {
+        return response()->noContent($this->statusCode, $headers);
+    }
+
     // default response for array (ONLY INTERNAL USAGE ALLOWED)
     protected function respondWithArray(array $arr, array $headers = []) {
         // return Response::json($arr, $this->statusCode, $headers);

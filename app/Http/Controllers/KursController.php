@@ -38,7 +38,7 @@ class KursController extends ApiController
 
         if (!$userInfo) {
             // no token or token exists but it's invalid
-            return $this->errorUnauthorized("Your token is not valid d00d");
+            return $this->errorUnauthorized("Token invalid");
         }
         
         // only accept json request
@@ -94,6 +94,48 @@ class KursController extends ApiController
         }
 
         
+    }
+
+    // update kurs data
+    // format {'id': x, 'kode_kurs': xxx, 'kurs_idr': xxx, 'tanggal_awal': xxx, 'tanggal_akhir': xxx}
+    public function update(Request $request, $id) {
+        // token exists?
+        if (!$request->bearerToken()) {
+            return $this->errorUnauthorized();
+        }
+
+        // token valid?
+        if (!getUserInfo($request->bearerToken())) {
+            return $this->errorUnauthorized("Token invalid");
+        }
+
+        // json kah?
+        if (!$request->isJson()) {
+            return $this->errorBadRequest();
+        }
+
+        // dapet kah?
+        $kurs = Kurs::find($id);
+
+        if (!$kurs) {
+            return $this->errorNotFound("Kurs dengan id {$id} tidak ditemukan");
+        }
+
+        // ok, coba ganti
+        try {
+            $kurs->kode_valas   = $request->kode_valas;
+            $kurs->kurs_idr     = (float) $request->kurs_idr;
+            $kurs->jenis        = $request->jenis;
+            $kurs->tanggal_awal = $request->tanggal_awal;
+            $kurs->tanggal_akhir= $request->tanggal_akhir;
+
+            $kurs->save();
+
+            // sukses, return 200 tanpa response body
+            return $this->respondWithEmptyBody();
+        } catch (\Exception $e) {
+            return $this->errorBadRequest("Request ditolak. Cek lagi data inputan anda");
+        }
     }
 
     // return all
