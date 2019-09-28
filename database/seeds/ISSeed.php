@@ -18,20 +18,35 @@ class ISSeed extends Seeder
         echo "generating about {$jumlah} IS(s)...\n";
 
         $a = 0;
+        $created = 0;
 
         while($a++ < $jumlah){
             $cd = App\CD::inRandomOrder()->first();
-            $is = $cd->ImporSementar ?? new App\IS;
 
-            $is->no_dok = getSequence('IS/SH', date('Y'));
+            // do not create IS if existing
+            $is = $cd->imporSementara;
+
+            if ($is) {
+                continue;
+            } else {
+                $is = new App\IS;
+            }
+            // increment counter
+            $created++;
+
+            // $is->lokasi_id = App\Lokasi::inRandomOrder()->first()->id;
+            // associate with lokasi
+            $is->lokasi()->associate(App\Lokasi::inRandomOrder()->first());
+            
+            $is->no_dok = getSequence('IS/'.$is->lokasi->nama.'/SH', date('Y'));
             $is->tgl_dok = date('Y-m-d');
-            $is->lokasi_id = App\Lokasi::inRandomOrder()->first()->id;
+            
             $is->total_fob = $cd->details()->sum('fob');
             $is->total_freight = $cd->details()->sum('freight');
             $is->total_insurance = $cd->details()->sum('insurance');
             $is->total_cif = $is->total_fob + $is->total_freight + $is->total_insurance;
             $is->nilai_valuta = $faker->randomFloat(NULL,92.82, 14067.999);
-            $is->kode_valuta = $faker->randomElement(['JPG', 'USD', 'KRW', 'GBP', 'INR']);
+            $is->kode_valuta = $faker->randomElement(['JPY', 'USD', 'KRW', 'GBP', 'INR']);
             $is->total_nilai_pabean = $is->total_cif * $is->nilai_valuta;
             $is->pembebasan =  $faker->randomElement([0,500,1000]);
             $is->keterangan =  $faker->sentence(10);
@@ -84,11 +99,11 @@ class ISSeed extends Seeder
             $is->total_brutto =   ceil($is->details()->sum('brutto'));
             $is->total_netto =   ceil($is->details()->sum('netto'));
 
-            $is->update();
+            $is->push();
 
 
         }
 
-        echo "IS data seeded.\n";
+        echo "IS data seeded with {$created} data.\n";
     }
 }

@@ -18,14 +18,25 @@ class SSPCPSeed extends Seeder
         echo "generating about {$jumlah} SSPCP(s)...\n";
 
         $a = 0;
+        $created = 0;
 
         while($a++ < $jumlah){
             $cd = App\CD::inRandomOrder()->first();
-            $sspcp = $cd->sspcp ?? new App\SSPCP;
+            $sspcp = $cd->sspcp;
 
-            $sspcp->no_dok = getSequence('SSPCP/SH', date('Y'));
+            // don't seed a new one if one already exist
+            if ($sspcp) {
+                continue;
+            } else {
+                $created++;
+                $sspcp = new App\SSPCP;
+            }
+            // associate with lokasi
+            $sspcp->lokasi()->associate(App\Lokasi::inRandomOrder()->first());
+
+            $sspcp->no_dok = getSequence('SSPCP/'.$sspcp->lokasi->nama.'/SH', date('Y'));
             $sspcp->tgl_dok = date('Y-m-d');
-            $sspcp->lokasi_id = App\Lokasi::inRandomOrder()->first()->id;
+            // $sspcp->lokasi_id = App\Lokasi::inRandomOrder()->first()->id;
             $sspcp->total_fob = $cd->details()->sum('fob');
             $sspcp->total_freight = $cd->details()->sum('freight');
             $sspcp->total_insurance = $cd->details()->sum('insurance');
@@ -81,12 +92,12 @@ class SSPCPSeed extends Seeder
             $sspcp->total_pph =   ceil($sspcp->details()->sum('pph'));
             $sspcp->total_denda =   ceil($sspcp->details()->sum('denda'));
 
-            $sspcp->update();
+            $sspcp->push();
 
 
         }
 
-        echo "SSPCP data seeded.\n";
+        echo "SSPCP data seeded with {$created} data.\n";
 
     }
 }

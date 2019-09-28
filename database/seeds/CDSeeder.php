@@ -20,8 +20,13 @@ class CDSeeder extends Seeder
 
         $i = 0;
         while($i++ < $jumlah) {
-            // create a passenger
+            // create a CD
             $p = new App\CD(); 
+
+            // associate it with random penumpang
+            $p->penumpang()->associate(App\Penumpang::inRandomOrder()->first());
+            // associate it with random lokasi
+            $p->lokasi()->associate(App\Lokasi::inRandomOrder()->first());
 
             // get fake timestamp between 2 years ago and now
             $ts = $faker->dateTimeBetween('-2 years')->getTimestamp();
@@ -29,14 +34,14 @@ class CDSeeder extends Seeder
             $p->no_hp           = $faker->e164PhoneNumber;
             $p->tgl_dok         = date('Y-m-d', $ts);       // use the faker generated timestamp
             $p->npwp            = $faker->numerify("###############");
-            $p->penumpang_id    = App\Penumpang::inRandomOrder()->first()->id;  // $faker->numberBetween(1,30);
+            // $p->penumpang_id    = App\Penumpang::inRandomOrder()->first()->id;  // $faker->numberBetween(1,30);
             $p->nib             = $faker->numerify("#############");
             $p->alamat          = $faker->address;
-            $p->lokasi_id       = $faker->numberBetween(1,3);
+            // $p->lokasi_id       = $faker->numberBetween(1,3);
 
             // generate valid sequence using helper
             $p->no_dok          = getSequence(
-                'CD/' . Lokasi::find($p->lokasi_id)->nama,  // grab its name
+                'CD/' . $p->lokasi->nama . '/SH',  // grab its name
                 (int)date('Y', strtotime($p->tgl_dok))      // grab the year of tgl_dok
             );
 
@@ -94,10 +99,10 @@ class CDSeeder extends Seeder
                 // isi data kategori
                 $g = 0;
                 $kategoriCount = random_int(0,2);
+                $kategoriDefs = App\Kategori::inRandomOrder()->get();
 
                 while($g++ < $kategoriCount){
-                    $kat = App\Kategori::find(random_int(1,3));
-                    $d->kategoris()->save($kat);
+                    $d->kategoris()->attach($kategoriDefs[$g]);
                 }
 
                 // isi data sekunder
@@ -107,7 +112,8 @@ class CDSeeder extends Seeder
                 while ($k++ < $dataSekunderCount) {
                     // create data sekunder
                     $ds = new App\DetailSekunder;
-                    $ds->jenis_detail_sekunder_id = $faker->numberBetween(1,4);
+                    // $ds->jenis_detail_sekunder_id = $faker->numberBetween(1,4);
+                    $ds->referensiJenisDetailSekunder()->associate(App\ReferensiJenisDetailSekunder::inRandomOrder()->first());
                     $ds->data = $faker->sentence(random_int(2,12));
 
                     $d->detailSekunders()->save($ds);

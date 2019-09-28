@@ -8,6 +8,15 @@ class CD extends Model
 {
     protected $table = 'cd_header';
 
+    // default values
+    protected $attributes = [
+        'no_dok'    => 0,   // 0 berarti blom dinomorin
+        'npwp'      => '',
+        'nib'       => '',
+        'alamat'    => '',
+        'no_flight' => ''
+    ];
+
     // always loaded relations
     protected $with = [
         'lokasi',
@@ -52,6 +61,10 @@ class CD extends Model
 
     // nomor lengkap, e.g. 000001/CD/T2F/SH/2019
     public function getNomorLengkapAttribute() {
+        if ($this->no_dok == 0) {
+            return null;
+        }
+        
         $nomorLengkap = str_pad($this->no_dok, 6,"0", STR_PAD_LEFT)
                         .'/CD/'
                         .$this->lokasi->nama
