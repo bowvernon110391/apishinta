@@ -1,7 +1,7 @@
 Feature: Kurs
 
 Scenario: ambil data kurs berdasarkan id
-    When I request "GET sds /kurs/2"
+    When I request "GET /kurs/2"
     Then I get "200" response
     And scope into the "data" property
         And the properties exist:
@@ -18,35 +18,68 @@ Scenario: ambil data kurs berdasarkan id
 Scenario: ambil data kurs per tanggal
     When I request "GET /kurs/2019-01-01"
     Then I get "200" response
-    And scope into the "data" property
-        And the "data" property is an array
+    And the "data" property is an array
+    And the "data" property contains at least 1 item
 
-Scenario: ambil data kurs yang gk ada
+Scenario: ambil data kurs yang gk ada, kurs rupiah harus ada selamanya
     When I request "GET /kurs/9999-01-01"
     Then I get "200" response
-    And the "data" property contains at least 1 item
-    And scope into the "data" property
-        And the "links" property contains 1 item
+    And the "data" property contains exactly 1 item
+
+Scenario: ambil data kurs berdasarkan id yg gk valid
+    When I request "GET /kurs/333"
+    Then I get "404" response
+
+Scenario: ambil data kurs pake query string, test kembalian kdu array walo kosong
+    When I request "GET /kurs?kode=USD&number=5&tanggal=2019-08-02"
+    Then I get "200" response
+    And the properties exist:
+        """
+        data
+        meta
+        """
+        And the "data" property is an array
 
 Scenario: input data kurs tanpa credential
     Given I have the payload:
         """
         {
-            "kode_valas"    : "MYR",
-            "nilai"         : 2500.0
+            "kode_valas": "CNY",
+            "jenis": "KURS_BI",
+            "kurs_idr": 18392.3195,
+            "tanggal_awal": "2019-08-29",
+            "tanggal_akhir": "2019-09-29"
         }
         """
     When I request "POST /kurs"
     Then I get "401" response
 
 Scenario: input data kurs pake credential palsu
-    Given I have the payload:
+    Given I use the token "token_bapuk"
+    And I have the payload:
         """
         {
-            "kode_valas"    : "MYR",
-            "nilai"         : 2500.0
+            "kode_valas": "AUD",
+            "jenis": "KURS_BI",
+            "kurs_idr": 8392.3195,
+            "tanggal_awal": "2019-09-29",
+            "tanggal_akhir": "2019-09-29"
         }
         """
-    Given I use the token "token_palsu"
     When I request "POST /kurs"
-    Then I get "403" response
+    Then I get "401" response
+
+Scenario: input data kurs dengan credential yang valid
+    Given I use the token "token_pdtt"
+    And I have the payload:
+        """
+        {
+            "kode_valas": "SGD",
+            "jenis": "KURS_BI",
+            "kurs_idr": 4392.23,
+            "tanggal_awal": "2019-09-29",
+            "tanggal_akhir": "2019-09-29"
+        }
+        """
+    When I request "POST /kurs"
+    Then I get "200" response
