@@ -89,8 +89,8 @@ class FeatureContext implements Context
         // grab token
 
         // store response and call using request Headers
-        echo "request with header: \n";
-        print_r($this->requestOptions);
+        // echo "request with header: \n";
+        // print_r($this->requestOptions);
 
         // store response
         $this->response = $this->client->request($requestData['METHOD'], $requestData['URI'], $this->requestOptions);

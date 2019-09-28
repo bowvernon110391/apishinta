@@ -14,3 +14,7 @@ Scenario: ambil data CD berdasarkan id
             declare_flags
             details
             """
+
+Scenario: ambil data CD yang idnya gk valid
+    When I request "GET /dokumen/cd/91231239131234"
+    Then I get "404" response
