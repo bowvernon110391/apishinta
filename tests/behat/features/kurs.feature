@@ -8,7 +8,7 @@ Scenario: ambil data kurs berdasarkan id
             """
             id
             kode_valas
-            nilai
+            kurs_idr
             jenis
             tanggal_awal
             tanggal_akhir
