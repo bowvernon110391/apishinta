@@ -27,19 +27,6 @@ class KursController extends ApiController
 
     // create new kurs data
     public function store(Request $request) {
-        // only someone registered may update kurs
-        // check for bearer token presence? and then validate
-        if (!$request->bearerToken()) {
-            return $this->errorUnauthorized();
-        }
-
-        // maybe token supplied but not valid
-        $userInfo = getUserInfo($request->bearerToken());
-
-        if (!$userInfo) {
-            // no token or token exists but it's invalid
-            return $this->errorUnauthorized("Token invalid");
-        }
         
         // only accept json request
         if (!$request->isJson()) {
@@ -100,15 +87,6 @@ class KursController extends ApiController
     // update kurs data
     // format {'id': x, 'kode_kurs': xxx, 'kurs_idr': xxx, 'tanggal_awal': xxx, 'tanggal_akhir': xxx}
     public function update(Request $request, $id) {
-        // token exists?
-        if (!$request->bearerToken()) {
-            return $this->errorUnauthorized();
-        }
-
-        // token valid?
-        if (!getUserInfo($request->bearerToken())) {
-            return $this->errorUnauthorized("Token invalid");
-        }
 
         // json kah?
         if (!$request->isJson()) {

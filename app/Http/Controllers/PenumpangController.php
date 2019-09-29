@@ -71,14 +71,6 @@ class PenumpangController extends ApiController
      */
     public function store(Request $request)
     {
-        // cuman user dgn token yg valid yg boleh akses
-        if (!$request->bearerToken())
-            return $this->errorUnauthorized();
-        
-        // mungkin dia pake token tp gk valid
-        $userInfo = getUserInfo($request->bearerToken());
-        if (!$userInfo) 
-            return $this->errorUnauthorized("Token invalid");
         
         // check if it's json
         if (!$request->isJson())
@@ -159,15 +151,6 @@ class PenumpangController extends ApiController
      */
     public function update(Request $request, $id)
     {
-        // Update data penumpang
-        // cuman user dgn token yg valid yg boleh akses
-        if (!$request->bearerToken())
-            return $this->errorUnauthorized();
-        
-        // mungkin dia pake token tp gk valid
-        $userInfo = getUserInfo($request->bearerToken());
-        if (!$userInfo) 
-            return $this->errorUnauthorized("Token invalid");
         
         // check if it's json
         if (!$request->isJson())

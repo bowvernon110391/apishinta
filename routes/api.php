@@ -19,11 +19,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 }); */
 
+// CORS allowed-methods. Biar user gk coba macem2
 $corsGroup = [
-    'readOnly'  => 'cors:GET,OPTIONS',
-    'singleItem'=> 'cors:GET,PUT,DELETE,OPTIONS,PATCH',
-    'all'       => 'cors:*',
-    'resourceGroup'  => 'cors:GET,POST,OPTIONS'
+    'readOnly'  => 'cors:GET,OPTIONS',  // item yg read only cuman bsa GET sama OPTIONS
+    'singleItem'=> 'cors:GET,PUT,DELETE,OPTIONS,PATCH', // single item bsa macem2
+    'all'       => 'cors:*',    // klo bisa jgn pake ini ya
+    'resourceGroup'  => 'cors:GET,POST,OPTIONS' // group bisa diinsert, dilihat, dicek
 ];
 
 // Kayaknya bagusnya digroup per endpoints dah
@@ -46,43 +47,46 @@ Route::get('/kurs/{id}', 'KursController@show')
 
 // POST /kurs   => tambah data kurs {kode_valas, kurs_idr, jenis, tanggal_awal, tanggal_akhir}
 Route::post('/kurs', 'KursController@store')
-        ->middleware($corsGroup['resourceGroup']);
+        ->middleware($corsGroup['resourceGroup'], 'role:PDTT,CONSOLE');
 
 // PUT /kurs/{id}       => update/replace data kurs id {id} dengan format {kode_valas, kurs_idr, jenis, tanggal_awal, tanggal_akhir}
 Route::put('/kurs/{id}', 'KursController@update')
-        ->middleware($corsGroup['singleItem']);
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
 
 //====================================================================================================
 // ENDPOINTS PENUMPANG
+// Data penumpang adalah data rahasia, jd kasih guard di endpointsnya
+// asal tokennya dari user yg valid dan aktif, gk masalah
 //====================================================================================================
 // GET /penumpang => list data penumpang dgn paginasi + query
 Route::get('/penumpang', 'PenumpangController@index')
-        ->middleware($corsGroup['resourceGroup']);
+        ->middleware($corsGroup['resourceGroup'], 'role');
 
 // GET /penumpang/3     => tampilkan data penumpang dgn id 3
 Route::get('/penumpang/{id}', 'PenumpangController@show')
-        ->middleware($corsGroup['singleItem']);
+        ->middleware($corsGroup['singleItem'], 'role');
 
 // POST /penumpang      => insert data penumpang
 Route::post('/penumpang', 'PenumpangController@store')
-        ->middleware($corsGroup['resourceGroup']);
+        ->middleware($corsGroup['resourceGroup'], 'role');
 
 // PUT /penumpang/3     => update/insert data penumpang dgn id 3
 Route::put('/penumpang/{id}', 'PenumpangController@update')
-        ->middleware($corsGroup['singleItem']);
+        ->middleware($corsGroup['singleItem'], 'role');
 
 //====================================================================================================
 // ENDPOINTS CD
+// CD itu classified, jd kasih guard di api endpointsnya
 //====================================================================================================
 // CD subresource dari dokumens
 // GET /dokumen/cd/2  => ambil data cd + relasinya
 Route::get('/dokumen/cd/{id}', 'CDController@show')
-        ->middleware($corsGroup['singleItem']);
+        ->middleware($corsGroup['singleItem'], 'role');
 
 // GET /dokumen/cd/2/details    => ambil data detail cd
 Route::get('/dokumen/cd/{id}/details', 'CDController@showDetails')
-        ->middleware($corsGroup['resourceGroup']);
+        ->middleware($corsGroup['resourceGroup'], 'role');
 
 /* // untuk resource yang cuman boleh dibaca
 Route::middleware($corsGroup['readOnly'])->group(function () {
