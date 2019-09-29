@@ -25,6 +25,8 @@ class CDTransformer extends TransformerAbstract {
             'lokasi'    => $cd->lokasi->nama,
             'declare_flags' => $cd->flat_declare_flags,
 
+            'jumlah_detail' => $cd->details()->count(),
+
             'created_at'    => (string) $cd->created_at,
             'updated_at'    => (string) $cd->updated_at,
 

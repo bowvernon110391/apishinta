@@ -52,13 +52,37 @@ Route::post('/kurs', 'KursController@store')
 Route::put('/kurs/{id}', 'KursController@update')
         ->middleware($corsGroup['singleItem']);
 
+
+//====================================================================================================
+// ENDPOINTS PENUMPANG
+//====================================================================================================
+// GET /penumpang => list data penumpang dgn paginasi + query
+Route::get('/penumpang', 'PenumpangController@index')
+        ->middleware($corsGroup['resourceGroup']);
+
+// GET /penumpang/3     => tampilkan data penumpang dgn id 3
+Route::get('/penumpang/{id}', 'PenumpangController@show')
+        ->middleware($corsGroup['singleItem']);
+
+// POST /penumpang      => insert data penumpang
+Route::post('/penumpang', 'PenumpangController@store')
+        ->middleware($corsGroup['resourceGroup']);
+
+// PUT /penumpang/3     => update/insert data penumpang dgn id 3
+Route::put('/penumpang/{id}', 'PenumpangController@update')
+        ->middleware($corsGroup['singleItem']);
+
 //====================================================================================================
 // ENDPOINTS CD
 //====================================================================================================
 // CD subresource dari dokumens
-// GET /dokumens/cds/2  => ambil data cd + relasinya
+// GET /dokumen/cd/2  => ambil data cd + relasinya
 Route::get('/dokumen/cd/{id}', 'CDController@show')
         ->middleware($corsGroup['singleItem']);
+
+// GET /dokumen/cd/2/details    => ambil data detail cd
+Route::get('/dokumen/cd/{id}/details', 'CDController@showDetails')
+        ->middleware($corsGroup['resourceGroup']);
 
 /* // untuk resource yang cuman boleh dibaca
 Route::middleware($corsGroup['readOnly'])->group(function () {

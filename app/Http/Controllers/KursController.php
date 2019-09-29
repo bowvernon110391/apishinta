@@ -74,7 +74,8 @@ class KursController extends ApiController
 
             // well, saved. return its id
             return $this->respondWithArray([
-                'kurs_id'   => $kurs->id
+                'id'    => $kurs->id,
+                'uri'   => '/kurs/' . $kurs->id
             ]);
         } catch (QueryException $e) {
             // or the query 
@@ -131,22 +132,24 @@ class KursController extends ApiController
 
             $kurs->save();
 
-            // sukses, return 200 tanpa response body
-            return $this->respondWithEmptyBody();
+            // sukses, return 204 tanpa response body
+            return $this->setStatusCode(204)
+                ->respondWithEmptyBody();
         } catch (\Exception $e) {
             return $this->errorBadRequest("Request ditolak. Cek lagi data inputan anda");
         }
     }
 
-    // return all
+    // return all kurs, possibly with some query involved
     public function index(Request $request) {
         // parse url for embedded fractal data
-        $this->fractal->parseIncludes($request->get('include', ''));
+        // ONLY NEEDED IF THERE'S A POSSIBLE INCLUDES (EMBED/SIDE LOADING)
+        // $this->fractal->parseIncludes($request->get('include', ''));
 
         // parse query string for our custom query?
-        $qKode_valas = $request->get('kode', '');
-        $qTanggal  = $request->get('tanggal', date('Y-m-d'));
-        $qJenis = $request->get('jenis');
+        $qKode_valas = $request->get('kode', '');               // param: kode
+        $qTanggal  = $request->get('tanggal', date('Y-m-d'));   // param: tanggal, if not supplied default to current date
+        $qJenis = $request->get('jenis');                       // param: jenis
 
         // build query (use try-catch)
         $query = Kurs::where('kode_valas', 'LIKE', '%'.$qKode_valas.'%')    // kode_valas LIKE %%
@@ -161,7 +164,8 @@ class KursController extends ApiController
         $query->orderBy('kode_valas', 'asc')
             ->orderBy('jenis', 'asc');
 
-        $paginator = $query->paginate($request->input('number', 10))
+        $paginator = $query
+                    ->paginate($request->input('number'))
                     ->appends($request->except('page'));
 
         // return $this->respondWithCollection($kurs, new KursTransformer);

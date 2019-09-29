@@ -70,12 +70,12 @@ class ApiController extends Controller
     }
 
     // default response for empty response (204, 200 PUT)
-    protected function respondWithEmptyBody(array $headers = []) {
+    public function respondWithEmptyBody(array $headers = []) {
         return response()->noContent($this->statusCode, $headers);
     }
 
     // default response for array (ONLY INTERNAL USAGE ALLOWED)
-    protected function respondWithArray(array $arr, array $headers = []) {
+    public function respondWithArray(array $arr, array $headers = []) {
         // return Response::json($arr, $this->statusCode, $headers);
         return response()->json(
             $arr,
@@ -86,7 +86,7 @@ class ApiController extends Controller
 
     // default response for any kind of error
     // must supply code and message, at least
-    protected function respondWithError($message) {
+    public function respondWithError($message) {
         // prevent noob mistake
         if ($this->statusCode === 200) {
             trigger_error("MUST NOT BE ABLE TO RESPOND WITH ERROR WITH STATUS CODE 200!!!"
@@ -104,38 +104,82 @@ class ApiController extends Controller
 
     // COMMON ERRORS
     // 404 not found
-    protected function errorNotFound($message = "Resource not found, sorry") {
+    public function errorNotFound($message = "Resource not found, sorry") {
         return $this->setStatusCode(404)
                 ->respondWithError($message);
     }
 
     // 400 bad request (user's an idiot)
-    protected function errorBadRequest($message = "Bad request d00d") {
+    public function errorBadRequest($message = "Bad request d00d") {
         return $this->setStatusCode(400)
                 ->respondWithError($message);
     }
 
     // 401 unauthorized (user has not supplied credentials)
-    protected function errorUnauthorized($message = "Credentials needed. Gib sum pls") {
+    public function errorUnauthorized($message = "Credentials needed. Gib sum pls") {
         return $this->setStatusCode(401)
                 ->respondWithError($message);
     }
 
     // 403 forbidden (requires privilege beyond user's pay grade)
-    protected function errorForbidden($message = "Forbidden access. Back the fuck off!") {
+    public function errorForbidden($message = "Forbidden access. Back the fuck off!") {
         return $this->setStatusCode(403)
                 ->respondWithError($message);
     }
 
     // 500 internal server error
-    protected function errorInternalServer($message = "Server's having a problem. Report to administrator if you wish") {
+    public function errorInternalServer($message = "Server's having a problem. Report to administrator if you wish") {
         return $this->setStatusCode(500)
                 ->respondWithError($message);
     }
 
     // 503 service unavailable (perhaps cause of overload or downtime)
-    protected function errorServiceUnavailable($message = "Service's unavailable at the moment") {
+    public function errorServiceUnavailable($message = "Service's unavailable at the moment") {
         return $this->setStatusCode(503)
                 ->respondWithError($message);
     }
+
+    // Guard this api call by returning error whenever necessary
+
+    /* // ensure caller has bearer token
+    protected function ensureUserHasValidToken(Request $request) {
+        if (!$request->bearerToken()) {
+            return $this->errorUnauthorized();
+            exit();
+        }
+
+        // maybe he has token, but is it valid?
+        $userInfo = getUserInfo($request->bearerToken());
+
+        if (!$userInfo) {
+            return $this->errorUnauthorized("Token invalid. token = " . $request->bearerToken());
+            exit();
+        }
+
+        return $userInfo;
+    }
+
+    // ensure caller has role
+    protected function ensureUserHasAnyOfTheRole(Request $request, $role = '') {
+        // first, ensure user has valid token
+        $userInfo = $this->ensureUserHasValidToken($request);
+
+        // role can be array or string
+        if (is_string($role)) {
+            // convert to array?
+            $role = explode(",", $role);
+            // clean up by trimming
+            $role = array_map(function ($elem) {
+                return trim($elem);
+            }, $role);
+        }
+
+        // ok, now we compare it with actual user role
+        $intersection = array_intersect($role, $userInfo['roles']);
+
+        // do we have any of that? if not, return error
+        if (count($intersection) == 0) {
+            return $this->errorForbidden("You don't belong to any of these groups: " . implode($role));
+        }
+    } */
 }

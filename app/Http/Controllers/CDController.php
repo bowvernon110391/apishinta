@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\CD;
 use App\Transformers\CDTransformer;
+use App\Transformers\DetailCDTransformer;
 
 class CDController extends ApiController
 {
@@ -30,14 +31,15 @@ class CDController extends ApiController
     }
 
     /**
-     * Display the specified resource.
-     *
+     * Display Customs Declaration Header Data 
+     * Jumlah detail gk dimunculin krn kemungkinan besar dan butuh paginasi
+     * 
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $this->fractal->parseIncludes('details');
+        // $this->fractal->parseIncludes('details');
 
         $cd = CD::find($id);
 
@@ -46,6 +48,25 @@ class CDController extends ApiController
         }
 
         return $this->respondWithItem($cd, new CDTransformer);
+    }
+
+    /**
+     * Display the details of a Customs Declaration
+     * with pagination
+     */
+    public function showDetails(Request $request, $id) {
+        $cd = CD::find($id);
+
+        if (!$cd) {
+            return $this->errorNotFound("Gak nemu data CD dengan id {$id}");
+        }
+
+        // mungkin kah gk ada CD detailsnya?
+        $paginator = $cd->details()
+                    ->paginate($request->get('number', 10))
+                    ->appends($request->except('page'));
+
+        return $this->respondWithPagination($paginator, new DetailCDTransformer);
     }
 
     /**

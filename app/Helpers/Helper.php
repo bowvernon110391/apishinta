@@ -34,6 +34,7 @@ if (!function_exists('getUserInfo')) {
                 'id'    => 2,
                 'nama'  => 'FAKE PDTT',
                 'nip'   => 'XXX6666XXX',
+                'active'=> 'Y',
                 'roles' => [
                     'PDTT'
                 ]
@@ -44,6 +45,7 @@ if (!function_exists('getUserInfo')) {
                 'id'    => 1,
                 'nama'  => 'FAKE ADMIN',
                 'nip'   => '45462626',
+                'active'=> 'Y',
                 'roles' => [
                     'PDTT',
                     'KASI',
