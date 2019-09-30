@@ -12,7 +12,7 @@ class CreateFotoDokTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('foto_dok', function(Blueprint $table)
+		Schema::create('foto', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->string('judul_foto');
@@ -32,7 +32,7 @@ class CreateFotoDokTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('foto_dok');
+		Schema::drop('foto');
 	}
 
 }
