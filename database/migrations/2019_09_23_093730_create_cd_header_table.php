@@ -30,6 +30,7 @@ class CreateCdHeaderTable extends Migration {
 			$table->smallInteger('jml_bagasi_tdk_dibawa')->unsigned()->default(0);
 			// $table->set('declare_flag',['KARANTINA','NARKOTIKA','UANG','BKC','KOMERSIL','IMPOR_UNTUK_DIPAKAI'])->default('');
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

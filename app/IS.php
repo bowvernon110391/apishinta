@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class IS extends Model
 {
+    use SoftDeletes;
+    
     protected $table = 'is_header';
 
     public function details(){

@@ -3,10 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DetailCD extends Model
 {
     //
+    use SoftDeletes;
+    
     protected $table = 'cd_detail';
 
     public function header(){

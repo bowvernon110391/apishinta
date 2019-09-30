@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CD extends Model
 {
+    // enable soft Deletion
+    use SoftDeletes;
+    // table name
     protected $table = 'cd_header';
 
     // default values

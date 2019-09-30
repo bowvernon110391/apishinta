@@ -30,6 +30,7 @@ class CreateSpmbHeaderTable extends Migration {
 			$table->decimal('total_brutto', 18, 4);
 			$table->decimal('total_netto', 18, 4);
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

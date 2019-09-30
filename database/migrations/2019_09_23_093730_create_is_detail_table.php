@@ -39,6 +39,7 @@ class CreateIsDetailTable extends Migration {
 			$table->decimal('brutto', 18, 4);
 			$table->decimal('netto', 18, 4);
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

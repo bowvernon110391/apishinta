@@ -40,6 +40,7 @@ class CreateIsHeaderTable extends Migration {
 			$table->decimal('total_netto', 18, 4);
 			$table->date('tgl_jatuh_tempo');
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

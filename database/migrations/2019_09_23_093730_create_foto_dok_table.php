@@ -20,6 +20,7 @@ class CreateFotoDokTable extends Migration {
 			$table->integer('imageable_id')->unsigned()->index();
 			$table->string('imageable_type')->index();
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

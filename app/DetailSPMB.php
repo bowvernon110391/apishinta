@@ -3,10 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DetailSPMB extends Model
 {
     //
+    use SoftDeletes;
+    
     protected $table = 'spmb_detail';
 
     public function header(){
