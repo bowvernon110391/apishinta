@@ -37,6 +37,7 @@ class CreateSspcpHeaderTable extends Migration {
 			$table->integer('pejabat_id')->unsigned();
 			$table->decimal('nilai_valuta', 18, 4)->nullable();
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 
