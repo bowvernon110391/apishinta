@@ -53,6 +53,10 @@ Route::post('/kurs', 'KursController@store')
 Route::put('/kurs/{id}', 'KursController@update')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
+// DELETE /kurs/{id}    => delete data kurs id {id}
+Route::delete('/kurs/{id}', 'KursController@destroy')
+        ->middleware($corsGroup['singleItem'], 'role:CONSOLE,PDTT');
+
 
 //====================================================================================================
 // ENDPOINTS PENUMPANG

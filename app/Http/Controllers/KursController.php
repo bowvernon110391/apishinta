@@ -166,4 +166,23 @@ class KursController extends ApiController
         // if things go smooth we go here
         return $this->respondWithCollection($result, new KursTransformer);
     }
+
+    // delete stuffs
+    public function destroy(Request $request, $id) {
+        // try to output user info instead
+        $userInfo = $request->get('sso_user');
+
+        if ($userInfo) {
+            // it's got info. but is it console?
+            if (in_array('CONSOLE', $userInfo['roles'])) {
+                // it's got CONSOLE authority, do something different
+                return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+            }
+
+            
+        }
+        // no console auth. tell him to upgrade his account maybe?
+        return $this->errorForbidden("You may not do that. Not an admin");
+    }
 }

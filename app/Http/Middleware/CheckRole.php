@@ -56,6 +56,9 @@ class CheckRole
             }
         }
 
+        // store user info on a request?
+        $request->merge(['sso_user' => $userInfo]);
+
         // pass role check. continue
         return $next($request);
     }

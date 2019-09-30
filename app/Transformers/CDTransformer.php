@@ -36,6 +36,10 @@ class CDTransformer extends TransformerAbstract {
                     'uri'   => '/dokumen/cd/' . $cd->id
                 ],
                 [
+                    'rel'   => 'cd.details',
+                    'uri'   => '/dokumen/cd/' . $cd->id . '/details'
+                ],
+                [
                     'rel'   => 'cd.penumpang',
                     'uri'   => '/penumpang/' . $cd->penumpang->id
                 ],
