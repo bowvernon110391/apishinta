@@ -12,7 +12,7 @@ class CreateStatusDokTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('status_dok', function(Blueprint $table)
+		Schema::create('status', function(Blueprint $table)
 		{
 			$table->bigIncrements('id');
 			$table->string('status');
@@ -20,6 +20,7 @@ class CreateStatusDokTable extends Migration {
 			$table->integer('statusable_id')->unsigned()->index();
 			$table->string('statusable_type')->index();
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 
@@ -31,7 +32,7 @@ class CreateStatusDokTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('status_dok');
+		Schema::drop('status');
 	}
 
 }

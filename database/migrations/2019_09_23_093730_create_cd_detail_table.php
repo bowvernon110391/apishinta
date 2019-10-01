@@ -31,6 +31,7 @@ class CreateCdDetailTable extends Migration {
 			$table->string('kode_valuta', 8);
 			$table->decimal('nilai_valuta', 18, 4);
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

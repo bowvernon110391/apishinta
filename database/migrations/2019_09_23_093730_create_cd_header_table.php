@@ -15,7 +15,7 @@ class CreateCdHeaderTable extends Migration {
 		Schema::create('cd_header', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('no_dok')->unsigned();
+			$table->integer('no_dok')->unsigned()->default(0);
 			$table->string('no_hp', 32)->default('');
 			$table->date('tgl_dok');
 			$table->string('npwp', 32)->default('');
@@ -30,6 +30,7 @@ class CreateCdHeaderTable extends Migration {
 			$table->smallInteger('jml_bagasi_tdk_dibawa')->unsigned()->default(0);
 			// $table->set('declare_flag',['KARANTINA','NARKOTIKA','UANG','BKC','KOMERSIL','IMPOR_UNTUK_DIPAKAI'])->default('');
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

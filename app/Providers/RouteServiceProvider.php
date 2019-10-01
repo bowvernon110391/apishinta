@@ -23,7 +23,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // register default pattern for common name parameter (id, etc)
+        Route::pattern('id', '^[0-9]+$');
 
         parent::boot();
     }
@@ -65,8 +66,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        Route::prefix('api')
-             ->middleware('api')
+        Route::middleware(['api'])
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
     }
