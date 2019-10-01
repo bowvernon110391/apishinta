@@ -73,8 +73,23 @@ trait TraitDokumen
         return $this->status()->latest()->first();
     }
 
+    public function getShortLastStatusAttribute() {
+        $ls = $this->last_status;
+        if ($ls) {
+            return [
+                'status'    => $ls->status,
+                'created_at'=> (string) $ls->created_at
+            ];
+        }
+
+        return null;
+    }
+
     public function status(){
         return $this->morphMany('App\Status', 'statusable');
     }
 
+    public function getUriAttribute() {
+        return "dokumen/{$this->jenis_dokumen}/{$this->id}";
+    }
 }

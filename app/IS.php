@@ -5,8 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class IS extends Model
+class IS extends Model implements IDokumen, ILinkable
 {
+    use TraitDokumen;
     use SoftDeletes;
     
     protected $table = 'is_header';
@@ -27,20 +28,35 @@ class IS extends Model
     // COMPUTED PROPERTIES GO HERE!!
     //=================================================================================================
     // ambil data tahun dok dari tgl
-    public function getTahunDokAttribute() {
-        return (int)substr($this->tgl_dok, 0, 4);
+    public function getJenisDokumenAttribute()
+    {
+        return 'is';
     }
-    // ambil nomor lengkap dalam bentuk string
-    public function getNomorLengkapAttribute() {
-        if ($this->no_dok == 0) {
-            return null;
+
+    public function getSkemaPenomoranAttribute()
+    {
+        return 'IS/SH';
+    }
+
+    public function getLinksAttribute() {
+        $links = [
+            [
+                'rel'   => 'self',
+                'uri'   => $this->uri,
+            ],
+            [
+                'rel'   => 'self.details',
+                'uri'   => $this->uri . '/details'
+            ]
+        ];
+
+        if ($this->cd) {
+            $links[] = [
+                'rel'   => 'cd',
+                'uri'   => $this->cd->uri
+            ];
         }
-        
-        $nomorLengkap = str_pad($this->no_dok, 6,"0", STR_PAD_LEFT)
-                        .'/IS/'
-                        .$this->lokasi->nama
-                        .'/SH/'
-                        .$this->tahun_dok;
-        return $nomorLengkap;
+
+        return $links;
     }
 }

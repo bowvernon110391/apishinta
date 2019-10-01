@@ -81,4 +81,36 @@ class CD extends Model implements IDokumen
     }
 
 
+    public function getLinksAttribute() {
+        $links = [
+            [
+                'rel'   => 'self',
+                'uri'   => $this->uri,
+            ],
+            [
+                'rel'   => 'self.details',
+                'uri'   => $this->uri . '/details'
+            ],
+            [
+                'rel'   => 'penumpang',
+                'uri'   => $this->penumpang->uri
+            ]
+        ];
+
+        if ($this->imporSementara) {
+            $links[] = [
+                'rel'   => 'is',
+                'uri'   => $this->imporSementara->uri
+            ];
+        }
+
+        if ($this->sspcp) {
+            $links[] = [
+                'rel'   => 'sspcp',
+                'uri'   => $this->sspcp->uri
+            ];
+        }
+
+        return $links;
+    }
 }

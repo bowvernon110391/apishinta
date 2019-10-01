@@ -31,48 +31,13 @@ class CDTransformer extends TransformerAbstract {
             'created_at'    => (string) $cd->created_at,
             'updated_at'    => (string) $cd->updated_at,
 
-            'last_status'   => null,
+            'last_status'   => $cd->short_last_status,
             
             'is_locked'   => $cd->is_locked,
 
-            'links' => [
-                [
-                    'rel'   => 'self',
-                    'uri'   => '/dokumen/cd/' . $cd->id
-                ],
-                [
-                    'rel'   => 'cd.details',
-                    'uri'   => '/dokumen/cd/' . $cd->id . '/details'
-                ],
-                [
-                    'rel'   => 'cd.penumpang',
-                    'uri'   => '/penumpang/' . $cd->penumpang->id
-                ],
+            'links' => $cd->links
                 
-            ]
         ];
-
-        // append additional links if available
-        if ($cd->sspcp) {
-            $result['links'][] = [
-                'rel'   => 'cd.sspcp',
-                'uri'   => '/dokumen/sspcp/' . $cd->sspcp->id
-            ];
-        }
-
-        if ($cd->imporSementara) {
-            $result['links'][] = [
-                'rel'   => 'cd.impor_sementara',
-                'uri'   => '/dokumen/is/' . $cd->imporSementara->id
-            ];
-        }
-
-        if ($cd->last_status) {
-            $result['last_status'] = [
-                'status'    => $cd->last_status->status,
-                'created_at'=> (string) $cd->last_status->created_at
-            ];
-        }
 
         return $result;
     }

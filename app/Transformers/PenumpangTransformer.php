@@ -21,7 +21,8 @@ class PenumpangTransformer extends TransformerAbstract {
             'kebangsaan'=> $p->kebangsaan,
             'pekerjaan' => $p->pekerjaan,
             'created_at'    => (string) $p->created_at,
-            'updated_at'    => (string) $p->updated_at
+            'updated_at'    => (string) $p->updated_at,
+            'links' => $p->links
         ];
     }
 }

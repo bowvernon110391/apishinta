@@ -8,6 +8,7 @@ interface IDokumen
     public function getJenisDokumenAttribute();
     public function getSkemaPenomoranAttribute();
     public function getLastStatusAttribute();
+    public function getShortLastStatusAttribute();
     public function status();
     public function lock();
     public function unlock();

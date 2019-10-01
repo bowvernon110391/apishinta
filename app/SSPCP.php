@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SSPCP extends Model implements IDokumen
+class SSPCP extends Model implements IDokumen, ILinkable
 {
     //
     use TraitDokumen {
@@ -63,4 +63,25 @@ class SSPCP extends Model implements IDokumen
     }
 
     
+    public function getLinksAttribute() {
+        $links = [
+            [
+                'rel'   => 'self',
+                'uri'   => $this->uri,
+            ],
+            [
+                'rel'   => 'self.details',
+                'uri'   => $this->uri . '/details'
+            ]
+        ];
+
+        if ($this->cd) {
+            $links[] = [
+                'rel'   => 'cd',
+                'uri'   => $this->cd->uri
+            ];
+        }
+
+        return $links;
+    }
 }
