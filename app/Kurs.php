@@ -8,6 +8,7 @@ use InvalidArgumentException;
 
 class Kurs extends Model
 {
+    use TraitLoggable;
     // model ini merepresentasikan data kurs
     protected $table = 'kurs';
 

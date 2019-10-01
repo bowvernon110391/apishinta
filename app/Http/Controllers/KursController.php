@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Transformers\KursTransformer;
 use Illuminate\Http\Request;
 use App\Kurs;
+use App\AppLog;
 use ErrorException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -59,6 +60,9 @@ class KursController extends ApiController
                 return $this->errorBadRequest();
             }
 
+            // log some shit
+            $kurs->logs()->save(AppLog::logInfo("Created kurs {$kurs->id} by {$request->user['nama']}"));
+
             // well, saved. return its id
             return $this->respondWithArray([
                 'id'    => $kurs->id,
@@ -78,7 +82,7 @@ class KursController extends ApiController
             // user supply invalid data
             return $this->errorBadRequest($e->getMessage());
         } catch (\Exception $e) {
-            return $this->errorServiceUnavailable();
+            return $this->errorServiceUnavailable($e->getMessage());
         }
 
         
@@ -109,6 +113,8 @@ class KursController extends ApiController
             $kurs->tanggal_akhir= $request->tanggal_akhir;
 
             $kurs->save();
+
+
 
             // sukses, return 204 tanpa response body
             return $this->setStatusCode(204)

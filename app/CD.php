@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CD extends Model implements IDokumen
 {
-    // enable soft Deletion
+    use TraitLoggable;
     use TraitDokumen;
+    // enable soft Deletion
     use SoftDeletes;
+
+
     // table name
     protected $table = 'cd_header';
 

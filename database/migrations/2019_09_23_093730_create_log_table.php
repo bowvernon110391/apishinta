@@ -19,7 +19,7 @@ class CreateLogTable extends Migration {
 			$table->text('object', 65535)->nullable();
 			$table->text('message', 65535)->nullable();
 			$table->morphs('loggable');
-			$table->dateTime('created_at')->nullable();
+			$table->timestamps();
 		});
 	}
 

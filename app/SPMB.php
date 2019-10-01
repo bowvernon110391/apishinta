@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class SPMB extends Model
 {
     use SoftDeletes;
+    use TraitLoggable;
     
     protected $table = 'spmb_header';
 

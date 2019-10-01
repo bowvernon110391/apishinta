@@ -12,6 +12,7 @@ class SSPCP extends Model implements IDokumen
         lock as public traitLock;
         unlock as public traitUnlock;
     }
+    use TraitLoggable;
     use SoftDeletes;
 
     protected $table = 'sspcp_header';
