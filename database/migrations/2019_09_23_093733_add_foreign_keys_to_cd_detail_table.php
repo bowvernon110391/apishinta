@@ -14,7 +14,7 @@ class AddForeignKeysToCdDetailTable extends Migration {
 	{
 		Schema::table('cd_detail', function(Blueprint $table)
 		{
-			$table->foreign('cd_header_id', 'fk_cd_detail_cd_id_cd_header_id')->references('id')->on('cd_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('cd_header_id', 'fk_cd_detail_cd_id_cd_header_id')->references('id')->on('cd_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 

@@ -14,8 +14,8 @@ class AddForeignKeysToIsHeaderTable extends Migration {
 	{
 		Schema::table('is_header', function(Blueprint $table)
 		{
-			$table->foreign('cd_header_id', 'is_header_ibfk_1')->references('id')->on('cd_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
-			$table->foreign('lokasi_id', 'is_header_ibfk_2')->references('id')->on('lokasi')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('cd_header_id', 'is_header_ibfk_1')->references('id')->on('cd_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('lokasi_id', 'is_header_ibfk_2')->references('id')->on('lokasi');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 

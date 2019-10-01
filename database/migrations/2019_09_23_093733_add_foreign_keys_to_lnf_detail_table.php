@@ -14,7 +14,7 @@ class AddForeignKeysToLnfDetailTable extends Migration {
 	{
 		Schema::table('lnf_detail', function(Blueprint $table)
 		{
-			$table->foreign('lnf_header_id', 'FK_lnf_detail_lnf_header')->references('id')->on('lnf_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('lnf_header_id', 'FK_lnf_detail_lnf_header')->references('id')->on('lnf_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 

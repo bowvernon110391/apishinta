@@ -14,8 +14,8 @@ class AddForeignKeysToCdHeaderTable extends Migration {
 	{
 		Schema::table('cd_header', function(Blueprint $table)
 		{
-			$table->foreign('lokasi_id', 'fk_cd_header_lokasi_id_lokasi_id')->references('id')->on('lokasi')->onUpdate('CASCADE')->onDelete('RESTRICT');
-			$table->foreign('penumpang_id', 'fk_cd_header_penumpang_id_penumpang_id')->references('id')->on('penumpang')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('lokasi_id', 'fk_cd_header_lokasi_id_lokasi_id')->references('id')->on('lokasi');//->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('penumpang_id', 'fk_cd_header_penumpang_id_penumpang_id')->references('id')->on('penumpang');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 

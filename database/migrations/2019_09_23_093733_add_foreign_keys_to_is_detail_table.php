@@ -14,8 +14,8 @@ class AddForeignKeysToIsDetailTable extends Migration {
 	{
 		Schema::table('is_detail', function(Blueprint $table)
 		{
-			$table->foreign('cd_detail_id', 'FK_is_detail_cd_detail')->references('id')->on('cd_detail')->onUpdate('CASCADE')->onDelete('RESTRICT');
-			$table->foreign('is_header_id', 'FK_is_detail_is_header')->references('id')->on('is_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('cd_detail_id', 'FK_is_detail_cd_detail')->references('id')->on('cd_detail');//->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('is_header_id', 'FK_is_detail_is_header')->references('id')->on('is_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 

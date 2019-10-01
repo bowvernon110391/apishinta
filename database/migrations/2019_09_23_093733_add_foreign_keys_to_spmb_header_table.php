@@ -14,8 +14,8 @@ class AddForeignKeysToSpmbHeaderTable extends Migration {
 	{
 		Schema::table('spmb_header', function(Blueprint $table)
 		{
-			$table->foreign('cd_header_id', 'spmb_header_ibfk_1')->references('id')->on('cd_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
-			$table->foreign('lokasi_id', 'spmb_header_ibfk_2')->references('id')->on('lokasi')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('cd_header_id', 'spmb_header_ibfk_1')->references('id')->on('cd_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('lokasi_id', 'spmb_header_ibfk_2')->references('id')->on('lokasi');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 

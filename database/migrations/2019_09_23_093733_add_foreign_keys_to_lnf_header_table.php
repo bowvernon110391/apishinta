@@ -14,8 +14,8 @@ class AddForeignKeysToLnfHeaderTable extends Migration {
 	{
 		Schema::table('lnf_header', function(Blueprint $table)
 		{
-			$table->foreign('lokasi_id', 'FK_lnf_header_lokasi')->references('id')->on('lokasi')->onUpdate('CASCADE')->onDelete('RESTRICT');
-			$table->foreign('pemilik_id', 'FK_lnf_header_penumpang')->references('id')->on('penumpang')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('lokasi_id', 'FK_lnf_header_lokasi')->references('id')->on('lokasi');//->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('pemilik_id', 'FK_lnf_header_penumpang')->references('id')->on('penumpang');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 

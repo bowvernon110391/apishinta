@@ -14,7 +14,7 @@ class AddForeignKeysToBc32DetailTable extends Migration {
 	{
 		Schema::table('bc32_detail', function(Blueprint $table)
 		{
-			$table->foreign('bc32_header_id', 'FK_bc32_detail_bc32_header')->references('id')->on('bc32_header')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('bc32_header_id', 'FK_bc32_detail_bc32_header')->references('id')->on('bc32_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 
