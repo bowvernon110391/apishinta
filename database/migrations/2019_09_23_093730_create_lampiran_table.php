@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateFotoDokTable extends Migration {
+class CreateLampiranTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,13 +12,14 @@ class CreateFotoDokTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('foto', function(Blueprint $table)
+		Schema::create('lampiran', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('judul_foto');
+			$table->string('judul');
+			$table->enum('jenis',['GAMBAR','DOKUMEN','LAIN-LAIN']);
+			$table->string('mime_type');
 			$table->string('filename')->unique('filename');
-			$table->integer('imageable_id')->unsigned()->index();
-			$table->string('imageable_type')->index();
+			$table->morphs('attachable');
 			$table->timestamps();
 			$table->softDeletes();
 		});
@@ -32,7 +33,7 @@ class CreateFotoDokTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('foto');
+		Schema::drop('lampiran');
 	}
 
 }
