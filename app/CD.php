@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CD extends Model
+class CD extends Model implements IDokumen
 {
     // enable soft Deletion
     use SoftDeletes;
@@ -70,9 +70,9 @@ class CD extends Model
         }
         
         $nomorLengkap = str_pad($this->no_dok, 6,"0", STR_PAD_LEFT)
-                        .'/CD/'
-                        .$this->lokasi->nama
-                        .'/SH/'
+                        .'/'
+                        .$this->skema_penomoran
+                        .'/'
                         .$this->tahun_dok;
         return $nomorLengkap;
     }
@@ -86,5 +86,13 @@ class CD extends Model
         }
 
         return $flags;
+    }
+
+    public function getJenisDokumenAttribute(){
+        return 'cd';
+    }
+
+    public function getSkemaPenomoranAttribute(){
+        return 'CD/'. $this->lokasi->nama . '/SH';
     }
 }
