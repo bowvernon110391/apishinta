@@ -12,7 +12,8 @@ class CDTransformer extends TransformerAbstract {
 
     // available relations, default relations not needed to apply
     protected $availableIncludes = [
-        'details'
+        'details',
+        'status'
     ];
 
     // basic transformation, without any sweetener
@@ -29,6 +30,10 @@ class CDTransformer extends TransformerAbstract {
 
             'created_at'    => (string) $cd->created_at,
             'updated_at'    => (string) $cd->updated_at,
+
+            'last_status'   => null,
+            
+            'is_locked'   => $cd->is_locked,
 
             'links' => [
                 [
@@ -62,6 +67,13 @@ class CDTransformer extends TransformerAbstract {
             ];
         }
 
+        if ($cd->last_status) {
+            $result['last_status'] = [
+                'status'    => $cd->last_status->status,
+                'created_at'=> (string) $cd->last_status->created_at
+            ];
+        }
+
         return $result;
     }
 
@@ -75,6 +87,17 @@ class CDTransformer extends TransformerAbstract {
     // include details
     public function includeDetails(CD $cd) {
         return $this->collection($cd->details, new DetailCDTransformer);
+    }
+
+    // include last status
+    // public function includeLastStatus(CD $cd) {
+    //     return $this->item($cd->last_status, new StatusTransformer);
+    // }
+
+     // include last status
+    public function includeStatus(CD $cd) {
+        $status = collect($cd->status()->latest()->get());
+        return $this->collection($status, new StatusTransformer);
     }
 }
 

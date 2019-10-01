@@ -37,9 +37,9 @@ class CDController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        // $this->fractal->parseIncludes('details');
+        $this->fractal->parseIncludes($request->get('include', ''));
 
         $cd = CD::find($id);
 
