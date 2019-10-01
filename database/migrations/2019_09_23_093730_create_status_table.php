@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateStatusDokTable extends Migration {
+class CreateStatusTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -17,8 +17,7 @@ class CreateStatusDokTable extends Migration {
 			$table->bigIncrements('id');
 			$table->string('status');
 			$table->integer('user_id')->unsigned()->nullable()->index();
-			$table->integer('statusable_id')->unsigned()->index();
-			$table->string('statusable_type')->index();
+			$table->morphs('statusable');
 			$table->timestamps();
 			$table->softDeletes();
 		});
