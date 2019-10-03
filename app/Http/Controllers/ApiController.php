@@ -66,7 +66,15 @@ class ApiController extends Controller
 
         // $this->fractal->setPaginator(new IlluminatePaginatorAdapter($paginator));
 
-        return $this->respondWithArray($rootData->toArray(), $headers);
+        $arr = [
+            "recordsTotal"  => (int) $paginator->total(),
+            "recordsFiltered"   => (int) $paginator->total()
+        ];
+
+        // insert our array
+        // $arr['draw'] = 1;
+
+        return $this->respondWithArray(array_merge($arr, $rootData->toArray()), $headers);
     }
 
     // default response for empty response (204, 200 PUT)
@@ -140,6 +148,9 @@ class ApiController extends Controller
     }
 
     // Guard this api call by returning error whenever necessary
+    public function options() {
+        return $this->setStatusCode(204)->respondWithEmptyBody();
+    }
 
     /* // ensure caller has bearer token
     protected function ensureUserHasValidToken(Request $request) {

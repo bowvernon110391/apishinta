@@ -28,6 +28,11 @@ $corsGroup = [
 ];
 
 // Kayaknya bagusnya digroup per endpoints dah
+// OPTIONS /* untuk menghandle preflight CORS request
+Route::options('/{fuckers}', 'ApiController@options')
+        ->where('fuckers', '.+')
+        ->middleware($corsGroup['all']);
+
 
 //====================================================================================================
 // ENDPOINTS Kurs
@@ -57,12 +62,12 @@ Route::put('/kurs/{id}', 'KursController@update')
 Route::delete('/kurs/{id}', 'KursController@destroy')
         ->middleware($corsGroup['singleItem'], 'role:CONSOLE,PDTT');
 
-
 //====================================================================================================
 // ENDPOINTS PENUMPANG
 // Data penumpang adalah data rahasia, jd kasih guard di endpointsnya
 // asal tokennya dari user yg valid dan aktif, gk masalah
 //====================================================================================================
+        
 // GET /penumpang => list data penumpang dgn paginasi + query
 Route::get('/penumpang', 'PenumpangController@index')
         ->middleware($corsGroup['resourceGroup'], 'role');
