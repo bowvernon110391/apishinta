@@ -14,9 +14,19 @@ class CDController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $query = '';
+        $query = CD::byQuery(
+            $request->get('q', ''),
+            $request->get('from'),
+            $request->get('to')
+        );
+
+        $paginator = $query
+                    ->paginate($request->get('number'))
+                    ->appends($request->except('page'));
+        
+        return $this->respondWithPagination($paginator, new CDTransformer);
     }
 
     /**

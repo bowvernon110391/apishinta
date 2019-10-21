@@ -28,7 +28,8 @@ class CD extends Model implements IDokumen
     // always loaded relations
     protected $with = [
         'lokasi',
-        'declareFlags'
+        'declareFlags',
+        'penumpang'
     ];
 
     public function details(){
@@ -58,8 +59,59 @@ class CD extends Model implements IDokumen
     public function spmb(){
         return $this->hasOne('App\SPMB','cd_header_id');
     }
-    
-    
+
+    // SCOPES
+    // scope By Query Parameter (wildcard query)
+
+    // scope from (tanggal dok)
+    public function scopeFrom($query, $tgl) {
+        return $query->where('tgl_dok', '>=', $tgl);
+    }
+
+    // scope to (tanggal dok)
+    public function scopeTo($query, $tgl) {
+        return $query->where('tgl_dok', '<=', $tgl);
+    }
+
+    // scope by penumpang (LIKE penumpang name)    
+    public function scopeByPenumpang($query, $nama) {
+        return $query->whereHas('penumpang', function($q) use($nama) {
+            $qString = "%{$nama}%";
+            return $q->where('nama', 'like', $qString)
+                    ->orWhere('pekerjaan', 'like', $qString)
+                    ->orWhere('kebangsaan', 'like', $qString)
+                    ->orWhere('no_paspor', 'like', $qString);
+        });
+    }
+
+    // scope by lokasi
+    public function scopeByLokasi($query, $lokasi) {
+        return $query->whereHas('lokasi', function($q) use($lokasi) {
+            return $q->where('nama', 'like', "%{$lokasi}%");
+        });
+    }
+
+    // scope by q (WILD QUERY)
+    public function scopeByQuery($query, $q='', $from=null, $to=null) {
+        return $query->where('npwp', 'like', "%{$q}%")
+                        ->orWhere('nib', 'like', "%{$q}%")
+                        ->orWhere('alamat', 'like', "%{$q}%")
+                        ->orWhere('no_flight', 'like', "%{$q}%")
+                        ->orWhere(function ($query) use ($q) {
+                            $query->byLokasi($q);
+                        })
+                        ->orWhere(function ($query) use ($q) {
+                            $query->byPenumpang($q);
+                        })
+                        ->when($from, function ($query) use ($from) {
+                            $query->from($from);
+                        })
+                        ->when($to, function ($query) use ($to) {
+                            $query->to($to);
+                        })
+                        ->latest()
+                        ->orderBy('tgl_dok', 'desc');
+    }
 
     // extrak data declareflags dalam bentuk flat array
     public function getFlatDeclareFlagsAttribute() {

@@ -89,6 +89,9 @@ Route::put('/penumpang/{id}', 'PenumpangController@update')
 // CD itu classified, jd kasih guard di api endpointsnya
 //====================================================================================================
 // CD subresource dari dokumens
+Route::get('/dokumen/cd', 'CDController@index')
+        ->middleware($corsGroup['resourceGroup'], 'role');
+
 // GET /dokumen/cd/2  => ambil data cd + relasinya
 Route::get('/dokumen/cd/{id}', 'CDController@show')
         ->middleware($corsGroup['singleItem'], 'role');
