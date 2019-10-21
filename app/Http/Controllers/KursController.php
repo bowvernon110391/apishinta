@@ -149,7 +149,8 @@ class KursController extends ApiController
             ->orderBy('jenis', 'asc');
 
         $paginator = $query
-                    ->paginate($request->input('number'));
+                    ->paginate($request->input('number'))
+                    ->appends($request->except('page'));
                     // ->appends($request->except('sso_user'));
 
         // return $this->respondWithCollection($kurs, new KursTransformer);
