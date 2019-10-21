@@ -26,6 +26,10 @@ class CDTransformer extends TransformerAbstract {
             'lokasi'    => $cd->lokasi->nama,
             'declare_flags' => $cd->flat_declare_flags,
 
+            'npwp_nib'      => (string) ($cd->nib ? $cd->nib : $cd->npwp),
+            'no_flight'     => (string) $cd->no_flight,
+            'tgl_kedatangan'    => (string) $cd->tgl_kedatangan,
+
             'jumlah_detail' => $cd->details()->count(),
 
             'created_at'    => (string) $cd->created_at,

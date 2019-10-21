@@ -91,6 +91,14 @@ class CD extends Model implements IDokumen
         });
     }
 
+    // scope by declare flags
+    public function scopeByDeclareFlags($query, $flags) {
+        // if not array, convert it
+        return $query->whereHas('declareFlags', function($q) use ($flags) {
+            return $q->byName($flags);
+        });
+    }
+
     // scope by q (WILD QUERY)
     public function scopeByQuery($query, $q='', $from=null, $to=null) {
         return $query->where('npwp', 'like', "%{$q}%")
@@ -102,6 +110,9 @@ class CD extends Model implements IDokumen
                         })
                         ->orWhere(function ($query) use ($q) {
                             $query->byPenumpang($q);
+                        })
+                        ->orWhere(function ($query) use ($q) {
+                            $query->byDeclareFlags($q);
                         })
                         ->when($from, function ($query) use ($from) {
                             $query->from($from);
