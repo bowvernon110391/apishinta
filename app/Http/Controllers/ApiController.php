@@ -149,7 +149,7 @@ class ApiController extends Controller
 
     // Guard this api call by returning error whenever necessary
     public function options() {
-        return $this->setStatusCode(204)->respondWithEmptyBody();
+        return $this->setStatusCode(200)->respondWithEmptyBody();
     }
 
     /* // ensure caller has bearer token
