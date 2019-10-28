@@ -41,7 +41,7 @@ if (!function_exists('getUserInfo')) {
                 $userInfo = $broker->getUserInfo();
                 return $userInfo;
             } catch (\Exception $e) {
-                echo "getUserInfo error: {$e->getMessage()}";
+                // echo "getUserInfo error: {$e->getMessage()}";
                 return null;
             }
         } 
