@@ -34,9 +34,9 @@ class CheckRole
             return $api->errorUnauthorized("Token invalid. Token used: " . $token);
         
         // maybe user is registered but is not activated?
-        $active = strtoupper($userInfo['active'] ?? 'N');
+        $active = strtoupper($userInfo['status'] ?? false);
 
-        if ($active == 'N')
+        if (!$active)
             return $api->errorUnauthorized("User with this token is not active. Kys, fag");
         
         // okay, token is valid and user is active. but is the user in the correct role/group?
