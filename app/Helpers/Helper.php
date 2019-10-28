@@ -143,4 +143,20 @@ if (!function_exists('userHasRole')) {
     }
 }
 
+// function: sqlDate()
+// converts any of matching format to sql date
+if (!function_exists('sqlDate')) {
+  // declare
+  function sqlDate($strDate) {
+    $matches = [];
+    if (preg_match('/(\d{1,2})-(\d{1,2})-(\d{4})/i', $strDate, $matches)) {
+      // match!! store it
+      return "{$matches[3]}-{$matches[2]}-{$matches[1]}";
+    } else if (preg_match('/(\d{4})-(\d{1,2})-(\d{1,2})/', $strDate, $matches)) {
+      return "{$matches[1]}-{$matches[2]}-{$matches[3]}";
+    }
+    return null;
+  }
+}
+
 ?>

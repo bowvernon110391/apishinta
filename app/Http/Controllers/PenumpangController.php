@@ -78,7 +78,7 @@ class PenumpangController extends ApiController
 
         // grab the parameter?
         $nama = $request->get('nama');
-        $tgl_lahir  = $request->get('tgl_lahir');
+        $tgl_lahir  = sqlDate($request->get('tgl_lahir'));
         $kebangsaan = $request->get('kebangsaan');
         $no_paspor  = $request->get('no_paspor');
         $pekerjaan  = $request->get('pekerjaan');
