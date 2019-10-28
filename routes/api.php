@@ -31,7 +31,7 @@ $corsGroup = [
 // OPTIONS /* untuk menghandle preflight CORS request
 Route::options('/{fuckers}', 'ApiController@options')
         ->where('fuckers', '.+')
-        ->middleware($corsGroup['all']);
+        ->middleware('cors:GET,POST,PUT,DELETE,OPTIONS,PATCH,HEAD');
 
 
 //====================================================================================================
