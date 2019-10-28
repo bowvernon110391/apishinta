@@ -83,10 +83,21 @@ class PenumpangController extends ApiController
         $no_paspor  = $request->get('no_paspor');
         $pekerjaan  = $request->get('pekerjaan');
 
-        // check if all parameter exists
-        if (!$nama || !$tgl_lahir || !$kebangsaan || !$no_paspor || !$pekerjaan) {
-            // shiet, one of em is missing. return error
-            return $this->errorBadRequest("Data penumpang tidak lengkap. Silahkan lengkapi");
+        // one check after another
+        if (!$nama) {
+            return $this->errorBadRequest('Nama penumpang tidak sesuai standar => ' . $nama);
+        }
+        if (!$tgl_lahir) {
+            return $this->errorBadRequest('Tanggal lahir invalid => ' . $tgl_lahir);
+        }
+        if (!$kebangsaan) {
+            return $this->errorBadRequest('Kebangsaan invalid => ' . $kebangsaan);
+        }
+        if (!$no_paspor) {
+            return $this->errorBadRequest('no paspor tidak valid => ' . $no_paspor);
+        }
+        if (!$pekerjaan) {
+            return $this->errorBadRequest('Pekerjaan tidak valid => ' . $pekerjaan);
         }
 
         // attempt to store it
@@ -102,7 +113,7 @@ class PenumpangController extends ApiController
 
             // coba save
             if (!$penumpang->save())
-                throw new $this->errorBadRequest();
+                throw new \Exception("Gagal menyimpan data penumpang");
             
             // berhasil? kembaliin data berupa id dan uri
             return $this->respondWithArray([
