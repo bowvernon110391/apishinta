@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Negara extends Model
 {
     protected $table = 'referensi_negara';
+    public $timestamps = false;
 
     public function scopeByCode($query, $code) {
         return $query->where('kode', 'LIKE', "%{$code}%");
