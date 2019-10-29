@@ -15,7 +15,7 @@ class CreateReferensiNegaraTable extends Migration {
 		Schema::create('referensi_negara', function(Blueprint $table)
 		{
 			$table->integer('id')->primary();
-			$table->string('kode', 4)->nullable()->index();
+			$table->string('kode', 4)->nullable()->unique();
 			$table->string('uraian')->nullable();
 		});
 	}
