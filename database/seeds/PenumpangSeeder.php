@@ -25,7 +25,7 @@ class PenumpangSeeder extends Seeder
             $p->tgl_lahir   = $faker->date('Y-m-d');
             $p->pekerjaan   = $faker->jobTitle;
             $p->no_paspor   = $faker->tollFreePhoneNumber;
-            $p->kebangsaan  = $faker->country;
+            $p->kebangsaan  = $faker->countryCode;
 
             $p->save();
         }

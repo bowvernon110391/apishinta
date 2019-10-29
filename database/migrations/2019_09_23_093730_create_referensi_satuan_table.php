@@ -14,9 +14,9 @@ class CreateReferensiSatuanTable extends Migration {
 	{
 		Schema::create('referensi_satuan', function(Blueprint $table)
 		{
-			$table->bigInteger('ID')->primary();
-			$table->string('KODE_SATUAN')->nullable();
-			$table->string('URAIAN_SATUAN')->nullable();
+			$table->bigInteger('id')->primary();
+			$table->string('kode', 4)->nullable()->index();
+			$table->string('uraian')->nullable();
 		});
 	}
 

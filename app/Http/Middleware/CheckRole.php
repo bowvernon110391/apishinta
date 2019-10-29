@@ -22,7 +22,7 @@ class CheckRole
         // ensure user has valid token first. only then it makes sense
         // to check role
         $token = $request->bearerToken();
-        $api = new ApiController(new Fractal\Manager());
+        $api = new ApiController(new Fractal\Manager(), $request);
 
         if (!$token)
             return $api->errorUnauthorized();

@@ -24,9 +24,9 @@ class SeedReferensiNegaraKemasanSatuan extends Migration
                 continue;
 
             DB::table('referensi_negara')->insert([
-                'ID'            => $csvNegara[0],
-                'KODE_NEGARA'   => $csvNegara[1],
-                'URAIAN_NEGARA' => $csvNegara[2]
+                'id'        => $csvNegara[0],
+                'kode'      => $csvNegara[1],
+                'uraian'    => $csvNegara[2]
             ]);
         }
         
@@ -41,9 +41,9 @@ class SeedReferensiNegaraKemasanSatuan extends Migration
                 continue;
 
             DB::table('referensi_kemasan')->insert([
-                'ID'            => $csvKemasan[0],
-                'KODE_KEMASAN'   => $csvKemasan[1],
-                'URAIAN_KEMASAN' => $csvKemasan[2]
+                'id'     => $csvKemasan[0],
+                'kode'   => $csvKemasan[1],
+                'uraian' => $csvKemasan[2]
             ]);
         }
         
@@ -58,9 +58,9 @@ class SeedReferensiNegaraKemasanSatuan extends Migration
                 continue;
 
             DB::table('referensi_satuan')->insert([
-                'ID'            => $csvSatuan[0],
-                'KODE_SATUAN'   => $csvSatuan[1],
-                'URAIAN_SATUAN' => $csvSatuan[2]
+                'id'     => $csvSatuan[0],
+                'kode'   => $csvSatuan[1],
+                'uraian' => $csvSatuan[2]
             ]);
         }
         

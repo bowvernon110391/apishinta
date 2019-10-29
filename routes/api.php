@@ -100,19 +100,17 @@ Route::get('/dokumen/cd/{id}', 'CDController@show')
 Route::get('/dokumen/cd/{id}/details', 'CDController@showDetails')
         ->middleware($corsGroup['resourceGroup'], 'role');
 
-/* // untuk resource yang cuman boleh dibaca
-Route::middleware($corsGroup['readOnly'])->group(function () {
+//====================================================================================================
+// ENDPOINTS untuk data referensi umum (negara, satuan, kemasan)
+//====================================================================================================
+// GET /negara
+Route::get('/negara', 'ReferensiController@getAllNegara')
+        ->middleware($corsGroup['resourceGroup']);
 
-}); */
+// GET /negara/id
+Route::get('/negara/{kode}', 'ReferensiController@getNegaraByCode')
+        ->middleware($corsGroup['singleItem']);
 
-// untuk resource yang merepresentasikan sekumpulan resource
-/* Route::middleware($corsGroup['resourceGroup'])->group(function () {
-    
-    
-});
-
-
-// untuk resource yang merepresentasikan single CRUD item
-Route::middleware($corsGroup['singleItem'])->group(function() {
-    Route::options('/dokumens/cds/{id}', function () {});
-}); */
+// POST /negara
+Route::post('/negara', 'ReferensiController@storeNegara')
+        ->middleware($corsGroup['resourceGroup']);

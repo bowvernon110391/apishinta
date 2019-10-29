@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Collection;
-use League\Fractal\Transformer;
 
 /**
  * Controller : ApiController
@@ -23,8 +21,11 @@ class ApiController extends Controller
 
     // PHP DEPENDENCY INJECTION!! WEIRD THING LOL
     // Secara otomatis $fractal akan terisi instance dari Manager
-    public function __construct(Manager $fractal) {
+    public function __construct(Manager $fractal, Request $request) {
+
         $this->fractal = $fractal;
+        // $this->request = $request;
+        $this->fractal->parseIncludes($request->get('include',''));
     }
 
     // get status code

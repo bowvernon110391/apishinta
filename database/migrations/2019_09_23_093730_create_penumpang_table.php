@@ -19,7 +19,7 @@ class CreatePenumpangTable extends Migration {
 			$table->date('tgl_lahir');
 			$table->string('pekerjaan');
 			$table->string('no_paspor');
-			$table->string('kebangsaan');
+			$table->string('kebangsaan', 4)->index();
 			$table->timestamps();
 		});
 	}

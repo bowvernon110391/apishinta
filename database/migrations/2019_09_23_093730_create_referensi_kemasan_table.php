@@ -14,9 +14,9 @@ class CreateReferensiKemasanTable extends Migration {
 	{
 		Schema::create('referensi_kemasan', function(Blueprint $table)
 		{
-			$table->bigInteger('ID')->primary();
-			$table->string('KODE_KEMASAN')->nullable();
-			$table->string('URAIAN_KEMASAN')->nullable();
+			$table->bigInteger('id')->primary();
+			$table->string('kode', 4)->nullable()->index();
+			$table->string('uraian')->nullable();
 		});
 	}
 

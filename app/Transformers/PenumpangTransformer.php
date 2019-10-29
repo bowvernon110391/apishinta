@@ -6,10 +6,13 @@ use League\Fractal\TransformerAbstract;
 
 class PenumpangTransformer extends TransformerAbstract {
     // list possible embeds/includes here
-    protected $availableIncludes = [];
+    protected $availableIncludes = [
+        'negara'
+    ];
 
     // list defaultly loaded embed/includes
-    protected $defaultIncludes = [];
+    protected $defaultIncludes = [
+    ];
 
     // simple transform for data penumpang
     public function transform(Penumpang $p) {
@@ -24,6 +27,11 @@ class PenumpangTransformer extends TransformerAbstract {
             'updated_at'    => (string) $p->updated_at,
             'links' => $p->links
         ];
+    }
+
+    // for detail on negara
+    public function includeNegara(Penumpang $p) {
+        return $this->item($p->negara, new NegaraTransformer);
     }
 }
 
