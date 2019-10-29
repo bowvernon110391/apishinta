@@ -34,7 +34,7 @@ Route::options('/{fuckers}', 'ApiController@options')
 //====================================================================================================
 // GET /kurs/2019-09-02 => ambil data kurs yg valid per tanggal tsb
 Route::get('/kurs/{tanggal}', 'KursController@showValidKursOnDate')
-        ->where('tanggal', '^\d{4}\-\d{2}\-\d{2}$')
+        ->where('tanggal', '^[\d-]{4,}$')
         ->middleware($corsGroup['readOnly']);
 
 // GET /kurs    => ambil data kurs (collection), bisa handle query

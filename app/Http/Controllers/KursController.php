@@ -159,6 +159,8 @@ class KursController extends ApiController
 
     // return valid kurs on that date
     public function showValidKursOnDate(Request $request, $date) {
+        // convert date
+        $date = sqlDate($date);
         try {
             $result = Kurs::findValidKursOnDateOrFail($date);
         } catch (InvalidArgumentException $e) {
