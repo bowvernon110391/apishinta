@@ -10,13 +10,13 @@ class ReferensiController extends ApiController
 {
     // GET /negara
     public function getAllNegara(Request $r) {
-        $negara = App\Negara::all();
+        $negara = Negara::all();
         return $this->respondWithCollection($negara, new NegaraTransformer);
     }
 
     // GET /negara/{kode}
     public function getNegaraByCode($kode) {
-        $negara = App\Negara::byExactCode($kode)->first();
+        $negara = Negara::byExactCode($kode)->first();
 
         if (!$negara) {
             return $this->errorNotFound("Negara dengan kode '{$kode}' tidak ditemukan");
