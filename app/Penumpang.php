@@ -28,4 +28,12 @@ class Penumpang extends Model implements ILinkable
     public function negara() {
         return $this->belongsTo('App\Negara', 'kebangsaan', 'kode');
     }
+
+    // SCOPES
+    public function scopeByNegara($query, $negara) {
+        return $query->where('kebangsaan', 'like', "%{$negara}%")
+                    ->orWhereHas('negara', function ($qNegara) use ($negara) {
+                        return $qNegara->where('uraian', 'like', "%{$negara}%");
+                    });
+    }
 }

@@ -22,9 +22,11 @@ class PenumpangController extends ApiController
             // wildcard search, gunakan apa yg ada
             $qSearch = "%{$q}%";
             $queryPenumpang = Penumpang::where("nama", "LIKE", $qSearch)
-                                        ->orWhere("kebangsaan", "LIKE", $qSearch)
                                         ->orWhere("no_paspor", "LIKE", $qSearch)
-                                        ->orWhere("pekerjaan", "LIKE", $qSearch);
+                                        ->orWhere("pekerjaan", "LIKE", $qSearch)
+                                        ->orWhere(function ($query) use ($q) {
+                                            $query->byNegara($q);
+                                        });
         } else {
             // pake parameter lain
             $qNama = $request->get('nama');
@@ -40,7 +42,8 @@ class PenumpangController extends ApiController
                     $query->where("nama", "LIKE", "%{$qNama}%");
                 })->when($qKebangsaan, function ($query) use ($qKebangsaan) {
                     // pake nama kebangsaan
-                    $query->where("kebangsaan", "LIKE", "%{$qKebangsaan}%");
+                    // $query->where("kebangsaan", "LIKE", "%{$qKebangsaan}%");
+                    $query->byNegara($qKebangsaan);
                 })->when($qNoPaspor, function ($query) use ($qNoPaspor) {
                     // pake nomor paspor
                     $query->where("no_paspor", "LIKE", "%{$qNoPaspor}%");
