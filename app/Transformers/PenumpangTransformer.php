@@ -12,6 +12,7 @@ class PenumpangTransformer extends TransformerAbstract {
 
     // list defaultly loaded embed/includes
     protected $defaultIncludes = [
+        'negara'
     ];
 
     // simple transform for data penumpang
