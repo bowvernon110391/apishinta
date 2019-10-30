@@ -8,7 +8,7 @@ class Penumpang extends Model implements ILinkable
 {
     //
     protected $table = 'penumpang';
-    protected $with = [];
+    protected $with = ['negara'];
 
     public function getUriAttribute() {
         return '/penumpang/'.$this->id;
