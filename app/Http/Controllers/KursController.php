@@ -131,17 +131,29 @@ class KursController extends ApiController
         // $this->fractal->parseIncludes($request->get('include', ''));
 
         // parse query string for our custom query?
-        $qKode_valas = $request->get('kode', '');               // param: kode
-        $qTanggal  = $request->get('tanggal', date('Y-m-d'));   // param: tanggal, if not supplied default to current date
-        $qJenis = $request->get('jenis');                       // param: jenis
+        // $qKode_valas = $request->get('kode', '');               // param: kode
+        $qTanggal  = $request->get('tanggal');                  // param: tanggal, if not supplied default to current date
+        // $qJenis = $request->get('jenis');                       // param: jenis
+        $qFrom = $request->get('from');
+        $qTo = $request->get('to');
+        $qWild = $request->get('q');
 
         // build query (use try-catch)
-        $query = Kurs::where('kode_valas', 'LIKE', '%'.$qKode_valas.'%')    // kode_valas LIKE %%
-                ->where('tanggal_awal', '<=', $qTanggal)                    // $qTanggal BETWEEN tanggal_awal
-                ->where('tanggal_akhir', '>=', $qTanggal)                   //      AND tanggal_akhir
-                ->when($qJenis, function($query) use ($qJenis) {            // optional where:
-                    $query->where('jenis', '=', $qJenis);                   //      WHERE jenis = xxx
+        $query = Kurs::when($qWild, function ($query) use ($qWild) {
+            $query->kode($qWild)
+                ->orWhere(function ($q) use ($qWild) {
+                    $q->kode($qWild);
+                })
+                ->orWhere(function ($q) use ($qWild) {
+                    $q->jenis($qWild);
                 });
+        })
+        ->when($qTanggal, function ($query) use ($qTanggal) {
+            $query->perTanggal(sqlDate($qTanggal));
+        })
+        ->when($qFrom && qTo, function ($query) use ($qFrom, $qTo) {
+            $query->periode(sqlDate($qFrom), sqlDate($qTo));
+        });
        
         
         // order based on kode_kurs then jenis kurs

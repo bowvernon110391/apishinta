@@ -31,4 +31,24 @@ class Kurs extends Model
 
         return $result;
     }
+
+    public function scopePerTanggal($query, $tgl) {
+        // tgl is assumed to be in correct format (use sqlDate)
+        return $query->where('tanggal_awal', '<=', $tgl)
+                        ->where('tanggal_akhir', '>=', $tgl);
+    }
+
+    public function scopePeriode($query, $tglAwal, $tglAkhir) {
+        // both date assumed to be valid. USE sqlDate to convert
+        return $query->where('tanggal_awal', '<=', $tglAkhir)
+                        ->where('tanggal_akhir', '>=', $tglAwal);
+    }
+
+    public function scopeKode($query, $kode) {
+        return $query->where('kode_valas', 'like', "%{$kode}%");
+    }
+
+    public function scopeJenis($query, $jenis) {
+        return $query->where('jenis', $jenis);
+    }
 }
