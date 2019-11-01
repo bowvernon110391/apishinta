@@ -138,6 +138,11 @@ class KursController extends ApiController
         $qTo = $request->get('to');
         $qWild = $request->get('q');
 
+        // set default tanggal if from and to is invalid
+        if (!$qFrom && !$qTo) {
+            $qTanggal = date('Y-m-d');
+        }
+
         // build query (use try-catch)
         $query = Kurs::when($qWild, function ($query) use ($qWild) {
             $query->kode($qWild)
