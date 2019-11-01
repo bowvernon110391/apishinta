@@ -66,16 +66,10 @@ class ApiController extends Controller
         $rootData = $this->fractal->createData($res);
 
         // $this->fractal->setPaginator(new IlluminatePaginatorAdapter($paginator));
-
-        $arr = [
-            "recordsTotal"  => (int) $paginator->total(),
-            "recordsFiltered"   => (int) $paginator->total()
-        ];
-
         // insert our array
         // $arr['draw'] = 1;
 
-        return $this->respondWithArray(array_merge($arr, $rootData->toArray()), $headers);
+        return $this->respondWithArray($rootData->toArray(), $headers);
     }
 
     // default response for empty response (204, 200 PUT)
