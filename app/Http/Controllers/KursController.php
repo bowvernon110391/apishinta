@@ -137,9 +137,10 @@ class KursController extends ApiController
         $qFrom = $request->get('from');
         $qTo = $request->get('to');
         $qWild = $request->get('q');
+        $qId = $request->get('id');
 
         // set default tanggal if from and to is invalid
-        if (!$qFrom && !$qTo) {
+        if (!$qFrom && !$qTo && !$qTanggal) {
             $qTanggal = date('Y-m-d');
         }
 
@@ -153,10 +154,13 @@ class KursController extends ApiController
                     $q->jenis($qWild);
                 });
         })
+        ->when($qId, function ($query) use ($qId) {
+            $query->whereIn('id', explode(',', $qId));
+        })
         ->when($qTanggal, function ($query) use ($qTanggal) {
             $query->perTanggal(sqlDate($qTanggal));
         })
-        ->when($qFrom && qTo, function ($query) use ($qFrom, $qTo) {
+        ->when($qFrom && $qTo, function ($query) use ($qFrom, $qTo) {
             $query->periode(sqlDate($qFrom), sqlDate($qTo));
         });
        
