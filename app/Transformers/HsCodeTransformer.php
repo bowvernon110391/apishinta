@@ -10,6 +10,7 @@ class HsCodeTransformer extends TransformerAbstract {
             'id'    => (int) $hs->id,
             'usable' => (boolean) $hs->usable,
             'takik' => (int) $hs->takik,
+            'raw_code' => $hs->raw_code,
             'kode'  => $hs->kode,
             'uraian'=> $hs->uraian,
             'jenis_tarif' => $hs->jenis_tarif,
