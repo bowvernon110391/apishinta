@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Negara;
+use App\HsCode;
+use App\Transformers\HsCodeTransformer;
 use Illuminate\Http\Request;
 use App\Transformers\NegaraTransformer;
 
@@ -63,5 +65,30 @@ class ReferensiController extends ApiController
         } catch (\Exception $e) {
             return $this->errorBadRequest("Gagal Menyimpan data negara: ".$e->getMessage());
         }
+    }
+
+    // GET /hs
+    public function getHS(Request $r) {
+        // can only use q
+        $q = $r->get('q', '');
+
+        // by default, select all
+        $query = HsCode::orderBy('id');
+
+        // depending on the type, execute different query
+        // if query is number, e.g. 0320 then we do query all
+        // children node
+        if (preg_match('/^([0][1-9]|[1-9][0-9])\d{0,8}$/', $q)) {
+            // kode mode
+            $query = $query->byHs($q);
+        } else if (strlen($q)) {
+            $query = HsCode::queryWildcard($q);
+        }
+
+        // build paginator
+        $paginator = $query->paginate($r->get('number'))
+                            ->appends($r->except('page'));
+        
+        return $this->respondWithPagination($paginator, new HsCodeTransformer);
     }
 }

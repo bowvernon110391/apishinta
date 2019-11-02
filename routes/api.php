@@ -96,7 +96,7 @@ Route::get('/dokumen/cd/{id}/details', 'CDController@showDetails')
         ->middleware($corsGroup['resourceGroup'], 'role');
 
 //====================================================================================================
-// ENDPOINTS untuk data referensi umum (negara, satuan, kemasan)
+// ENDPOINTS untuk data referensi umum (negara, satuan, kemasan, hs)
 //====================================================================================================
 // GET /negara
 Route::get('/negara', 'ReferensiController@getAllNegara')
@@ -108,4 +108,8 @@ Route::get('/negara/{kode}', 'ReferensiController@getNegaraByCode')
 
 // POST /negara
 Route::post('/negara', 'ReferensiController@storeNegara')
+        ->middleware($corsGroup['resourceGroup']);
+
+// GET /hs
+Route::get('/hs', 'ReferensiController@getHS')
         ->middleware($corsGroup['resourceGroup']);

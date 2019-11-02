@@ -26,6 +26,37 @@ class HsCode extends Model
         echo "Done!";
     }
 
+    public function scopeDistinctFirstNChar($query, $uraian, $n) {
+        return $query->selectRaw("LEFT(`kode`, ?) ukod", [$n])
+                ->byFullDesc($uraian)
+                ->where('kode', '<>', '')
+                ->distinct();
+    }
+
+    // query related rows based on uraian
+    public static function queryRelated($uraian) {
+        // grab lvl 4 kode
+        $q1 = HsCode::distinctFirstNChar($uraian, 4);
+        // grab lvl 6 kode
+        $q2 = HsCode::distinctFirstNChar($uraian, 6);
+        // union them
+        $relatedKode = $q1->union($q2);
+        // grab related 
+        $relatedRows = HsCode::joinSub($relatedKode, 't', function ($join) {
+            $join->on('kode', '=', 't.ukod');
+        })->select('hs_code.*');
+
+        return $relatedRows;
+    }
+
+    // query based on fulldesc and unionize with related rows, sorted out
+    public static function queryWildcard($uraian) {
+        $q1 = HsCode::byFullDesc($uraian);
+        $q2 = HsCode::queryRelated($uraian);
+        $q3 = ($q1->union($q2))->orderBy('id');
+        return $q3;
+    }
+
     public function scopeByFullDesc($query, $uraian) {
         return $query->where('full_desc', 'like', "%{$uraian}%");
     }
