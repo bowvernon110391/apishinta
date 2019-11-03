@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
 use App\Negara;
 use App\HsCode;
+use App\Kategori;
 use App\Transformers\HsCodeTransformer;
-use Illuminate\Http\Request;
 use App\Transformers\NegaraTransformer;
+use App\Transformers\KategoriTransformer;
 
 class ReferensiController extends ApiController
 {
@@ -90,5 +91,20 @@ class ReferensiController extends ApiController
                             ->appends($r->except('page'));
         
         return $this->respondWithPagination($paginator, new HsCodeTransformer);
+    }
+
+    // GET /kategori
+    public function getKategori(Request $r) {
+        $q = $r->get('q');
+
+        $query = Kategori::orderBy('nama');
+
+        if ($q) {
+            // if it contains query, grab all
+            // possible match
+            $query = $query->byName($q);
+        }
+
+        return $this->respondWithCollection($query->get(), new KategoriTransformer);
     }
 }
