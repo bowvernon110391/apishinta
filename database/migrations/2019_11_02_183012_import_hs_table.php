@@ -14,7 +14,7 @@ class ImportHsTable extends Migration
     public function up()
     {
         // just read the hs file
-        DB::unprepared(File::get(__DIR__.'./hs_table_dump.sql'));
+        DB::unprepared(File::get(__DIR__.'/hs_table_dump.sql'));
     }
 
     /**
