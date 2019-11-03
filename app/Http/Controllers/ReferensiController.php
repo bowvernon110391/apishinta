@@ -107,4 +107,34 @@ class ReferensiController extends ApiController
 
         return $this->respondWithCollection($query->get(), new KategoriTransformer);
     }
+
+    // POST /kategori
+    public function storeKategori(Request $r) {
+        $nama = $r->get('nama');
+        // only json allowed
+        if (!$r->isJson()) {
+            return $this->errorBadRequest("Only json allowed dude");
+        }
+        // gotta check if nama is valid
+        if (!$nama) {
+            return $this->errorBadRequest("Nama Kategori tidak valid -> {$nama}");
+        }
+        // gotta check if name already exists though
+        if (Kategori::where('nama', $nama)->count()) {
+            return $this->errorBadRequest("Nama kategori sudah ada -> {$nama}");
+        }
+        // safe to add. go ahead
+        try {
+            $k = new Kategori;
+            $k->nama = $nama;
+            $k->save();
+
+            return $this->respondWithArray([
+                'id'    => $k->id,
+                'uri'   => '/kategori/' . $k->id
+            ]);
+        } catch (\Exception $e) {
+            return $this->errorBadRequest("Unknown error: " . $e->getMessage());
+        }
+    }
 }

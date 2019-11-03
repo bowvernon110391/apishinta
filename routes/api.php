@@ -117,3 +117,7 @@ Route::get('/hs', 'ReferensiController@getHS')
 // GET /kategori
 Route::get('/kategori', 'ReferensiController@getKategori')
         ->middleware($corsGroup['resourceGroup']);
+
+// POST /kategori
+Route::post('/kategori', 'ReferensiController@storeKategori')
+        ->middleware($corsGroup['resourceGroup']);
