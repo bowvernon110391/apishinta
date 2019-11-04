@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\CD;
+use App\DeclareFlag;
 use App\Penumpang;
 use App\Transformers\CDTransformer;
 use App\Transformers\DetailCDTransformer;
@@ -65,12 +66,14 @@ class CDController extends ApiController
                 'no_flight'    => $no_flight,
                 'tgl_kedatangan'    => $tgl_kedatangan,
                 'kd_pelabuhan_asal'    => $kd_pelabuhan_asal,
-                'kd_pelabuhan_tujuan'    => $kd_pelabuhan_tujuan,
-                'declare_flags' => $declare_flags
+                'kd_pelabuhan_tujuan'    => $kd_pelabuhan_tujuan
             ]);
 
             // try save
             $cd->save();
+
+            // sync flags
+            $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
 
             // return with array
             return $this->respondWithArray([
@@ -146,7 +149,9 @@ class CDController extends ApiController
             $cd->tgl_kedatangan = expectSomething($r->get('tgl_kedatangan'), 'Tanggal Kedatangan');
             $cd->kd_pelabuhan_asal = expectSomething($r->get('kd_pelabuhan_asal'), 'Kode Pelabuhan Asal');
             $cd->kd_pelabuhan_tujuan = expectSomething($r->get('kd_pelabuhan_tujuan'), 'Kode Pelabuhan Tujuan');
-            $cd->declare_flags  = $r->get('declare_flags');
+            
+            $declare_flags  = $r->get('declare_flags');
+
 
             // pastikan id penumpang valid
             if (!Penumpang::find($cd->penumpang_id)) {
@@ -155,6 +160,7 @@ class CDController extends ApiController
             
             // try to save
             $cd->save();
+            $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
             // return no body
             return $this->setStatusCode(200)->respondWithEmptyBody();
         } catch (\Exception $e) {

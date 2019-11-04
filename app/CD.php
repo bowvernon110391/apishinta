@@ -34,8 +34,7 @@ class CD extends Model implements IDokumen
         'no_flight',
         'tgl_kedatangan',
         'kd_pelabuhan_asal',
-        'kd_pelabuhan_tujuan',
-        'declare_flags'
+        'kd_pelabuhan_tujuan'
     ];
 
     // always loaded relations

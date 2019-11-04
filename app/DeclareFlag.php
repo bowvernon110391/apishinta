@@ -23,7 +23,7 @@ class DeclareFlag extends Model
      */
     public function scopeByName($query, $names) {
         // convert to array if it's still in string
-        $nameArr = is_array($names) ? names : array_map(function($e) {
+        $nameArr = is_array($names) ? $names : array_map(function($e) {
             return trim($e);
         }, explode(",", $names));
 
