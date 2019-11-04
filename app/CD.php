@@ -19,8 +19,8 @@ class CD extends Model implements IDokumen
     // default values
     protected $attributes = [
         'no_dok'    => 0,   // 0 berarti blom dinomorin
-        'npwp'      => '',
-        'nib'       => '',
+        'npwp'      => '-',
+        'nib'       => '-',
         'alamat'    => '',
         'no_flight' => ''
     ];
