@@ -12,6 +12,7 @@ class CDTransformer extends TransformerAbstract {
 
     // available relations, default relations not needed to apply
     protected $availableIncludes = [
+        'penumpang',
         'details',
         'status'
     ];
