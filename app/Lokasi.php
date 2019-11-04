@@ -8,4 +8,8 @@ class Lokasi extends Model
 {
     //
     protected $table = 'lokasi';
+
+    public function scopeByName($query, $lokasi) {
+        return $query->where('nama', $lokasi);
+    }
 }

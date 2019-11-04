@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\CD;
 use App\DeclareFlag;
+use App\Lokasi;
 use App\Penumpang;
 use App\Transformers\CDTransformer;
 use App\Transformers\DetailCDTransformer;
@@ -60,7 +61,6 @@ class CDController extends ApiController
 
             $cd = new CD([
                 'tgl_dok'   => $tgl_dok,
-                'lokasi'    => $lokasi,
                 'penumpang_id'    => $penumpang_id,
                 'npwp_nib'    => $npwp_nib,
                 'no_flight'    => $no_flight,
@@ -72,8 +72,9 @@ class CDController extends ApiController
             // try save
             $cd->save();
 
-            // sync flags
+            // sync flags and lokasi
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
+            $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
 
             // return with array
             return $this->respondWithArray([
@@ -142,7 +143,6 @@ class CDController extends ApiController
             }
             //code...
             $cd->tgl_dok = expectSomething($r->get('tgl_dok'), 'Tanggal Dokumen');
-            $cd->lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
             $cd->penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
             $cd->npwp_nib = $r->get('npwp_nib');
             $cd->no_flight = expectSomething($r->get('no_flight'), 'Nomor flight');
@@ -151,6 +151,7 @@ class CDController extends ApiController
             $cd->kd_pelabuhan_tujuan = expectSomething($r->get('kd_pelabuhan_tujuan'), 'Kode Pelabuhan Tujuan');
             
             $declare_flags  = $r->get('declare_flags');
+            $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
 
 
             // pastikan id penumpang valid
@@ -161,6 +162,7 @@ class CDController extends ApiController
             // try to save
             $cd->save();
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
+            $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
             // return no body
             return $this->setStatusCode(200)->respondWithEmptyBody();
         } catch (\Exception $e) {
