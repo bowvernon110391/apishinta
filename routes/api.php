@@ -95,6 +95,14 @@ Route::get('/dokumen/cd/{id}', 'CDController@show')
 Route::get('/dokumen/cd/{id}/details', 'CDController@showDetails')
         ->middleware($corsGroup['resourceGroup'], 'role');
 
+// POST /dokumen/cd     => store data cd baru
+Route::post('/dokumen/cd', 'CDController@store')
+        ->middleware($corsGroup['resourceGroup'], 'role:PDTT,CONSOLE');
+
+// PUT /dokumen/cd/{id} => update data cd
+Route::put('/dokumen/cd/{id}', 'CDController@update')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
+
 //====================================================================================================
 // ENDPOINTS untuk data referensi umum (negara, satuan, kemasan, hs)
 //====================================================================================================

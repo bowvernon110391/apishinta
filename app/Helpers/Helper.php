@@ -148,6 +148,9 @@ if (!function_exists('userHasRole')) {
 if (!function_exists('sqlDate')) {
   // declare
   function sqlDate($strDate) {
+    if (!$strDate)
+      return null;
+
     $matches = [];
     if (preg_match('/(\d{1,2})-(\d{1,2})-(\d{4})/i', $strDate, $matches)) {
       // match!! store it
@@ -156,6 +159,15 @@ if (!function_exists('sqlDate')) {
       return "{$matches[1]}-{$matches[2]}-{$matches[3]}";
     }
     return null;
+  }
+}
+
+// function expectSomething
+// return something other than empty
+if (!function_exists('expectSomething')) {
+  function expectSomething($var, $name) {
+    if (!$var) throw new \Exception("{$name} tidak valid -> {$var}");
+    return $var;
   }
 }
 
