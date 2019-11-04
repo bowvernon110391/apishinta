@@ -73,12 +73,14 @@ class CDController extends ApiController
                 $cd->npwp = $cd->nib = $npwp_nib;
             }
 
-            // sync flags and lokasi
-            $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
+            // associate lokasi first
             $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
 
-            // try save
+            // try save first
             $cd->save();
+
+            // sync flags and lokasi
+            $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
 
             // return with array
             return $this->respondWithArray([
