@@ -70,12 +70,12 @@ class CDController extends ApiController
                 'kd_pelabuhan_tujuan'    => $kd_pelabuhan_tujuan
             ]);
 
-            // try save
-            $cd->save();
-
             // sync flags and lokasi
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
             $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
+
+            // try save
+            $cd->save();
 
             // return with array
             return $this->respondWithArray([
