@@ -28,6 +28,10 @@ class CDSeeder extends Seeder
             // associate it with random lokasi
             $p->lokasi()->associate(App\Lokasi::inRandomOrder()->first());
 
+            // associate with random pelabuhan
+            $p->pelabuhanAsal()->associate(App\Pelabuhan::inRandomOrder()->first());
+            $p->pelabuhanTujuan()->associate(App\Pelabuhan::inRandomOrder()->first());
+
             // get fake timestamp between 2 years ago and now
             $ts = $faker->dateTimeBetween('-2 years')->getTimestamp();
             

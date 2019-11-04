@@ -14,7 +14,9 @@ class CDTransformer extends TransformerAbstract {
     protected $availableIncludes = [
         'penumpang',
         'details',
-        'status'
+        'status',
+        'pelabuhan_asal',
+        'pelabuhan_tujuan'
     ];
 
     // basic transformation, without any sweetener
@@ -27,9 +29,14 @@ class CDTransformer extends TransformerAbstract {
             'lokasi'    => $cd->lokasi->nama,
             'declare_flags' => $cd->flat_declare_flags,
 
+            'penumpang_id'  => (int) $cd->penumpang_id,
+
             'npwp_nib'      => (string) ($cd->nib ? $cd->nib : $cd->npwp),
             'no_flight'     => (string) $cd->no_flight,
             'tgl_kedatangan'    => (string) $cd->tgl_kedatangan,
+
+            'kd_pelabuhan_asal' => (string) $cd->kd_pelabuhan_asal,
+            'kd_pelabuhan_tujuan' => (string) $cd->kd_pelabuhan_tujuan,
 
             'jumlah_detail' => $cd->details()->count(),
 
@@ -68,6 +75,17 @@ class CDTransformer extends TransformerAbstract {
     public function includeStatus(CD $cd) {
         $status = collect($cd->status()->latest()->get());
         return $this->collection($status, new StatusTransformer);
+    }
+
+    // include pelabuhan
+    public function includePelabuhanAsal(CD $cd) {
+        $pa = $cd->pelabuhanAsal;
+        return $this->item($pa, new PelabuhanTransformer);
+    }
+
+    public function includePelabuhanTujuan(CD $cd) {
+        $pt = $cd->pelabuhanTujuan;
+        return $this->item($pt, new PelabuhanTransformer);
     }
 }
 

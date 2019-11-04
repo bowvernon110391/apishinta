@@ -40,6 +40,14 @@ class CD extends Model implements IDokumen
         return $this->belongsTo('App\Lokasi', 'lokasi_id');
     }
 
+    public function pelabuhanAsal() {
+        return $this->belongsTo('App\Pelabuhan', 'kd_pelabuhan_asal', 'kode');
+    }
+
+    public function pelabuhanTujuan() {
+        return $this->belongsTo('App\Pelabuhan', 'kd_pelabuhan_tujuan', 'kode');
+    }
+
     public function declareFlags(){
         return $this->belongsToMany('App\DeclareFlag', 'cd_header_declare_flag', 'cd_header_id', 'declare_flag_id');
     }
