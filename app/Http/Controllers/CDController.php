@@ -62,13 +62,16 @@ class CDController extends ApiController
             $cd = new CD([
                 'tgl_dok'   => $tgl_dok,
                 'penumpang_id'    => $penumpang_id,
-                'npwp'    => $npwp_nib,
-                'nib'    => $npwp_nib,
                 'no_flight'    => $no_flight,
                 'tgl_kedatangan'    => $tgl_kedatangan,
                 'kd_pelabuhan_asal'    => $kd_pelabuhan_asal,
                 'kd_pelabuhan_tujuan'    => $kd_pelabuhan_tujuan
             ]);
+
+            // set npwp/nib
+            if ($npwp_nib) {
+                $cd->npwp = $cd->nib = $npwp_nib;
+            }
 
             // sync flags and lokasi
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
@@ -145,7 +148,6 @@ class CDController extends ApiController
             //code...
             $cd->tgl_dok = expectSomething($r->get('tgl_dok'), 'Tanggal Dokumen');
             $cd->penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
-            $cd->npwp = $cd->nib = $r->get('npwp_nib');
             $cd->no_flight = expectSomething($r->get('no_flight'), 'Nomor flight');
             $cd->tgl_kedatangan = expectSomething($r->get('tgl_kedatangan'), 'Tanggal Kedatangan');
             $cd->kd_pelabuhan_asal = expectSomething($r->get('kd_pelabuhan_asal'), 'Kode Pelabuhan Asal');
@@ -153,7 +155,12 @@ class CDController extends ApiController
             
             $declare_flags  = $r->get('declare_flags');
             $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
+            $npwp_nib = $r->get('npwp_nib');
 
+            // set npwp/nib
+            if ($npwp_nib) {
+                $cd->npwp = $cd->nib = $npwp_nib;
+            }
 
             // pastikan id penumpang valid
             if (!Penumpang::find($cd->penumpang_id)) {
