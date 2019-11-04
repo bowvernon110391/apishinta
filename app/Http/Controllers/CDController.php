@@ -62,7 +62,8 @@ class CDController extends ApiController
             $cd = new CD([
                 'tgl_dok'   => $tgl_dok,
                 'penumpang_id'    => $penumpang_id,
-                'npwp_nib'    => $npwp_nib,
+                'npwp'    => $npwp_nib,
+                'nib'    => $npwp_nib,
                 'no_flight'    => $no_flight,
                 'tgl_kedatangan'    => $tgl_kedatangan,
                 'kd_pelabuhan_asal'    => $kd_pelabuhan_asal,
@@ -144,7 +145,7 @@ class CDController extends ApiController
             //code...
             $cd->tgl_dok = expectSomething($r->get('tgl_dok'), 'Tanggal Dokumen');
             $cd->penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
-            $cd->npwp_nib = $r->get('npwp_nib');
+            $cd->npwp = $cd->nib = $r->get('npwp_nib');
             $cd->no_flight = expectSomething($r->get('no_flight'), 'Nomor flight');
             $cd->tgl_kedatangan = expectSomething($r->get('tgl_kedatangan'), 'Tanggal Kedatangan');
             $cd->kd_pelabuhan_asal = expectSomething($r->get('kd_pelabuhan_asal'), 'Kode Pelabuhan Asal');

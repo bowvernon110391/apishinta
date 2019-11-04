@@ -28,9 +28,10 @@ class CD extends Model implements IDokumen
     // fillables
     protected $fillable = [
         'tgl_dok',
-        'lokasi',
+        'lokasi_id',
         'penumpang_id',
-        'npwp_nib',
+        'npwp',
+        'nib',
         'no_flight',
         'tgl_kedatangan',
         'kd_pelabuhan_asal',
