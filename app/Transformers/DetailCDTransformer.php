@@ -23,6 +23,8 @@ class DetailCDTransformer extends TransformerAbstract {
                 'jumlah'    => (int) $det->jumlah_kemasan,
                 'jenis'     => $det->jenis_kemasan
             ],
+            'kode_valuta' => $det->kode_valuta,
+            'nilai_valuta' => $det->nilai_valuta,
             'hscode'    => (string) $det->hs_code,
             'fob'       => (float) $det->fob,
             'insurance' => (float) $det->insurance,
