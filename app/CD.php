@@ -82,7 +82,11 @@ class CD extends Model implements IDokumen
     }
 
     // SCOPES
-    // scope By Query Parameter (wildcard query)
+    // scope by number
+    public function scopeNo($query, $no) {
+        return $query->where('no', $no);
+    }
+
 
     // scope from (tanggal dok)
     public function scopeFrom($query, $tgl) {
@@ -126,6 +130,7 @@ class CD extends Model implements IDokumen
                         ->orWhere('nib', 'like', "%{$q}%")
                         ->orWhere('alamat', 'like', "%{$q}%")
                         ->orWhere('no_flight', 'like', "%{$q}%")
+                        ->orWhere('no_dok', $q)
                         ->orWhere(function ($query) use ($q) {
                             $query->byLokasi($q);
                         })
