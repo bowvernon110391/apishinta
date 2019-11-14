@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\AppLog;
 use Illuminate\Http\Request;
 use App\Negara;
 use App\HsCode;
@@ -59,6 +61,9 @@ class ReferensiController extends ApiController
             $n->uraian = $uraian;
 
             $n->save();
+
+            // log first
+            AppLog::logInfo("Negara '{$n->uraian}' ditambahkan oleh {$r->userInfo['username']}", $n);
 
             // return array
             return $this->respondWithArray([
@@ -130,6 +135,9 @@ class ReferensiController extends ApiController
             $k = new Kategori;
             $k->nama = $nama;
             $k->save();
+
+            // log first
+            AppLog::logInfo("Kategori '{$k->nama}' ditambahkan oleh {$r->userInfo['username']}", $k);
 
             return $this->respondWithArray([
                 'id'    => $k->id,

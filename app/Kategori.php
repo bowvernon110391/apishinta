@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kategori extends Model
 {
-    //
+    // trait
+    use TraitLoggable;
+    
     protected $table = 'kategori';
 
     // query kategori by name

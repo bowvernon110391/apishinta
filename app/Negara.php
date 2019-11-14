@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Negara extends Model
 {
+    use TraitLoggable;
+
     protected $table = 'referensi_negara';
     public $timestamps = false;
 
