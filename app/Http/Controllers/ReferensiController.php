@@ -5,9 +5,11 @@ use Illuminate\Http\Request;
 use App\Negara;
 use App\HsCode;
 use App\Kategori;
+use App\Pelabuhan;
 use App\Transformers\HsCodeTransformer;
 use App\Transformers\NegaraTransformer;
 use App\Transformers\KategoriTransformer;
+use App\Transformers\PelabuhanTransformer;
 
 class ReferensiController extends ApiController
 {
@@ -136,5 +138,24 @@ class ReferensiController extends ApiController
         } catch (\Exception $e) {
             return $this->errorBadRequest("Unknown error: " . $e->getMessage());
         }
+    }
+
+    // Pelabuhan
+    public function getPelabuhan(Request $r) {
+        $q = $r->get('q');
+
+        $query = Pelabuhan::orderBy('id');
+
+        if ($q) {
+            $query->byKode($q)
+                ->orWhere(function ($query) use ($q) {
+                    $query->byNama($q);
+                });
+        }
+
+        $paginator = $query->paginate($r->get('number'))
+                            ->appends($r->except('page'));
+        
+        return $this->respondWithPagination($paginator, new PelabuhanTransformer);
     }
 }
