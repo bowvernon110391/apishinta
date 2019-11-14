@@ -149,6 +149,10 @@ class CDController extends ApiController
             if (!$cd) {
                 throw new \Exception("CD dengan id {$id} tidak ditemukan");
             }
+            // check if it's locked
+            if ($cd->is_locked) {
+                throw new \Exception("Dokumen ini sudah terkunci, kontak administrator untuk informasi lebih lanjut");
+            }
             //code...
             $cd->tgl_dok = expectSomething($r->get('tgl_dok'), 'Tanggal Dokumen');
             $cd->penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
