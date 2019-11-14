@@ -28,8 +28,9 @@ class CreateCdDetailTable extends Migration {
 			$table->decimal('insurance', 18, 4);
 			$table->decimal('brutto', 18, 4);
 			$table->decimal('netto', 18, 4);
-			$table->string('kode_valuta', 8);
-			$table->decimal('nilai_valuta', 18, 4);
+			// $table->string('kode_valuta', 8);
+			// $table->decimal('nilai_valuta', 18, 4);
+			$table->integer('kurs_id')->unsigned();
 			$table->timestamps();
 			$table->softDeletes();
 		});

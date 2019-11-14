@@ -28,6 +28,10 @@ class DetailCD extends Model
         return $this->hasOne('App\DetailSSPCP','cd_detail_id');
     }
 
+    public function kurs() {
+        return $this->belongsTo('App\Kurs', 'kurs_id');
+    }
+
     //=================================================================================================
     // COMPUTED PROPERTIES GO HERE!!
     //=================================================================================================

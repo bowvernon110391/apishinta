@@ -98,8 +98,9 @@ class CDSeeder extends Seeder
                 // kurs requires special attention
                 $kurs = App\Kurs::inRandomOrder()->first();
 
-                $d->kode_valuta = $kurs->kode_valas; //$faker->randomElement(['USD','AUD','SGD','INR','MYR']);
-                $d->nilai_valuta    = $kurs->kurs_idr; //$faker->randomFloat(4, 100.0, 40000.0);
+                // $d->kode_valuta = $kurs->kode_valas; //$faker->randomElement(['USD','AUD','SGD','INR','MYR']);
+                // $d->nilai_valuta    = $kurs->kurs_idr; //$faker->randomFloat(4, 100.0, 40000.0);
+                $d->kurs()->associate($kurs);
 
 
                 $p->details()->save($d);
