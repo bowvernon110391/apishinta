@@ -77,7 +77,7 @@ class CDSeeder extends Seeder
             }
 
             // create teh details
-            $detailCount = random_int(0, 4);
+            $detailCount = random_int(1, 14);
 
             $j = 0;
             while($j++ < $detailCount) {
@@ -90,12 +90,16 @@ class CDSeeder extends Seeder
                 $d->jenis_kemasan   = $faker->randomElement(['BX','PX','RO','PK']);
                 $d->hs_code         = $faker->numerify("########");
                 $d->fob         = $faker->randomFloat(4);
-                $d->freight     = $faker->randomFloat(4);
-                $d->insurance   = $faker->randomFloat(4);
+                $d->freight     = 0; //$faker->randomFloat(4);
+                $d->insurance   = 0; //$faker->randomFloat(4);
                 $d->brutto      = $faker->randomFloat(4, 0.5);
                 $d->netto       = $faker->randomFloat(4, 0, $d->brutto-0.25);
-                $d->kode_valuta = $faker->randomElement(['USD','AUD','SGD','INR','MYR']);
-                $d->nilai_valuta    = $faker->randomFloat(4, 100.0, 40000.0);
+
+                // kurs requires special attention
+                $kurs = App\Kurs::inRandomOrder()->first();
+
+                $d->kode_valuta = $kurs->kode_valas; //$faker->randomElement(['USD','AUD','SGD','INR','MYR']);
+                $d->nilai_valuta    = $kurs->kurs_idr; //$faker->randomFloat(4, 100.0, 40000.0);
 
 
                 $p->details()->save($d);
