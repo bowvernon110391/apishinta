@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AppLog;
 use Illuminate\Http\Request;
 use App\CD;
 use App\DeclareFlag;
@@ -83,6 +84,9 @@ class CDController extends ApiController
 
             // sync flags and lokasi
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
+
+            // log it
+            AppLog::logInfo("CD #{$cd->id} diinput oleh {$r->userInfo['username']}", $cd);
 
             // return with array
             return $this->respondWithArray([
@@ -180,6 +184,10 @@ class CDController extends ApiController
             $cd->save();
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
             $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
+
+            // log it
+            AppLog::logInfo("CD #{$cd->id} diupdate oleh {$r->userInfo['username']}", $cd);
+
             // return no body
             return $this->setStatusCode(200)->respondWithEmptyBody();
         } catch (\Exception $e) {
