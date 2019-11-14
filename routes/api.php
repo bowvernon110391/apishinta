@@ -133,3 +133,7 @@ Route::post('/kategori', 'ReferensiController@storeKategori')
 // GET /pelabuhan
 Route::get('/pelabuhan', 'ReferensiController@getPelabuhan')
         ->middleware($corsGroup['resourceGroup']);
+
+// GET /pelabuhan/{kode}
+Route::get('/pelabuhan/{kode}', 'ReferensiController@getPelabuhanByKode')
+        ->middleware($corsGroup['singleItem']);

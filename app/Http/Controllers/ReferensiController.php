@@ -158,4 +158,14 @@ class ReferensiController extends ApiController
         
         return $this->respondWithPagination($paginator, new PelabuhanTransformer);
     }
+
+    public function getPelabuhanByKode(Request $r, $kode) {
+        $pelabuhan = Pelabuhan::byKode($kode)->first();
+
+        if (!$pelabuhan) {
+            return $this->errorNotFound("Pelabuhan dengan kode {$kode} tidak ditemukan");
+        }
+
+        return $this->respondWithItem($pelabuhan, new PelabuhanTransformer);
+    }
 }
