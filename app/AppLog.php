@@ -21,9 +21,19 @@ class AppLog extends Model
     static public function logInfo($message, $object = NULL){
         $log = new AppLog;
         $log->message = $message;
-        $log->object = $object;
+        $log->object = json_encode($object);
         $log->tipe = 'INFO';
-        $log->save();
+        // $log->save();
+
+        // if object is not null, might want to attach it
+        if ($object) {
+            if (method_exists($object, 'logs')) {
+                // attach it
+                $object->logs()->save($log);
+            }
+        } else {
+            $log->save();
+        }
 
         return $log;
     }
@@ -31,9 +41,19 @@ class AppLog extends Model
     static public function logWarning($message, $object = NULL){
         $log = new App\Log;
         $log->message = $message;
-        $log->object = $object;
+        $log->object = json_encode($object);
         $log->tipe = 'WARNING';
-        $log->save();
+        // $log->save();
+
+        // if object is not null, might want to attach it
+        if ($object) {
+            if (method_exists($object, 'logs')) {
+                // attach it
+                $object->logs()->save($log);
+            }
+        } else {
+            $log->save();
+        }
 
         return $log;
     }
@@ -41,9 +61,19 @@ class AppLog extends Model
     static public function logError($message, $object = NULL){
         $log = new App\Log;
         $log->message = $message;
-        $log->object = $object;
+        $log->object = json_encode($object);
         $log->tipe = 'ERROR';
-        $log->save();
+        // $log->save();
+
+        // if object is not null, might want to attach it
+        if ($object) {
+            if (method_exists($object, 'logs')) {
+                // attach it
+                $object->logs()->save($log);
+            }
+        } else {
+            $log->save();
+        }
 
         return $log;
     }

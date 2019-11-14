@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AppLog;
 use Illuminate\Http\Request;
 use App\Penumpang;
 use App\Transformers\PenumpangTransformer;
@@ -117,6 +118,9 @@ class PenumpangController extends ApiController
             // coba save
             if (!$penumpang->save())
                 throw new \Exception("Gagal menyimpan data penumpang");
+
+            // log dulu
+            AppLog::logInfo("Penumpang #{$penumpang->id} diinput oleh {$request->userInfo['username']}", $penumpang);
             
             // berhasil? kembaliin data berupa id dan uri
             return $this->respondWithArray([
@@ -198,6 +202,9 @@ class PenumpangController extends ApiController
             // coba save
             if (!$penumpang->save())
                 throw new $this->errorBadRequest();
+            
+            // log dulu
+            AppLog::logInfo("Penumpang #{$penumpang->id} diupdate oleh {$request->userInfo['username']}", $penumpang);
             
             // berhasil? Utk put gk ngembaliin data, ckup kembaliin respon 204
             $this->setStatusCode(204)

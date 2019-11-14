@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Penumpang extends Model implements ILinkable
 {
-    //
+    // trait
+    use TraitLoggable;
+
     protected $table = 'penumpang';
     // protected $with = ['negara'];
 
