@@ -116,7 +116,7 @@ Route::get('/negara/{kode}', 'ReferensiController@getNegaraByCode')
 
 // POST /negara
 Route::post('/negara', 'ReferensiController@storeNegara')
-        ->middleware($corsGroup['resourceGroup']);
+        ->middleware($corsGroup['resourceGroup'], 'role');
 
 // GET /hs
 Route::get('/hs', 'ReferensiController@getHS')
@@ -128,7 +128,7 @@ Route::get('/kategori', 'ReferensiController@getKategori')
 
 // POST /kategori
 Route::post('/kategori', 'ReferensiController@storeKategori')
-        ->middleware($corsGroup['resourceGroup']);
+        ->middleware($corsGroup['resourceGroup'], 'role');
 
 // GET /pelabuhan
 Route::get('/pelabuhan', 'ReferensiController@getPelabuhan')
