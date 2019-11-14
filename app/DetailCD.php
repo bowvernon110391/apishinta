@@ -43,7 +43,7 @@ class DetailCD extends Model
     
     // hitung nilai pabean?
     public function getNilaiPabeanAttribute() {
-        return (float) $this->nilai_valuta * $this->cif;
+        return (float) $this->kurs->kurs_idr * $this->cif;
     }
 
     // ambil kategori (tag)
