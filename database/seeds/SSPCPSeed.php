@@ -13,7 +13,7 @@ class SSPCPSeed extends Seeder
     {
         $faker = Faker\Factory::create();
 
-        $jumlah= 30;
+        $jumlah= 15;
 
         echo "generating about {$jumlah} SSPCP(s)...\n";
 
