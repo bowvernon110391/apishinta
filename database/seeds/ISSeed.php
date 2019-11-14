@@ -24,9 +24,10 @@ class ISSeed extends Seeder
             $cd = App\CD::inRandomOrder()->first();
 
             // do not create IS if existing
+            // or cd is locked
             $is = $cd->imporSementara;
 
-            if ($is) {
+            if ($is || $cd->is_locked) {
                 continue;
             } else {
                 $is = new App\IS;
@@ -101,6 +102,9 @@ class ISSeed extends Seeder
 
             $is->push();
 
+            // lock cd and is
+            // $cd->lock();
+            $is->lock();
 
         }
 

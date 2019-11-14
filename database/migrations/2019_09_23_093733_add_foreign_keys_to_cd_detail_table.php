@@ -30,7 +30,6 @@ class AddForeignKeysToCdDetailTable extends Migration {
 		Schema::table('cd_detail', function(Blueprint $table)
 		{
 			$table->dropForeign('fk_cd_detail_cd_id_cd_header_id');
-			$table->dropForeign('fk_cd_detail_kurs_id');
 		});
 	}
 

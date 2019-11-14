@@ -25,7 +25,8 @@ class SSPCPSeed extends Seeder
             $sspcp = $cd->sspcp;
 
             // don't seed a new one if one already exist
-            if ($sspcp) {
+            // or cd is locked
+            if ($sspcp || $cd->is_locked) {
                 continue;
             } else {
                 $created++;
@@ -94,6 +95,8 @@ class SSPCPSeed extends Seeder
 
             $sspcp->push();
 
+            // lock sspcp also locks cd document
+            $sspcp->lock();
 
         }
 

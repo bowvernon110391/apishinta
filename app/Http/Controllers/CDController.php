@@ -52,6 +52,7 @@ class CDController extends ApiController
             $tgl_kedatangan = expectSomething($r->get('tgl_kedatangan'), 'Tanggal Kedatangan');
             $kd_pelabuhan_asal = expectSomething($r->get('kd_pelabuhan_asal'), 'Kode Pelabuhan Asal');
             $kd_pelabuhan_tujuan = expectSomething($r->get('kd_pelabuhan_tujuan'), 'Kode Pelabuhan Tujuan');
+            $alamat = expectSomething($r->get('alamat'), 'Alamat Tinggal');
             $declare_flags  = $r->get('declare_flags');
 
             // pastikan id penumpang valid
@@ -65,7 +66,8 @@ class CDController extends ApiController
                 'no_flight'    => $no_flight,
                 'tgl_kedatangan'    => $tgl_kedatangan,
                 'kd_pelabuhan_asal'    => $kd_pelabuhan_asal,
-                'kd_pelabuhan_tujuan'    => $kd_pelabuhan_tujuan
+                'kd_pelabuhan_tujuan'    => $kd_pelabuhan_tujuan,
+                'alamat'    => $alamat
             ]);
 
             // set npwp/nib

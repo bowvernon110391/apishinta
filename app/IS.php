@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class IS extends Model implements IDokumen, ILinkable
 {
-    use TraitDokumen;
+    use TraitDokumen {
+        lock as public traitLock;
+        unlock as public traitUnlock;
+    }
     use SoftDeletes;
     
     protected $table = 'is_header';
@@ -22,6 +25,25 @@ class IS extends Model implements IDokumen, ILinkable
     
     public function lokasi(){
         return $this->belongsTo('App\Lokasi', 'lokasi_id');
+    }
+
+    //=================================================================================================
+    // TRAIT OVERRIDES
+    //=================================================================================================
+    public function lock() {
+        $cd = $this->cd;
+
+        if ($cd->is_locked)
+            return false;
+
+        if ($this->is_locked)
+            return $this->is_locked;
+
+        return $cd->lock() && $this->traitLock();
+    }
+
+    public function unlock() {
+        return $this->traitUnlock();
     }
 
     //=================================================================================================
