@@ -24,12 +24,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Relation::morphMap([
+        /* Relation::morphMap([
             'cd_header' => 'App\CD',
             'cd_detail' => 'App\DetailCD',
             'sspcp_header' => 'App\SSPCP',
             'sspcp_detail' => 'App\DetailSSPCP',
             'kurs'  => 'App\Kurs'
-        ]);
+        ]); */
     }
 }
