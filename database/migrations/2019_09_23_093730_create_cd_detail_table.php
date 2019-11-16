@@ -24,8 +24,8 @@ class CreateCdDetailTable extends Migration {
 			$table->string('jenis_satuan', 16);
 			$table->string('hs_code', 16);
 			$table->decimal('fob', 18, 4);
-			$table->decimal('freight', 18, 4);
-			$table->decimal('insurance', 18, 4);
+			// $table->decimal('freight', 18, 4);
+			// $table->decimal('insurance', 18, 4);
 			$table->decimal('brutto', 18, 4);
 			$table->decimal('netto', 18, 4);
 			// $table->string('kode_valuta', 8);

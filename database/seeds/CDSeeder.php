@@ -90,8 +90,8 @@ class CDSeeder extends Seeder
                 $d->jenis_kemasan   = $faker->randomElement(['BX','PX','RO','PK']);
                 $d->hs_code         = $faker->numerify("########");
                 $d->fob         = $faker->randomFloat(4);
-                $d->freight     = 0; //$faker->randomFloat(4);
-                $d->insurance   = 0; //$faker->randomFloat(4);
+                // $d->freight     = 0; //$faker->randomFloat(4);
+                // $d->insurance   = 0; //$faker->randomFloat(4);
                 $d->brutto      = $faker->randomFloat(4, 0.5);
                 $d->netto       = $faker->randomFloat(4, 0, $d->brutto-0.25);
 

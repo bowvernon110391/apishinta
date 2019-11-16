@@ -39,8 +39,8 @@ class SSPCPSeed extends Seeder
             $sspcp->tgl_dok = date('Y-m-d');
             // $sspcp->lokasi_id = App\Lokasi::inRandomOrder()->first()->id;
             $sspcp->total_fob = $cd->details()->sum('fob');
-            $sspcp->total_freight = $cd->details()->sum('freight');
-            $sspcp->total_insurance = $cd->details()->sum('insurance');
+            $sspcp->total_freight = $faker->randomFloat(4, 0, 200); // $cd->details()->sum('freight');
+            $sspcp->total_insurance = 0.005 * ($sspcp->total_fob + $sspcp->total_freight); // $cd->details()->sum('insurance');
             $sspcp->total_cif = $sspcp->total_fob + $sspcp->total_freight + $sspcp->total_insurance;
             $sspcp->nilai_valuta = $faker->randomFloat(NULL,92.82, 14067.999);
             $sspcp->kode_valuta = $faker->randomElement(['JPG', 'USD', 'KRW', 'GBP', 'INR']);

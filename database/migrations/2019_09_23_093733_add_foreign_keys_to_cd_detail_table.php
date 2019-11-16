@@ -16,6 +16,8 @@ class AddForeignKeysToCdDetailTable extends Migration {
 		{
 			$table->foreign('cd_header_id', 'fk_cd_detail_cd_id_cd_header_id')->references('id')->on('cd_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('kurs_id')->references('id')->on('kurs');
+			$table->foreign('jenis_kemasan')->references('kode')->on('referensi_kemasan');
+			$table->foreign('jenis_satuan')->references('kode')->on('referensi_satuan');
 		});
 	}
 
