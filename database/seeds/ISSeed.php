@@ -43,8 +43,8 @@ class ISSeed extends Seeder
             $is->tgl_dok = date('Y-m-d');
             
             $is->total_fob = $cd->details()->sum('fob');
-            $is->total_freight = $cd->details()->sum('freight');
-            $is->total_insurance = $cd->details()->sum('insurance');
+            $is->total_freight = 0; // $cd->details()->sum('freight');
+            $is->total_insurance = 0; //$cd->details()->sum('insurance');
             $is->total_cif = $is->total_fob + $is->total_freight + $is->total_insurance;
             $is->nilai_valuta = $faker->randomFloat(NULL,92.82, 14067.999);
             $is->kode_valuta = $faker->randomElement(['JPY', 'USD', 'KRW', 'GBP', 'INR']);
