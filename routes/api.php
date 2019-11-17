@@ -104,6 +104,10 @@ Route::put('/cd/{id}', 'CDController@update')
 Route::get('/cd/{id}/details', 'CDController@showDetails')
         ->middleware($corsGroup['resourceGroup'], 'role');
 
+// GET /cd/details/{id} => ambil data detail cd spesifik
+Route::get('/cd/details/{id}', 'DetailCDController@show')
+        ->middleware($corsGroup['singleItem'], 'role');
+
 // POST /cd/2/details   => tambah detail cd
 Route::post('/cd/{id}/details', 'DetailCDController@store')
         ->middleware($corsGroup['resourceGroup'], 'role:PDTT,KASI,CONSOLE');

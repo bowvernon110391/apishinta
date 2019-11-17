@@ -7,6 +7,7 @@ use App\DetailCD;
 use App\DetailSekunder;
 use App\Kategori;
 use App\Kurs;
+use App\ReferensiJenisDetailSekunder;
 use App\Transformers\DetailCDTransformer;
 use Illuminate\Http\Request;
 
@@ -55,7 +56,7 @@ class DetailCDController extends ApiController
 
             // detail sekunder?
             // bisa kosong
-            $detailSekunder = $r->get('detailSekunder');
+            $detailSekunders = $r->get('detailSekunders');
 
             // kurs? harus ada
             $kurs = expectSomething($r->get('kurs'), 'Kurs');
@@ -72,26 +73,31 @@ class DetailCDController extends ApiController
             $det->netto = $netto;
 
             // associate kurs
-            $det->associate(Kurs::find($kurs->id));
+            $det->kurs()->associate(Kurs::find($kurs['id']));
             // try to associate shit? after saving
             $det->save();
             // kategori
-            $det->sync(Kategori::byNameList($kategori));
+            $det->kategoris()->sync(Kategori::byNameList($kategori)->get());
             // detail sekunders?
-            foreach ($detailSekunder as $ds) {
+            // delete all, reinsert then
+            $det->detailSekunders()->delete();
+            // reinsert
+            foreach ($detailSekunders as $ds) {
                 // if it's got id, just update and save it
-                if ($ds->id) {
-                    // just update it
-                    $detSekunder = DetailSekunder::findOrFail($ds->id);
-                    $detSekunder->jenis = $ds->jenis;
-                    $detSekunder->data = $ds->data;
+                if (1/* $ds['id'] */) {
+                    /* // just update it
+                    $detSekunder = new DetailSekunder;
+                    $detSekunder->id = $ds['id'];
+                    $detSekunder->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($ds['jenis'])->first());
+                    $detSekunder->data = $ds['data'];
                     // save
                     $detSekunder->save();
-                } else {
+                } else { */
                     // it's a new data, add it
                     $detSekunder = new DetailSekunder;
-                    $detSekunder->jenis = $ds->jenis;
-                    $detSekunder->data = $ds->data;
+                    $detSekunder->id = $ds['id'];
+                    $detSekunder->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($ds['jenis'])->first());
+                    $detSekunder->data = $ds['data'];
                     // save
                     $det->detailSekunders()->save($detSekunder);
                 }
@@ -136,13 +142,13 @@ class DetailCDController extends ApiController
 
             // detail sekunder?
             // bisa kosong
-            $detailSekunder = $r->get('detailSekunder');
+            $detailSekunders = $r->get('detailSekunders');
 
             // kurs? harus ada
             $kurs = expectSomething($r->get('kurs'), 'Kurs');
 
             // ok, set data
-            $det = $cd->details()->create(new DetailCD([
+            $det = new DetailCD([
                 'uraian'    => $uraian,
                 'jumlah_satuan' => $jumlah_satuan,
                 'jumlah_kemasan' => $jumlah_kemasan,
@@ -152,17 +158,21 @@ class DetailCDController extends ApiController
                 'fob' => $fob,
                 'brutto' => $brutto,
                 'netto' => $netto
-            ]));
+            ]);
 
             // associate kurs
-            $det->associate(Kurs::find($kurs->id));
+            $det->kurs()->associate(Kurs::find($kurs['id']));
+
+            $det = $cd->details()->save($det);
+            // $det->header()->associate($cd);
+
             // try to associate shit? after saving
-            $cd->details()->save($det);
-            $det->save();
+            // $cd->details()->save($det);
+            // $det->save();
             // kategori
-            $det->sync(Kategori::byNameList($kategori));
+            $det->kategoris()->sync(Kategori::byNameList($kategori)->get());
             // detail sekunders?
-            foreach ($detailSekunder as $ds) {
+            foreach ($detailSekunders as $ds) {
                 // if it's got id, just update and save it
                 if ($ds->id) {
                     // just update it
