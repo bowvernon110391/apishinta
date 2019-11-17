@@ -38,6 +38,11 @@ class DetailCDController extends ApiController
             return $this->errorNotFound("Detail CD #{$id} tidak ditemukan");
         }
 
+        // may we edit shit?
+        if (!canEdit($det->header->is_locked, $r->userInfo)) {
+            return $this->errorForbidden("Dokumen sudah terkunci dan anda tidak berhak melakukan proses ini");
+        }
+
         try {
             // grab all essential data, then attempt updating
             $uraian = expectSomething($r->get('uraian'), 'Uraian');
@@ -123,6 +128,11 @@ class DetailCDController extends ApiController
             return $this->errorNotFound("CD #{$cdId} tidak ditemukan");
         }
 
+        // may we edit shit?
+        if (!canEdit($cd->is_locked, $r->userInfo)) {
+            return $this->errorForbidden("Dokumen sudah terkunci dan anda tidak berhak melakukan proses ini");
+        }
+
         // grab all essential data first
         try {
             // grab all essential data, then attempt updating
@@ -174,18 +184,20 @@ class DetailCDController extends ApiController
             // detail sekunders?
             foreach ($detailSekunders as $ds) {
                 // if it's got id, just update and save it
-                if ($ds->id) {
-                    // just update it
-                    $detSekunder = DetailSekunder::findOrFail($ds->id);
-                    $detSekunder->jenis = $ds->jenis;
-                    $detSekunder->data = $ds->data;
+                if (1/* $ds['id'] */) {
+                    /* // just update it
+                    $detSekunder = new DetailSekunder;
+                    $detSekunder->id = $ds['id'];
+                    $detSekunder->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($ds['jenis'])->first());
+                    $detSekunder->data = $ds['data'];
                     // save
                     $detSekunder->save();
-                } else {
+                } else { */
                     // it's a new data, add it
                     $detSekunder = new DetailSekunder;
-                    $detSekunder->jenis = $ds->jenis;
-                    $detSekunder->data = $ds->data;
+                    $detSekunder->id = $ds['id'];
+                    $detSekunder->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($ds['jenis'])->first());
+                    $detSekunder->data = $ds['data'];
                     // save
                     $det->detailSekunders()->save($detSekunder);
                 }
@@ -204,17 +216,19 @@ class DetailCDController extends ApiController
     public function destroy(Request $r, $id) {
         // might wanna check if user is allowed to do that
         // or if the header is not locked out yet
-        try {
-            // does it exist?
-            $det = DetailCD::find($id);
+        // it exists, can we delete?
+        // does it exist?
+        $det = DetailCD::find($id);
 
-            if (!$det) {
-                throw new \Exception("DetailCD #{$id} tidak ditemukan");
-            }
-            // it exists, can we delete?
-            if (!canEdit($det->header->is_locked, $r->userInfo)) {
-                throw new \Exception("Dokumen sudah terkunci atau anda tidak memiliki privilege yang cukup untuk menghapus detail ini");
-            }
+        if (!$det) {
+            return $this->errorNotFound("DetailCD #{$id} tidak ditemukan");
+        }
+
+        if (!canEdit($det->header->is_locked, $r->userInfo)) {
+            return $this->errorForbidden("Dokumen sudah terkunci dan anda tidak berhak melakukan proses ini");
+        }
+
+        try {
             // ok, delete
             $det->delete();
             // say it's done
