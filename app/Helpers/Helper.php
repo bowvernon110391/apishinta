@@ -133,13 +133,22 @@ if (!function_exists('userHasRole')) {
             return false;
         }
 
+        // check if user has sibape
+        if (!array_key_exists('apps_data', $userInfo)) {
+            return false;
+        }
+
+        if (!array_key_exists('5', $userInfo['apps_data'])) {
+            return false;
+        }
+
         // check existence of key 'role'
-        if (!array_key_exists('roles', $userInfo)) {
+        if (!array_key_exists('roles', $userInfo['apps_data']['5'])) {
             return false;
         }
 
         // okay, find it
-        return in_array($roleName, $userInfo['roles']);
+        return in_array($roleName, $userInfo['apps_data']['5']['roles']);
     }
 }
 
@@ -168,6 +177,17 @@ if (!function_exists('expectSomething')) {
   function expectSomething($var, $name) {
     if (!$var) throw new \Exception("{$name} tidak valid -> {$var}");
     return $var;
+  }
+}
+
+// function userCanEdit
+// return true if user can edit
+if (!function_exists('canEdit')) {
+  function canEdit($docIsLocked, $userInfo) {
+    // only can edit if: 1. doc is unlocked
+    // or 2. doc is locked and user is (KASI | CONSOLE)
+    return !$docIsLocked 
+            || ( $docIsLocked && (userHasRole('KASI', $userInfo) || userHasRole('CONSOLE', $userInfo)) );
   }
 }
 

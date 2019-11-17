@@ -91,7 +91,7 @@ class CDController extends ApiController
             // return with array
             return $this->respondWithArray([
                 'id'    => $cd->id,
-                'uri'   => '/dokumen/cd/' . $cd->id
+                'uri'   => '/cd/' . $cd->id
             ]);
         } catch (\Exception $e) {
             return $this->errorBadRequest($e->getMessage());

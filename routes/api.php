@@ -84,24 +84,37 @@ Route::put('/penumpang/{id}', 'PenumpangController@update')
 // CD itu classified, jd kasih guard di api endpointsnya
 //====================================================================================================
 // CD subresource dari dokumens
-Route::get('/dokumen/cd', 'CDController@index')
+Route::get('/cd', 'CDController@index')
         ->middleware($corsGroup['resourceGroup'], 'role');
 
-// GET /dokumen/cd/2  => ambil data cd + relasinya
-Route::get('/dokumen/cd/{id}', 'CDController@show')
+// GET /cd/2  => ambil data cd + relasinya
+Route::get('/cd/{id}', 'CDController@show')
         ->middleware($corsGroup['singleItem'], 'role');
 
-// GET /dokumen/cd/2/details    => ambil data detail cd
-Route::get('/dokumen/cd/{id}/details', 'CDController@showDetails')
-        ->middleware($corsGroup['resourceGroup'], 'role');
-
-// POST /dokumen/cd     => store data cd baru
-Route::post('/dokumen/cd', 'CDController@store')
+// POST /cd     => store data cd baru
+Route::post('/cd', 'CDController@store')
         ->middleware($corsGroup['resourceGroup'], 'role:PDTT,CONSOLE');
 
-// PUT /dokumen/cd/{id} => update data cd
-Route::put('/dokumen/cd/{id}', 'CDController@update')
+// PUT /cd/{id} => update data cd
+Route::put('/cd/{id}', 'CDController@update')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
+
+//==== DETAIL CD ====================================================
+// GET /cd/2/details    => ambil data detail cd
+Route::get('/cd/{id}/details', 'CDController@showDetails')
+        ->middleware($corsGroup['resourceGroup'], 'role');
+
+// POST /cd/2/details   => tambah detail cd
+Route::post('/cd/{id}/details', 'DetailCDController@store')
+        ->middleware($corsGroup['resourceGroup'], 'role:PDTT,KASI,CONSOLE');
+
+// PUT /cd/details/32   => update detail cd
+Route::put('/cd/details/{id}', 'DetailCDController@update')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,KASI,CONSOLE');
+
+// DELETE /cd/details/32        => hapus detail cd
+Route::delete('/cd/details/{id}', 'DetailCDController@destroy')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,KASI,CONSOLE');
 
 //====================================================================================================
 // ENDPOINTS untuk data referensi umum (negara, satuan, kemasan, hs)

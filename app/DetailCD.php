@@ -11,6 +11,11 @@ class DetailCD extends Model
     use SoftDeletes;
     
     protected $table = 'cd_detail';
+    protected $guarded = [
+        'created_at',
+        'deleted_at',
+        'updated_at'
+    ];
 
     public function header(){
         return $this->belongsTo('App\CD', 'cd_header_id');
