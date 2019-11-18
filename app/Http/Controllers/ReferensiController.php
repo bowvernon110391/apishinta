@@ -7,11 +7,15 @@ use Illuminate\Http\Request;
 use App\Negara;
 use App\HsCode;
 use App\Kategori;
+use App\Kemasan;
 use App\Pelabuhan;
+use App\Satuan;
 use App\Transformers\HsCodeTransformer;
 use App\Transformers\NegaraTransformer;
 use App\Transformers\KategoriTransformer;
+use App\Transformers\KemasanTransformer;
 use App\Transformers\PelabuhanTransformer;
+use App\Transformers\SatuanTransformer;
 
 class ReferensiController extends ApiController
 {
@@ -175,5 +179,65 @@ class ReferensiController extends ApiController
         }
 
         return $this->respondWithItem($pelabuhan, new PelabuhanTransformer);
+    }
+
+    // GET /kemasan
+    public function getKemasan(Request $r) {
+        $query = Kemasan::orderBy('kode');
+
+        $q = $r->get('q');
+
+        if ($q) {
+            $query->byKode($q)
+                ->orWhere(function ($query) use ($q) {
+                    $query->byUraian($q);
+                });
+        }
+
+        $paginator = $query->paginate($r->get('number'))
+                            ->appends($r->except('page'));
+
+        return $this->respondWithPagination($paginator, new KemasanTransformer);
+    }
+
+    // GET /kemasan/{kode}
+    public function getKemasanByKode(Request $r, $kode) {
+        $kemasan = Kemasan::byKode($kode)->first();
+
+        if (!$kemasan) {
+            return $this->errorNotFound("Jenis kemasan '{$kode}' tidak ditemukan");
+        }
+
+        return $this->respondWithItem($kemasan, new KemasanTransformer);
+    }
+
+    // GET /satuan
+    public function getSatuan(Request $r) {
+        $query = Satuan::orderBy('kode');
+
+        $q = $r->get('q');
+
+        if ($q) {
+            $query->byKode($q)
+                ->orWhere(function ($query) use ($q) {
+                    $query->byUraian($q);
+                });
+        }
+
+        $paginator = $query->paginate($r->get('number'))
+                            ->appends($r->except('page'));
+
+        return $this->respondWithPagination($paginator, new SatuanTransformer);
+    }
+
+    // GET /kemasan/{kode}
+    public function getSatuanByKode(Request $r, $kode) {
+        $satuan = Satuan::byKode($kode)->first();
+
+        if (!$satuan) {
+            return $this->errorNotFound("Jenis satuan '{$kode}' tidak ditemukan");
+        }
+
+        return $this->respondWithItem($satuan, new SatuanTransformer);
     }
 }

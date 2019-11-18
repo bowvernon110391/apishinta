@@ -154,3 +154,19 @@ Route::get('/pelabuhan', 'ReferensiController@getPelabuhan')
 // GET /pelabuhan/{kode}
 Route::get('/pelabuhan/{kode}', 'ReferensiController@getPelabuhanByKode')
         ->middleware($corsGroup['singleItem']);
+
+// GET /kemasan
+Route::get('/kemasan', 'ReferensiController@getKemasan')
+        ->middleware($corsGroup['resourceGroup']);
+
+// GET /kemasan/{kode}
+Route::get('/kemasan/{kode}', 'ReferensiController@getKemasanByKode')
+        ->middleware($corsGroup['singleItem']);
+
+// GET /satuan
+Route::get('/satuan', 'ReferensiController@getSatuan')
+        ->middleware($corsGroup['resourceGroup']);
+
+// GET /satuan/{kode}
+Route::get('/satuan/{kode}', 'ReferensiController@getSatuanByKode')
+        ->middleware($corsGroup['singleItem']);
