@@ -44,12 +44,13 @@ class DetailCDController extends ApiController
         }
 
         try {
+            // $data = $r->json()->all();
             // grab all essential data, then attempt updating
             $uraian = expectSomething($r->get('uraian'), 'Uraian');
-            $jumlah_satuan = expectSomething($r->get('jumlah_satuan'), 'Jumlah Satuan');
-            $jenis_satuan = expectSomething($r->get('jenis_satuan'), 'Jenis Satuan');
-            $jumlah_kemasan = expectSomething($r->get('jumlah_kemasan'), 'Jumlah Kemasan');
-            $jenis_kemasan = expectSomething($r->get('jenis_kemasan'), 'Jenis Kemasan');
+            $jumlah_satuan = expectSomething($r->get('satuan')['jumlah'], 'Jumlah Satuan');
+            $jenis_satuan = expectSomething($r->get('satuan')['jenis'], 'Jenis Satuan');
+            $jumlah_kemasan = expectSomething($r->get('kemasan')['jumlah'], 'Jumlah Kemasan');
+            $jenis_kemasan = expectSomething($r->get('kemasan')['jenis'], 'Jenis Kemasan');
             $hs_code = expectSomething($r->get('hscode'), 'Kode HS');
             $fob = expectSomething($r->get('fob'), 'FOB');
             $brutto = expectSomething($r->get('brutto'), 'Brutto');
@@ -61,10 +62,10 @@ class DetailCDController extends ApiController
 
             // detail sekunder?
             // bisa kosong
-            $detailSekunders = $r->get('detailSekunders');
+            $detailSekunders = $r->get('detailSekunders')['data'];
 
             // kurs? harus ada
-            $kurs = expectSomething($r->get('kurs'), 'Kurs');
+            $kurs = expectSomething($r->get('kurs')['data'], 'Kurs');
 
             // ok, set data
             $det->uraian = $uraian;
@@ -87,26 +88,29 @@ class DetailCDController extends ApiController
             // delete all, reinsert then
             $det->detailSekunders()->delete();
             // reinsert
-            foreach ($detailSekunders as $ds) {
-                // if it's got id, just update and save it
-                if (1/* $ds['id'] */) {
-                    /* // just update it
-                    $detSekunder = new DetailSekunder;
-                    $detSekunder->id = $ds['id'];
-                    $detSekunder->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($ds['jenis'])->first());
-                    $detSekunder->data = $ds['data'];
-                    // save
-                    $detSekunder->save();
-                } else { */
-                    // it's a new data, add it
-                    $detSekunder = new DetailSekunder;
-                    $detSekunder->id = $ds['id'];
-                    $detSekunder->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($ds['jenis'])->first());
-                    $detSekunder->data = $ds['data'];
-                    // save
-                    $det->detailSekunders()->save($detSekunder);
+            if ($detailSekunders) {
+                foreach ($detailSekunders as $ds) {
+                    // if it's got id, just update and save it
+                    if (1/* $ds['id'] */) {
+                        /* // just update it
+                        $detSekunder = new DetailSekunder;
+                        $detSekunder->id = $ds['id'];
+                        $detSekunder->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($ds['jenis'])->first());
+                        $detSekunder->data = $ds['data'];
+                        // save
+                        $detSekunder->save();
+                    } else { */
+                        // it's a new data, add it
+                        $detSekunder = new DetailSekunder;
+                        $detSekunder->id = $ds['id'];
+                        $detSekunder->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($ds['jenis'])->first());
+                        $detSekunder->data = $ds['data'];
+                        // save
+                        $det->detailSekunders()->save($detSekunder);
+                    }
                 }
             }
+            
             // say the good news
             return $this->setStatusCode(204)
                         ->respondWithEmptyBody();
