@@ -202,7 +202,7 @@ class ReferensiController extends ApiController
 
     // GET /kemasan/{kode}
     public function getKemasanByKode(Request $r, $kode) {
-        $kemasan = Kemasan::byKode($kode)->first();
+        $kemasan = Kemasan::byExactKode($kode)->first();
 
         if (!$kemasan) {
             return $this->errorNotFound("Jenis kemasan '{$kode}' tidak ditemukan");
@@ -232,7 +232,7 @@ class ReferensiController extends ApiController
 
     // GET /kemasan/{kode}
     public function getSatuanByKode(Request $r, $kode) {
-        $satuan = Satuan::byKode($kode)->first();
+        $satuan = Satuan::byExactKode($kode)->first();
 
         if (!$satuan) {
             return $this->errorNotFound("Jenis satuan '{$kode}' tidak ditemukan");

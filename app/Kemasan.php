@@ -17,4 +17,8 @@ class Kemasan extends Model
     public function scopeByUraian($query, $nama) {
         return $query->where('uraian', 'like', "%$nama%");
     }
+
+    public function scopeByExactKode($query, $kode) {
+        return $query->where('kode', $kode);
+    }
 }
