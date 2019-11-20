@@ -154,7 +154,8 @@ class CDController extends ApiController
                 throw new \Exception("CD dengan id {$id} tidak ditemukan");
             }
             // check if it's locked
-            if ($cd->is_locked) {
+            // UPDATE: CHECK IF USER CAN UPDATE
+            if (!canEdit($cd->is_locked, $r->userInfo)) {
                 throw new \Exception("Dokumen ini sudah terkunci, kontak administrator untuk informasi lebih lanjut");
             }
             //code...

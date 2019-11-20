@@ -44,28 +44,28 @@ class DetailCDController extends ApiController
         }
 
         try {
-            // $data = $r->json()->all();
+            $data = $r->json()->all();
             // grab all essential data, then attempt updating
-            $uraian = expectSomething($r->get('uraian'), 'Uraian');
-            $jumlah_satuan = expectSomething($r->get('satuan')['jumlah'], 'Jumlah Satuan');
-            $jenis_satuan = expectSomething($r->get('satuan')['jenis'], 'Jenis Satuan');
-            $jumlah_kemasan = expectSomething($r->get('kemasan')['jumlah'], 'Jumlah Kemasan');
-            $jenis_kemasan = expectSomething($r->get('kemasan')['jenis'], 'Jenis Kemasan');
-            $hs_code = expectSomething($r->get('hscode'), 'Kode HS');
-            $fob = expectSomething($r->get('fob'), 'FOB');
-            $brutto = expectSomething($r->get('brutto'), 'Brutto');
-            $netto = expectSomething($r->get('netto'), 'Netto');
+            $uraian = expectSomething($data['uraian'], 'Uraian');
+            $jumlah_satuan = expectSomething($data['satuan']['jumlah'], 'Jumlah Satuan');
+            $jenis_satuan = expectSomething($data['satuan']['jenis'], 'Jenis Satuan');
+            $jumlah_kemasan = expectSomething($data['satuan']['jumlah'], 'Jumlah Kemasan');
+            $jenis_kemasan = expectSomething($data['kemasan']['jenis'], 'Jenis Kemasan');
+            $hs_code = expectSomething($data['hscode'], 'Kode HS');
+            $fob = expectSomething($data['fob'], 'FOB');
+            $brutto = expectSomething($data['brutto'], 'Brutto');
+            $netto = expectSomething($data['netto'], 'Netto');
 
             // kategori?
             // bisa kosong
-            $kategori = $r->get('kategori');
+            $kategori = $data['kategori'];
 
             // detail sekunder?
             // bisa kosong
-            $detailSekunders = $r->get('detailSekunders')['data'];
+            $detailSekunders = $data['detailSekunders']['data'];
 
             // kurs? harus ada
-            $kurs = expectSomething($r->get('kurs')['data'], 'Kurs');
+            $kurs = expectSomething($data['kurs']['data'], 'Kurs');
 
             // ok, set data
             $det->uraian = $uraian;
@@ -139,27 +139,28 @@ class DetailCDController extends ApiController
 
         // grab all essential data first
         try {
+            $data = $r->json()->all();
             // grab all essential data, then attempt updating
-            $uraian = expectSomething($r->get('uraian'), 'Uraian');
-            $jumlah_satuan = expectSomething($r->get('jumlah_satuan'), 'Jumlah Satuan');
-            $jenis_satuan = expectSomething($r->get('jenis_satuan'), 'Jenis Satuan');
-            $jumlah_kemasan = expectSomething($r->get('jumlah_kemasan'), 'Jumlah Kemasan');
-            $jenis_kemasan = expectSomething($r->get('jenis_kemasan'), 'Jenis Kemasan');
-            $hs_code = expectSomething($r->get('hscode'), 'Kode HS');
-            $fob = expectSomething($r->get('fob'), 'FOB');
-            $brutto = expectSomething($r->get('brutto'), 'Brutto');
-            $netto = expectSomething($r->get('netto'), 'Netto');
+            $uraian = expectSomething($data['uraian'], 'Uraian');
+            $jumlah_satuan = expectSomething($data['satuan']['jumlah'], 'Jumlah Satuan');
+            $jenis_satuan = expectSomething($data['satuan']['jenis'], 'Jenis Satuan');
+            $jumlah_kemasan = expectSomething($data['kemasan']['jumlah'], 'Jumlah Kemasan');
+            $jenis_kemasan = expectSomething($data['kemasan']['jenis'], 'Jenis Kemasan');
+            $hs_code = expectSomething($data['hscode'], 'Kode HS');
+            $fob = expectSomething($data['fob'], 'FOB');
+            $brutto = expectSomething($data['brutto'], 'Brutto');
+            $netto = expectSomething($data['netto'], 'Netto');
 
             // kategori?
             // bisa kosong
-            $kategori = $r->get('kategori');
+            $kategori = $data['kategori'];
 
             // detail sekunder?
             // bisa kosong
-            $detailSekunders = $r->get('detailSekunders');
+            $detailSekunders = $data['detailSekunders']['data'];
 
             // kurs? harus ada
-            $kurs = expectSomething($r->get('kurs'), 'Kurs');
+            $kurs = expectSomething($data['kurs']['data'], 'Kurs');
 
             // ok, set data
             $det = new DetailCD([
