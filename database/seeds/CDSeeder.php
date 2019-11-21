@@ -55,6 +55,7 @@ class CDSeeder extends Seeder
             $p->jml_anggota_keluarga    = $faker->numberBetween(0, 5);
             $p->jml_bagasi_dibawa       = $faker->numberBetween(1, 5);
             $p->jml_bagasi_tdk_dibawa = $faker->numberBetween(0, 5);
+            $p->pembebasan  = $faker->randomElement([0, 500, 1000]);
 
             $p->save();
 

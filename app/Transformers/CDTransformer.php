@@ -29,6 +29,13 @@ class CDTransformer extends TransformerAbstract {
             'lokasi'    => $cd->lokasi->nama,
             'declare_flags' => $cd->flat_declare_flags,
 
+            // keluarga n pembebasan
+            'jml_anggota_keluarga'  => (int) $cd->jml_anggota_keluarga,
+            'jml_bagasi_dibawa'     => (int) $cd->jml_bagasi_dibawa,
+            'jml_bagasi_tdk_dibawa' => (int) $cd->jml_bagasi_tdk_dbawa,
+
+            'pembebasan'    => (float) $cd->pembebasan,
+
             'alamat'    => $cd->alamat,
 
             'penumpang_id'  => (int) $cd->penumpang_id,

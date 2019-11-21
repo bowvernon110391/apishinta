@@ -24,6 +24,7 @@ class CreateCdHeaderTable extends Migration {
 			$table->text('alamat', 65535);
 			$table->integer('lokasi_id')->unsigned()->index('fk_cd_header_lokasi_id_lokasi_id');
 			$table->date('tgl_kedatangan')->nullable();
+			$table->decimal('pembebasan', 18, 4)->default(0);
 			$table->string('no_flight', 64);
 			$table->string('kd_pelabuhan_asal', 8);
 			$table->string('kd_pelabuhan_tujuan', 8);
