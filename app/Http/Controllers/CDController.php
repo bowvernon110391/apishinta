@@ -56,6 +56,12 @@ class CDController extends ApiController
             $alamat = expectSomething($r->get('alamat'), 'Alamat Tinggal');
             $declare_flags  = $r->get('declare_flags');
 
+            // keluarga, pembebasan
+            $jml_bagasi_dibawa = expectSomething($r->get('jml_bagasi_dibawa'), 'Jumlah Bagasi Dibawa');
+            $jml_bagasi_tdk_dibawa = expectSomething($r->get('jml_bagasi_tdk_dibawa'), 'Jumlah Bagasi Tidak Dibawa');
+            $pembebasan = expectSomething($r->get('pembebasan'), 'Jumlah Pembebasan');
+            $jml_anggota_keluarga = expectSomething($r->get('jml_anggota_keluarga'), 'Jumlah Anggota Keluarga');
+
             // pastikan id penumpang valid
             if (!Penumpang::find($penumpang_id)) {
                 throw new \Exception("Penumpang dengan id {$penumpang_id} tidak ditemukan!");
@@ -68,7 +74,11 @@ class CDController extends ApiController
                 'tgl_kedatangan'    => $tgl_kedatangan,
                 'kd_pelabuhan_asal'    => $kd_pelabuhan_asal,
                 'kd_pelabuhan_tujuan'    => $kd_pelabuhan_tujuan,
-                'alamat'    => $alamat
+                'alamat'    => $alamat,
+                'jml_bagasi_dibawa'     => $jml_bagasi_dibawa,
+                'jml_bagasi_tdk_dibawa' => $jml_bagasi_tdk_dibawa,
+                'pembebasan'    => $pembebasan,
+                'jml_anggota_keluarga'  => $jml_anggota_keluarga
             ]);
 
             // set npwp/nib
@@ -166,6 +176,12 @@ class CDController extends ApiController
             $cd->kd_pelabuhan_asal = expectSomething($r->get('kd_pelabuhan_asal'), 'Kode Pelabuhan Asal');
             $cd->kd_pelabuhan_tujuan = expectSomething($r->get('kd_pelabuhan_tujuan'), 'Kode Pelabuhan Tujuan');
             $cd->alamat = expectSomething($r->get('alamat'), 'Alamat/Domisili');
+
+            // keluarga, pembebasan
+            $cd->jml_bagasi_dibawa = expectSomething($r->get('jml_bagasi_dibawa'), 'Jumlah Bagasi Dibawa');
+            $cd->jml_bagasi_tdk_dibawa = expectSomething($r->get('jml_bagasi_tdk_dibawa'), 'Jumlah Bagasi Tidak Dibawa');
+            $cd->pembebasan = expectSomething($r->get('pembebasan'), 'Jumlah Pembebasan');
+            $cd->jml_anggota_keluarga = expectSomething($r->get('jml_anggota_keluarga'), 'Jumlah Anggota Keluarga');
             
             $declare_flags  = $r->get('declare_flags');
             $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');

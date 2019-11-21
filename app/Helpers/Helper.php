@@ -175,7 +175,7 @@ if (!function_exists('sqlDate')) {
 // return something other than empty
 if (!function_exists('expectSomething')) {
   function expectSomething($var, $name) {
-    if (!$var) throw new \Exception("{$name} tidak valid -> {$var}");
+    if (is_null($var)) throw new \Exception("{$name} tidak valid -> {$var}");
     return $var;
   }
 }

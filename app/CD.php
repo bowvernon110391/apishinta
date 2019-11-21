@@ -26,17 +26,10 @@ class CD extends Model implements IDokumen
     ];
 
     // fillables
-    protected $fillable = [
-        'tgl_dok',
-        'lokasi_id',
-        'penumpang_id',
-        'npwp',
-        'nib',
-        'no_flight',
-        'tgl_kedatangan',
-        'kd_pelabuhan_asal',
-        'kd_pelabuhan_tujuan',
-        'alamat'
+    protected $guarded = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     // always loaded relations
