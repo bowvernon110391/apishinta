@@ -1,5 +1,6 @@
 <?php
 
+use App\HsCode;
 use App\Lokasi;
 use Illuminate\Database\Seeder;
 
@@ -88,7 +89,10 @@ class CDSeeder extends Seeder
                 $d->jumlah_kemasan  = $faker->numberBetween(1, 20);
                 $d->jenis_satuan    = $faker->randomElement(['PCE','KGM','EA']);
                 $d->jenis_kemasan   = $faker->randomElement(['BX','PX','RO','PK']);
-                $d->hs_code         = $faker->numerify("########");
+
+                // $d->hs_code         = $faker->numerify("########");
+                $d->hs()->associate(HsCode::usable()->inRandomOrder()->first());
+
                 $d->fob         = $faker->randomFloat(4);
                 // $d->freight     = 0; //$faker->randomFloat(4);
                 // $d->insurance   = 0; //$faker->randomFloat(4);

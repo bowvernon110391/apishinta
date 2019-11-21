@@ -37,6 +37,10 @@ class DetailCD extends Model
         return $this->belongsTo('App\Kurs', 'kurs_id');
     }
 
+    public function hs() {
+        return $this->belongsTo('App\HsCode', 'hs_code', 'kode');
+    }
+
     //=================================================================================================
     // COMPUTED PROPERTIES GO HERE!!
     //=================================================================================================

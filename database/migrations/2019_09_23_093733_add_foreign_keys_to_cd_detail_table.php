@@ -18,6 +18,7 @@ class AddForeignKeysToCdDetailTable extends Migration {
 			$table->foreign('kurs_id')->references('id')->on('kurs');
 			$table->foreign('jenis_kemasan')->references('kode')->on('referensi_kemasan');
 			$table->foreign('jenis_satuan')->references('kode')->on('referensi_satuan');
+			$table->foreign('hs_code')->references('kode')->on('hs_code');
 		});
 	}
 
