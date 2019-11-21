@@ -203,8 +203,28 @@ class CDController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $r, $id)
     {
-        // 
+        // first, find it
+        $cd = CD::find($id);
+
+        if (!$cd) {
+            return $this->errorNotFound("CD #{$id} tidak ditemukan");
+        }
+
+        // may we delete it?
+        if (!canEdit($cd->is_locked, $r->userInfo)) {
+            return $this->errorForbidden("Dokumen sudah terkunci dan anda tidak memiliki hak untuk melakukan penghapusan ini");
+        }
+
+        // attempt deletion
+        try {
+            $cd->delete();
+
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 }

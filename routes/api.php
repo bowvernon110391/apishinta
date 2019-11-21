@@ -99,6 +99,10 @@ Route::post('/cd', 'CDController@store')
 Route::put('/cd/{id}', 'CDController@update')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
+// DELETE /cd/{id} => hapus data cd
+Route::delete('/cd/{id}', 'CDController@destroy')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE,KASI');
+
 //==== DETAIL CD ====================================================
 // GET /cd/2/details    => ambil data detail cd
 Route::get('/cd/{id}/details', 'CDController@showDetails')
