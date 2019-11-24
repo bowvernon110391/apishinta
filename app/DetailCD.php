@@ -41,6 +41,14 @@ class DetailCD extends Model
         return $this->belongsTo('App\HsCode', 'hs_code', 'kode');
     }
 
+    public function kemasan() {
+        return $this->belongsTo('App\Kemasan', 'jenis_kemasan', 'kode');
+    }
+
+    public function satuan() {
+        return $this->belongsTo('App\Satuan', 'jenis_satuan', 'kode');
+    }
+
     //=================================================================================================
     // COMPUTED PROPERTIES GO HERE!!
     //=================================================================================================
