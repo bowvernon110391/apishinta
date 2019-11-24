@@ -8,7 +8,10 @@ class DetailCDTransformer extends TransformerAbstract {
     // default related transformable
     protected $defaultIncludes = [
         'detailSekunders',
-        'kurs'
+        'kurs',
+        'refHs',
+        'refKemasan',
+        'refSatuan'
     ];
 
     // just simple transform I guess
@@ -46,6 +49,21 @@ class DetailCDTransformer extends TransformerAbstract {
     // include kurs data
     public function includeKurs(DetailCD $det) {
         return $this->item($det->kurs, new KursTransformer);
+    }
+
+    // include hs
+    public function includeRefHs(DetailCD $det) {
+        return $this->item($det->hs, new HsCodeTransformer);
+    }
+
+    // include kemasan
+    public function includeRefKemasan(DetailCD $det) {
+        return $this->item($det->kemasan, new KemasanTransformer);
+    }
+
+    // include satuan
+    public function includeRefSatuan(DetailCD $det) {
+        return $this->item($det->satuan, new SatuanTransformer);
     }
 }
 
