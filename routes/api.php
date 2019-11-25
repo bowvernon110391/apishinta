@@ -174,3 +174,7 @@ Route::get('/satuan', 'ReferensiController@getSatuan')
 // GET /satuan/{kode}
 Route::get('/satuan/{kode}', 'ReferensiController@getSatuanByKode')
         ->middleware($corsGroup['singleItem']);
+
+// GET /jenis-detail-sekunder
+Route::get('/jenis-detail-sekunder', 'ReferensiController@getJenisDetailSekunder')
+        ->middleware($corsGroup['resourceGroup']);

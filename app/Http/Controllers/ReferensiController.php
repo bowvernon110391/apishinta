@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AppLog;
+use App\DetailSekunder;
 use Illuminate\Http\Request;
 use App\Negara;
 use App\HsCode;
@@ -10,11 +11,13 @@ use App\Kategori;
 use App\Kemasan;
 use App\Pelabuhan;
 use App\Satuan;
+use App\ReferensiJenisDetailSekunder;
 use App\Transformers\HsCodeTransformer;
 use App\Transformers\NegaraTransformer;
 use App\Transformers\KategoriTransformer;
 use App\Transformers\KemasanTransformer;
 use App\Transformers\PelabuhanTransformer;
+use App\Transformers\ReferensiJenisDetailSekunderTransformer;
 use App\Transformers\SatuanTransformer;
 
 class ReferensiController extends ApiController
@@ -239,5 +242,14 @@ class ReferensiController extends ApiController
         }
 
         return $this->respondWithItem($satuan, new SatuanTransformer);
+    }
+
+    // GET /jenis-detail-sekunder
+    public function getJenisDetailSekunder() {
+        $data = ReferensiJenisDetailSekunder::all();
+
+        return $this->respondWithCollection($data, new ReferensiJenisDetailSekunderTransformer);
+
+        // return $this->respondWithArray($data);
     }
 }
