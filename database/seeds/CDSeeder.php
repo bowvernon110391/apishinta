@@ -94,9 +94,9 @@ class CDSeeder extends Seeder
                 // $d->hs_code         = $faker->numerify("########");
                 $d->hs()->associate(HsCode::usable()->inRandomOrder()->first());
 
-                $d->fob         = $faker->randomFloat(4);
-                // $d->freight     = 0; //$faker->randomFloat(4);
-                // $d->insurance   = 0; //$faker->randomFloat(4);
+                $d->fob         = $faker->randomFloat(4, 500, 98000);
+                $d->freight     = $faker->randomFloat(4, 0, 200);
+                $d->insurance   = $faker->randomFloat(4, 0, 100);
                 $d->brutto      = $faker->randomFloat(4, 0.5);
                 $d->netto       = $faker->randomFloat(4, 0, $d->brutto-0.25);
 

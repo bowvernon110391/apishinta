@@ -49,6 +49,43 @@ class DetailCD extends Model
         return $this->belongsTo('App\Satuan', 'jenis_satuan', 'kode');
     }
 
+    // tarif digunakan kalau dioverride aja
+    public function beaMasuk($tarif = null) {
+        if (isset($tarif)) {
+            return ceil($this->nilai_pabean * $tarif * 0.01 / 1000.0) * 1000.0;
+        } else if ($this->hs) {
+            // apakah advalorum?
+            if ($this->hs->jenis_tarif == 'ADVALORUM') {
+                // hitung pakai tarif advalorum
+                return ceil($this->nilai_pabean * (float) $this->hs->bm_tarif * 0.01 / 1000.0) * 1000.0;
+            } else {
+                // hitung pakai tarif spesifik
+                // jumlah satuan spesifik * tarif
+                return ceil($this->jumlah_satuan * $this->hs->bm_tarif / 1000.0) * 1000.0;
+            }
+        }
+        // return ceil($this->nilai_pabean * $tarif * 0.01 / 1000.0) * 1000.0;
+        return 0;
+    }
+
+    public function ppn($bm, $tarif = 10) {
+        if (!isset($tarif)) {
+            // echo "Using hs ppn...\n";
+            $tarif = $this->hs->ppn_tarif;
+        }
+        return ceil( ($this->nilai_pabean + $bm) * $tarif * 0.01 / 1000.0) * 1000.0;
+    }
+
+    public function pph($bm, $tarif = 7.5) {
+        return ceil( ($this->nilai_pabean + $bm) * $tarif * 0.01 / 1000.0) * 1000.0;
+    }
+
+    public function ppnbm($bm) {
+        $tarif = $this->ppnbm_tarif;
+
+        return ceil( ($this->nilai_pabean + $bm) * $tarif * 0.01 / 1000.0) * 1000.0;
+    }
+
     //=================================================================================================
     // COMPUTED PROPERTIES GO HERE!!
     //=================================================================================================
@@ -60,7 +97,7 @@ class DetailCD extends Model
     
     // hitung nilai pabean?
     public function getNilaiPabeanAttribute() {
-        return (float) $this->kurs->kurs_idr * $this->cif;
+        return (float) ( $this->kurs->kurs_idr * ($this->cif) );
     }
 
     // ambil kategori (tag)

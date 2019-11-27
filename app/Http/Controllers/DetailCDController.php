@@ -55,6 +55,9 @@ class DetailCDController extends ApiController
             $fob = expectSomething($data['fob'], 'FOB');
             $brutto = expectSomething($data['brutto'], 'Brutto');
             $netto = expectSomething($data['netto'], 'Netto');
+            $freight = $r->get('freight', 0);
+            $insurance = $r->get('insurance', 0);
+            $ppnbm_tarif = $r->get('ppnbm_tarif');
 
             // kategori?
             // bisa kosong
@@ -77,6 +80,9 @@ class DetailCDController extends ApiController
             $det->fob = $fob;
             $det->brutto = $brutto;
             $det->netto = $netto;
+            $det->freight = $freight;
+            $det->insurance = $insurance;
+            $det->ppnbm_tarif = $ppnbm_tarif;
 
             // associate kurs
             $det->kurs()->associate(Kurs::find($kurs['id']));
@@ -150,6 +156,9 @@ class DetailCDController extends ApiController
             $fob = expectSomething($data['fob'], 'FOB');
             $brutto = expectSomething($data['brutto'], 'Brutto');
             $netto = expectSomething($data['netto'], 'Netto');
+            $freight = $r->get('freight', 0);
+            $insurance = $r->get('insurance', 0);
+            $ppnbm_tarif = $r->get('ppnbm_tarif');
 
             // kategori?
             // bisa kosong
@@ -172,7 +181,10 @@ class DetailCDController extends ApiController
                 'hs_code' => $hs_code,
                 'fob' => $fob,
                 'brutto' => $brutto,
-                'netto' => $netto
+                'netto' => $netto,
+                'freight'   => $freight,
+                'insurance' => $insurance,
+                'ppnbm_tarif' => $ppnbm_tarif
             ]);
 
             // associate kurs

@@ -31,8 +31,11 @@ class DetailCDTransformer extends TransformerAbstract {
             // 'nilai_valuta' => $det->nilai_valuta,
             'hscode'    => (string) $det->hs_code,
             'fob'       => (float) $det->fob,
-            // 'insurance' => (float) $det->insurance,
-            // 'freight'   => (float) $det->freight,
+            'insurance' => (float) $det->insurance,
+            'freight'   => (float) $det->freight,
+
+            'ppnbm_tarif' => $det->ppnbm_tarif,
+
             'brutto'    => (float) $det->brutto,
             'netto'     => (float) $det->netto,
             'cif'       => (float) $det->cif,
