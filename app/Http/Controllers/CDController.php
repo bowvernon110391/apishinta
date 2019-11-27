@@ -61,6 +61,7 @@ class CDController extends ApiController
             $jml_bagasi_tdk_dibawa = expectSomething($r->get('jml_bagasi_tdk_dibawa'), 'Jumlah Bagasi Tidak Dibawa');
             $pembebasan = expectSomething($r->get('pembebasan'), 'Jumlah Pembebasan');
             $jml_anggota_keluarga = expectSomething($r->get('jml_anggota_keluarga'), 'Jumlah Anggota Keluarga');
+            $pph_tarif = expectSomething($r->get('pph_tarif'), 'Tarif PPh');
 
             // pastikan id penumpang valid
             if (!Penumpang::find($penumpang_id)) {
@@ -78,7 +79,8 @@ class CDController extends ApiController
                 'jml_bagasi_dibawa'     => $jml_bagasi_dibawa,
                 'jml_bagasi_tdk_dibawa' => $jml_bagasi_tdk_dibawa,
                 'pembebasan'    => $pembebasan,
-                'jml_anggota_keluarga'  => $jml_anggota_keluarga
+                'jml_anggota_keluarga'  => $jml_anggota_keluarga,
+                'pph_tarif'     => $pph_tarif
             ]);
 
             // set npwp/nib
@@ -182,6 +184,7 @@ class CDController extends ApiController
             $cd->jml_bagasi_tdk_dibawa = expectSomething($r->get('jml_bagasi_tdk_dibawa'), 'Jumlah Bagasi Tidak Dibawa');
             $cd->pembebasan = expectSomething($r->get('pembebasan'), 'Jumlah Pembebasan');
             $cd->jml_anggota_keluarga = expectSomething($r->get('jml_anggota_keluarga'), 'Jumlah Anggota Keluarga');
+            $cd->pph_tarif = expectSomething($r->get('pph_tarif'), 'Tarif PPh');
             
             $declare_flags  = $r->get('declare_flags');
             $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');

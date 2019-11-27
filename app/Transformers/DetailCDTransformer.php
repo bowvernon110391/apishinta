@@ -34,7 +34,7 @@ class DetailCDTransformer extends TransformerAbstract {
             'insurance' => (float) $det->insurance,
             'freight'   => (float) $det->freight,
 
-            'ppnbm_tarif' => $det->ppnbm_tarif,
+            'ppnbm_tarif' => (float) $det->ppnbm_tarif,
 
             'brutto'    => (float) $det->brutto,
             'netto'     => (float) $det->netto,

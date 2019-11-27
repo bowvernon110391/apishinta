@@ -36,6 +36,8 @@ class CDTransformer extends TransformerAbstract {
 
             'pembebasan'    => (float) $cd->pembebasan,
 
+            'pph_tarif' => (float) $cd->pph_tarif,
+
             'alamat'    => $cd->alamat,
 
             'penumpang_id'  => (int) $cd->penumpang_id,
