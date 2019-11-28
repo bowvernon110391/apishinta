@@ -191,4 +191,13 @@ if (!function_exists('canEdit')) {
   }
 }
 
+// function accumulate
+// simple accumulator for various map/reducer
+if (!function_exists('accumulate')) {
+  function accumulate($acc, $e) {
+    $acc += $e;
+    return $acc;
+  }
+}
+
 ?>

@@ -196,4 +196,59 @@ class CD extends Model implements IDokumen
 
         return $links;
     }
+
+    // apakah importasi termasuk komersil?
+    public function getKomersilAttribute() {
+        return $this->declareFlags()->byName("KOMERSIL")->count() > 0;
+    }
+
+    // simulasi perhitungan
+    public function getSimulasiPungutanAttribute() {
+        // pertama, perhitungan BM bisa berubah tergantung
+        // jenis importasi (komersil atau pribadi)?
+        $isKomersil = $this->komersil;
+        $pph_tarif = $this->pph_tarif;
+
+        // $total_cukai = 0;   // for now, unaccounted. so set to 0
+        
+        // hitung per detil
+        $total_hitung = $this
+                        ->details
+                        ->map(function($e) use ($isKomersil, $pph_tarif) {
+                            // 10% utk non komersil, klo komersil ikut hs
+                            $bm = $e->beaMasuk($isKomersil ? null : 10);
+                            // ppn by default 10%
+                            $ppn = $e->ppn($bm);
+                            // pph ikut tarif yg diset di header
+                            $pph = $e->pph($bm, $pph_tarif);
+                            // ppnbm ikut tarif yg diset per detil
+                            $ppnbm = $e->ppnbm($bm);
+
+                            return [
+                                'bm' => $bm,
+                                'cukai' => 0,
+                                'ppn'=> $ppn,
+                                'pph'=> $pph,
+                                'ppnbm' => $ppnbm
+                            ];
+                        });
+
+        $hitung_total = function($acc, $e) {
+            return $acc + $e;
+        };
+        // total dari total hitung
+        $total_bm       = $total_hitung->map(function($e) { return $e['bm']; })->reduce($hitung_total);
+        $total_cukai    = $total_hitung->map(function($e) { return $e['cukai']; })->reduce($hitung_total);
+        $total_ppn      = $total_hitung->map(function($e) { return $e['ppn']; })->reduce($hitung_total);
+        $total_pph      = $total_hitung->map(function($e) { return $e['pph']; })->reduce($hitung_total);
+        $total_ppnbm    = $total_hitung->map(function($e) { return $e['ppnbm']; })->reduce($hitung_total);
+
+        return [
+            'total_bm'  => $total_bm,
+            'total_cukai'  => $total_cukai,
+            'total_ppn'  => $total_ppn,
+            'total_pph'  => $total_pph,
+            'total_ppnbm'  => $total_ppnbm,
+        ];
+    }
 }
