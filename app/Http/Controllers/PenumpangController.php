@@ -58,6 +58,9 @@ class PenumpangController extends ApiController
             }
         }   
 
+        // order by name
+        $queryPenumpang->orderBy("nama");
+
         // pake buat pagination
         $paginator = $queryPenumpang
                 ->paginate($request->get('number'))
