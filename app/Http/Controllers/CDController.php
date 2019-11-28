@@ -270,8 +270,11 @@ class CDController extends ApiController
             return $this->errorNotFound("CD #{$id} tidak ditemukan");
         }
 
-        $pungutan = $cd->simulasi_pungutan;
-
-        return $this->respondWithArray($pungutan);
+        try {
+            $pungutan = $cd->simulasi_pungutan;
+            return $this->respondWithArray($pungutan);
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 }

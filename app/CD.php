@@ -271,7 +271,7 @@ class CD extends Model implements IDokumen
             $ppnbm_tarif = $total_hitung->map(function ($e) { return $e['ppnbm_tarif']; })->reduce($cari_maksimum, 0);
 
             // hitung bm pakai nilai_pabean * 10%;
-            $total_bm = $nilai_pabean * 0.1;
+            $total_bm = ceil($nilai_pabean * 0.1 / 1000.0) * 1000.0;
             $total_cukai = 0;
             $total_ppn = ceil( ($nilai_pabean + $total_bm) * 0.1 / 1000.0 ) * 1000.0;
             $total_pph = ceil( ($nilai_pabean + $total_bm) * ($pph_tarif * 0.01) / 1000.0 ) * 1000.0;
