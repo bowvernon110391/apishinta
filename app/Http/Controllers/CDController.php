@@ -6,6 +6,7 @@ use App\AppLog;
 use Illuminate\Http\Request;
 use App\CD;
 use App\DeclareFlag;
+use App\Kurs;
 use App\Lokasi;
 use App\Penumpang;
 use App\Transformers\CDTransformer;
@@ -62,6 +63,7 @@ class CDController extends ApiController
             $pembebasan = expectSomething($r->get('pembebasan'), 'Jumlah Pembebasan');
             $jml_anggota_keluarga = expectSomething($r->get('jml_anggota_keluarga'), 'Jumlah Anggota Keluarga');
             $pph_tarif = expectSomething($r->get('pph_tarif'), 'Tarif PPh');
+            $ndpbm = expectSomething($r->get('ndpbm'), 'NDPBM');
 
             // pastikan id penumpang valid
             if (!Penumpang::find($penumpang_id)) {
@@ -90,6 +92,9 @@ class CDController extends ApiController
 
             // associate lokasi first
             $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
+
+            // ndpbm
+            $cd->ndpbm()->associate(Kurs::findOrFail($ndpbm['data']['id']));
 
             // try save first
             $cd->save();
@@ -189,6 +194,7 @@ class CDController extends ApiController
             $declare_flags  = $r->get('declare_flags');
             $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
             $npwp_nib = $r->get('npwp_nib');
+            $ndpbm = expectSomething($r->get('ndpbm'), 'NDPBM');
 
             // set npwp/nib
             if ($npwp_nib) {
@@ -199,11 +205,17 @@ class CDController extends ApiController
             if (!Penumpang::find($cd->penumpang_id)) {
                 throw new \Exception("Penumpang dengan id {$cd->penumpang_id} tidak ditemukan!");
             }
+
+            $cd->ndpbm_id = $ndpbm['data']['id'];
+
+            $cd->ndpbm()->associate(Kurs::find($ndpbm['data']['id']));
+            $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
+            $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
             
             // try to save
             $cd->save();
-            $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
-            $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
+            
+            
 
             // log it
             AppLog::logInfo("CD #{$cd->id} diupdate oleh {$r->userInfo['username']}", $cd);

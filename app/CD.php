@@ -213,6 +213,7 @@ class CD extends Model implements IDokumen
         // jenis importasi (komersil atau pribadi)?
         $isKomersil = $this->komersil;
         $pph_tarif = $this->pph_tarif;
+        $ppnbm_tarif = 0;
 
         // $total_cukai = 0;   // for now, unaccounted. so set to 0
         
@@ -230,6 +231,7 @@ class CD extends Model implements IDokumen
                             $ppnbm = $e->ppnbm($bm);
 
                             return [
+                                'ppnbm_tarif'   => (float) $e->ppnbm_tarif,
                                 'nilai_pabean'  => $e->nilai_pabean,
                                 'cif' => $e->cif,
                                 'bm' => $bm,
@@ -244,11 +246,36 @@ class CD extends Model implements IDokumen
             return $acc + $e;
         };
 
+        $cari_maksimum = function($acc, $e) {
+            return $acc > $e ? $acc : $e;
+        };
+
         // untuk non komersil, BM = (total nilai pabean - pembebasan) * 10% 
         if (!$isKomersil) {
             // totalkan nilai pabean
             $nilai_pabean = $total_hitung->map(function($e) { return $e['nilai_pabean']; })->reduce($hitung_total);
             // hitung nilai pembebasan
+            if (!$this->ndpbm) {
+                throw new \Exception("NDPBM belum diset!");
+            }
+
+            $nilai_pembebasan = $this->pembebasan * $this->ndpbm->kurs_idr;
+            $nilai_pabean -= $nilai_pembebasan;
+
+            // gotta check if nilai_pabean < nilai_pembebasan
+            if ($nilai_pabean <= 0.0) {
+                throw new \Exception("Total nilai barang di bawah pembebasan. Perhitungan tidak dapat dilanjutkan", 8008);
+            }
+
+            // ambil tarif ppnbm dari tarif maksimum yang diset di barang
+            $ppnbm_tarif = $total_hitung->map(function ($e) { return $e['ppnbm_tarif']; })->reduce($cari_maksimum, 0);
+
+            // hitung bm pakai nilai_pabean * 10%;
+            $total_bm = $nilai_pabean * 0.1;
+            $total_cukai = 0;
+            $total_ppn = ceil( ($nilai_pabean + $total_bm) * 0.1 / 1000.0 ) * 1000.0;
+            $total_pph = ceil( ($nilai_pabean + $total_bm) * ($pph_tarif * 0.01) / 1000.0 ) * 1000.0;
+            $total_ppnbm = ceil( ($nilai_pabean + $total_bm) * ($ppnbm_tarif * 0.01) / 1000.0 ) * 1000.0;
 
             // ambil kurs usd per tanggal hari ini?
         } else {
@@ -263,6 +290,7 @@ class CD extends Model implements IDokumen
         return [
             'komersil'  => $isKomersil,
             'pph_tarif' => $pph_tarif,
+            'ppnbm_tarif' => $ppnbm_tarif,
             'total_bm'  => $total_bm,
             'total_cukai'  => $total_cukai,
             'total_ppn'  => $total_ppn,
