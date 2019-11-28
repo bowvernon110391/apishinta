@@ -103,6 +103,10 @@ Route::put('/cd/{id}', 'CDController@update')
 Route::delete('/cd/{id}', 'CDController@destroy')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE,KASI');
 
+// GET /cd/{id}/simulasi
+Route::get('/cd/{id}/simulasi', 'CDController@simulasiHitung')
+        ->middleware($corsGroup['singleItem'], 'role');
+
 //==== DETAIL CD ====================================================
 // GET /cd/2/details    => ambil data detail cd
 Route::get('/cd/{id}/details', 'CDController@showDetails')

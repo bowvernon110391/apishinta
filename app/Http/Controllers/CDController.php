@@ -246,4 +246,20 @@ class CDController extends ApiController
             return $this->errorBadRequest($e->getMessage());
         }
     }
+
+    /**
+     * Simulasi perhitungan pungutan
+     */
+    public function simulasiHitung($id) {
+        // cari cd
+        $cd = CD::find($id);
+
+        if (!$cd) {
+            return $this->errorNotFound("CD #{$id} tidak ditemukan");
+        }
+
+        $pungutan = $cd->simulasi_pungutan;
+
+        return $this->respondWithArray($pungutan);
+    }
 }

@@ -244,6 +244,8 @@ class CD extends Model implements IDokumen
         $total_ppnbm    = $total_hitung->map(function($e) { return $e['ppnbm']; })->reduce($hitung_total);
 
         return [
+            'komersil'  => $isKomersil,
+            'pph_tarif' => $pph_tarif,
             'total_bm'  => $total_bm,
             'total_cukai'  => $total_cukai,
             'total_ppn'  => $total_ppn,
