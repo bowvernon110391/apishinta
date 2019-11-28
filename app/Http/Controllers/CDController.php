@@ -94,7 +94,14 @@ class CDController extends ApiController
             $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
 
             // ndpbm
-            $cd->ndpbm()->associate(Kurs::findOrFail($ndpbm['data']['id']));
+            $kursNdpbm = Kurs::find($ndpbm['data']['id']);
+
+            // if not found, refuse further processing
+            if (!$kursNdpbm) {
+                throw new \Exception("Kurs NDPBM invalid");
+            }
+
+            $cd->ndpbm()->associate($kursNdpbm);
 
             // try save first
             $cd->save();
@@ -206,9 +213,17 @@ class CDController extends ApiController
                 throw new \Exception("Penumpang dengan id {$cd->penumpang_id} tidak ditemukan!");
             }
 
-            $cd->ndpbm_id = $ndpbm['data']['id'];
+            // $cd->ndpbm_id = $ndpbm['data']['id'];
 
-            $cd->ndpbm()->associate(Kurs::find($ndpbm['data']['id']));
+            // ndpbm
+            $kursNdpbm = Kurs::find($ndpbm['data']['id']);
+
+            // if not found, refuse further processing
+            if (!$kursNdpbm) {
+                throw new \Exception("Kurs NDPBM invalid");
+            }
+
+            $cd->ndpbm()->associate($kursNdpbm);
             $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
             
