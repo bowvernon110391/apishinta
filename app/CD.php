@@ -36,8 +36,13 @@ class CD extends Model implements IDokumen
     protected $with = [
         'lokasi',
         'declareFlags',
-        'penumpang'
+        'penumpang',
+        'ndpbm'
     ];
+
+    public function ndpbm(){
+        return $this->belongsTo('App\Kurs', 'ndpbm_id');
+    }
 
     public function details(){
         return $this->hasMany('App\DetailCD', 'cd_header_id');
@@ -225,6 +230,8 @@ class CD extends Model implements IDokumen
                             $ppnbm = $e->ppnbm($bm);
 
                             return [
+                                'nilai_pabean'  => $e->nilai_pabean,
+                                'cif' => $e->cif,
                                 'bm' => $bm,
                                 'cukai' => 0,
                                 'ppn'=> $ppn,
@@ -236,12 +243,22 @@ class CD extends Model implements IDokumen
         $hitung_total = function($acc, $e) {
             return $acc + $e;
         };
-        // total dari total hitung
-        $total_bm       = $total_hitung->map(function($e) { return $e['bm']; })->reduce($hitung_total);
-        $total_cukai    = $total_hitung->map(function($e) { return $e['cukai']; })->reduce($hitung_total);
-        $total_ppn      = $total_hitung->map(function($e) { return $e['ppn']; })->reduce($hitung_total);
-        $total_pph      = $total_hitung->map(function($e) { return $e['pph']; })->reduce($hitung_total);
-        $total_ppnbm    = $total_hitung->map(function($e) { return $e['ppnbm']; })->reduce($hitung_total);
+
+        // untuk non komersil, BM = (total nilai pabean - pembebasan) * 10% 
+        if (!$isKomersil) {
+            // totalkan nilai pabean
+            $nilai_pabean = $total_hitung->map(function($e) { return $e['nilai_pabean']; })->reduce($hitung_total);
+            // hitung nilai pembebasan
+
+            // ambil kurs usd per tanggal hari ini?
+        } else {
+            // total dari total hitung        
+            $total_bm       = $total_hitung->map(function($e) { return $e['bm']; })->reduce($hitung_total);
+            $total_cukai    = $total_hitung->map(function($e) { return $e['cukai']; })->reduce($hitung_total);
+            $total_ppn      = $total_hitung->map(function($e) { return $e['ppn']; })->reduce($hitung_total);
+            $total_pph      = $total_hitung->map(function($e) { return $e['pph']; })->reduce($hitung_total);
+            $total_ppnbm    = $total_hitung->map(function($e) { return $e['ppnbm']; })->reduce($hitung_total);
+        }
 
         return [
             'komersil'  => $isKomersil,

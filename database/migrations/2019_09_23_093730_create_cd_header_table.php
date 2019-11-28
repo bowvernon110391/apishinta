@@ -31,6 +31,7 @@ class CreateCdHeaderTable extends Migration {
 			$table->smallInteger('jml_anggota_keluarga')->unsigned()->default(0);
 			$table->smallInteger('jml_bagasi_dibawa')->unsigned()->default(0);
 			$table->smallInteger('jml_bagasi_tdk_dibawa')->unsigned()->default(0);
+			$table->integer('ndpbm_id')->unsigned()->nullable();
 			// $table->set('declare_flag',['KARANTINA','NARKOTIKA','UANG','BKC','KOMERSIL','IMPOR_UNTUK_DIPAKAI'])->default('');
 			// tarif pph
 			$table->decimal('pph_tarif', 18, 4)->default(7.5);

@@ -1,6 +1,7 @@
 <?php
 
 use App\HsCode;
+use App\Kurs;
 use App\Lokasi;
 use Illuminate\Database\Seeder;
 
@@ -43,6 +44,9 @@ class CDSeeder extends Seeder
             $p->nib             = $faker->numerify("#############");
             $p->alamat          = $faker->address;
             // $p->lokasi_id       = $faker->numberBetween(1,3);
+            $p->ndpbm()->associate(
+                Kurs::kode('USD')->inRandomOrder()->first()
+            );
 
             // generate valid sequence using helper
             $p->no_dok          = getSequence(

@@ -7,7 +7,8 @@ use League\Fractal\TransformerAbstract;
 class CDTransformer extends TransformerAbstract {
     // defaultly loaded relations
     protected $defaultIncludes = [
-        'penumpang'
+        'penumpang',
+        'ndpbm'
     ];
 
     // available relations, default relations not needed to apply
@@ -16,7 +17,8 @@ class CDTransformer extends TransformerAbstract {
         'details',
         'status',
         'pelabuhan_asal',
-        'pelabuhan_tujuan'
+        'pelabuhan_tujuan',
+        'ndpbm'
     ];
 
     // basic transformation, without any sweetener
@@ -97,6 +99,11 @@ class CDTransformer extends TransformerAbstract {
     public function includePelabuhanTujuan(CD $cd) {
         $pt = $cd->pelabuhanTujuan;
         return $this->item($pt, new PelabuhanTransformer);
+    }
+
+    public function includeNdpbm(CD $cd) {
+        $ndpbm = $cd->ndpbm;
+        return $this->item($ndpbm, new KursTransformer);
     }
 }
 
