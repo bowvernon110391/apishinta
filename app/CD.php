@@ -251,6 +251,7 @@ class CD extends Model implements IDokumen
             'total_ppn'  => $total_ppn,
             'total_pph'  => $total_pph,
             'total_ppnbm'  => $total_ppnbm,
+            'total_bm_pajak'    => $total_bm+$total_cukai+$total_ppn+$total_pph+$total_ppnbm
         ];
     }
 }
