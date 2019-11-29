@@ -17,6 +17,7 @@ class Penumpang extends Model implements ILinkable
     }
 
     public function getLinksAttribute() {
+
         $links = [
             [
                 'rel'   => 'self',
@@ -24,7 +25,23 @@ class Penumpang extends Model implements ILinkable
             ]
         ];
 
-        return $links;
+        $cdLinks = $this->cds
+                    ->map(function($e) { 
+                        // grab the links attribute
+                        return $e->links; 
+                    })
+                    ->map(function($e) {
+                        // pick the first one only
+                        $d = $e[0];
+                        $d['rel'] = 'cd';
+
+                        return $d;
+                    });
+        // print_r($cdLinks);
+
+        // return $links;
+        return array_merge($links, $cdLinks->toArray());
+        // return array_push($links, array_values($cdLinks));
     }
 
     public function negara() {
@@ -37,5 +54,10 @@ class Penumpang extends Model implements ILinkable
                     ->orWhereHas('negara', function ($qNegara) use ($negara) {
                         return $qNegara->where('uraian', 'like', "%{$negara}%");
                     });
+    }
+
+    // All document related to this piece of shit
+    public function cds() {
+        return $this->hasMany('App\CD', 'penumpang_id', 'id');
     }
 }
