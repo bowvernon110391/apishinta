@@ -90,6 +90,6 @@ trait TraitDokumen
     }
 
     public function getUriAttribute() {
-        return "dokumen/{$this->jenis_dokumen}/{$this->id}";
+        return "/{$this->jenis_dokumen}/{$this->id}";
     }
 }
