@@ -1,16 +1,14 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Transformers\KursTransformer;
 use Illuminate\Http\Request;
 use App\Kurs;
 use App\AppLog;
-use ErrorException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
-use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class KursController extends ApiController
@@ -229,6 +227,70 @@ class KursController extends ApiController
 
     // pull from BKF
     public function pullFromBKF(Request $r) {
-        
+        $kursData = grabKursData();
+
+        $inserted = 0;
+        $updated = 0;
+
+        if ($kursData) {
+            DB::beginTransaction();
+
+            try {
+                // save for each kurs
+                foreach ($kursData['data'] as $valas => $nilaiKurs) {
+                    // try to search first
+                    $k = Kurs::where('kode_valas', $valas)
+                                ->where('jenis', 'KURS_PAJAK')
+                                ->where('tanggal_awal', $kursData['dateStart'])
+                                ->where('tanggal_akhir', $kursData['dateEnd'])
+                                ->get();
+
+                    // welp, duplicate found. let's replace it
+                    if (count($k)) {
+                        // replace every occurence (get returns collection)
+                        foreach ($k as $kRep) {
+                            $kRep->kurs_idr = $nilaiKurs;
+                            $kRep->save();
+
+                            $updated ++;
+                        }
+                        // $updated++;
+                    } else {
+                        // new shiet. save it
+                        $k = new Kurs();
+                        $k->kode_valas = $valas;
+                        $k->jenis = 'KURS_PAJAK';
+                        $k->tanggal_awal = trim($kursData['dateStart']);
+                        $k->tanggal_akhir = trim($kursData['dateEnd']);
+                        $k->kurs_idr = $nilaiKurs;
+
+                        
+
+                        // throw new \Exception(json_encode($k));
+
+                        $k->save();
+
+                        $inserted ++;
+                    }
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                return $this->errorInternalServer($e->getMessage());
+            }
+
+            // anggep berhasil
+            return $this->respondWithArray([
+                'kurs_updated'  => date('Y-m-d H:i:s'),
+                'inserted'  => $inserted,
+                'updated'   => $updated,
+                'info' => $kursData['data']
+            ]);
+        } else {
+            // failed to grab data...for whatever reason
+            // flag server error
+            return $this->errorServiceUnavailable("Situs BKF lagi down kayaknya");
+        }
     }
 }

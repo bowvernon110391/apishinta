@@ -15,6 +15,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 }); */
 
 // CORS allowed-methods. Biar user gk coba macem2
+
+use Illuminate\Support\Facades\Route;
+
 $corsGroup = [
     'readOnly'  => 'cors:GET,OPTIONS',  // item yg read only cuman bsa GET sama OPTIONS
     'singleItem'=> 'cors:GET,PUT,DELETE,OPTIONS,PATCH', // single item bsa macem2
@@ -56,6 +59,10 @@ Route::put('/kurs/{id}', 'KursController@update')
 // DELETE /kurs/{id}    => delete data kurs id {id}
 Route::delete('/kurs/{id}', 'KursController@destroy')
         ->middleware($corsGroup['singleItem'], 'role:CONSOLE,PDTT');
+
+// POST /kurs/bkf        => update data kurs ambil dari BKF
+Route::post('/kurs/bkf', 'KursController@pullFromBKF')
+        ->middleware($corsGroup['resourceGroup'], 'role');
 
 //====================================================================================================
 // ENDPOINTS PENUMPANG
