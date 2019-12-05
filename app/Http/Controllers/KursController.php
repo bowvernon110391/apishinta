@@ -226,4 +226,9 @@ class KursController extends ApiController
         // no console auth. tell him to upgrade his account maybe?
         return $this->errorForbidden("You may not do that. Not an admin");
     }
+
+    // pull from BKF
+    public function pullFromBKF(Request $r) {
+        
+    }
 }

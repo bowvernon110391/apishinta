@@ -29,6 +29,14 @@ class CreateKursTable extends Migration
                 'tanggal_akhir',
                 'kode_valas'
             ]);
+
+            // tambahkan unique key untuk {tanggal_awal, tanggal_akhir, kode_valas, jenis}
+            $table->unique([
+                'tanggal_awal',
+                'tanggal_akhir',
+                'kode_valas',
+                'jenis'
+            ]);
         });
 
         // seed data awal dengan kurs default IDR yang berlaku seumur hidup
