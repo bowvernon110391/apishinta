@@ -75,7 +75,7 @@ class KursController extends ApiController
                 return $this->errorBadRequest("Fuck you! Your data is bad!");
             }
             return $this->errorInternalServer();
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             // This would be server's down
             return $this->errorInternalServer();
         } catch (BadRequestHttpException $e) {
@@ -200,17 +200,28 @@ class KursController extends ApiController
     // delete stuffs
     public function destroy(Request $request, $id) {
         // try to output user info instead
-        $userInfo = $request->get('sso_user');
+        $userInfo = $request->userInfo;
 
         if ($userInfo) {
-            // it's got info. but is it console?
-            if (in_array('CONSOLE', $userInfo['roles'])) {
-                // it's got CONSOLE authority, do something different
-                return $this->setStatusCode(204)
-                        ->respondWithEmptyBody();
-            }
 
-            
+            // if console tried to delete, allow it
+            if (userHasRole('CONSOLE', $userInfo)) {
+                $k = Kurs::find($id);
+                if (!$k) {
+                    return $this->errorNotFound("Kurs #{$id} tidak ditemukan");
+                }
+
+                // delet dis
+                try {
+                    $k->delete();
+
+                    // empty response
+                    return $this->setStatusCode(204)
+                                ->respondWithEmptyBody();
+                } catch (\Exception $e) {
+                    return $this->errorBadRequest($e->getMessage());
+                }
+            }           
         }
         // no console auth. tell him to upgrade his account maybe?
         return $this->errorForbidden("You may not do that. Not an admin");
