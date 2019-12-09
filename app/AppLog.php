@@ -39,7 +39,7 @@ class AppLog extends Model
     }
 
     static public function logWarning($message, $object = NULL){
-        $log = new App\Log;
+        $log = new AppLog;
         $log->message = $message;
         $log->object = json_encode($object);
         $log->tipe = 'WARNING';
@@ -59,7 +59,7 @@ class AppLog extends Model
     }
 
     static public function logError($message, $object = NULL){
-        $log = new App\Log;
+        $log = new AppLog;
         $log->message = $message;
         $log->object = json_encode($object);
         $log->tipe = 'ERROR';
