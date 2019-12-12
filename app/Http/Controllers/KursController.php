@@ -164,8 +164,10 @@ class KursController extends ApiController
        
         
         // order based on kode_kurs then jenis kurs
-        $query->orderBy('kode_valas', 'asc')
-            ->orderBy('jenis', 'asc');
+        $query->latest()
+            ->orderBy('jenis', 'asc')
+            ->orderBy('kode_valas', 'asc');
+            
 
         $paginator = $query
                     ->paginate($request->input('number'))
