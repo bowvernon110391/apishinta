@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateBpjTable extends Migration {
 
@@ -29,10 +30,23 @@ class CreateBpjTable extends Migration {
 			$table->integer('pembuat_id')->nullable();
 			$table->boolean('active')->nullable();
 			$table->enum('status', array('AKTIF','DICAIRKAN','BATAL'))->nullable()->default('AKTIF');
-			$table->timestamps();
+			
 			$table->string('no_bukti_pengembalian')->nullable();
 			$table->date('tgl_bukti_pengembalian')->nullable();
 			$table->string('kode_agenda')->nullable();
+
+			$table->string('catatan')->nullable();
+
+			$table->integer('lokasi_id')->unsigned();
+			$table->integer('penumpang_id')->unsigned();
+
+			// polymorphs
+			// $table->string('guaranteeable_type')->nullable();
+			// $table->integer('guaranteeable_id')->unsigned()->nullable();
+			$table->morphs('guaranteeable');
+
+			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 
