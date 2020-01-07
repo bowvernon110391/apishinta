@@ -18,6 +18,7 @@ class CreateStatusTable extends Migration {
 			$table->string('status');
 			$table->integer('user_id')->unsigned()->nullable()->index();
 			$table->morphs('statusable');
+			$table->string('lokasi', 8)->nullable();
 			$table->timestamps();
 			$table->softDeletes();
 		});
