@@ -10,7 +10,7 @@ class Status extends Model
     protected $table = 'status';
 
 
-    protected $fillable = ['status'];
+    protected $fillable = ['status', 'lokasi'];
 
     protected $attributes = [
         'statusable_id' => 0,
