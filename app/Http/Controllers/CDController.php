@@ -273,9 +273,9 @@ class CDController extends ApiController
         try {
             $cdId = $cd->id;
 
-            $cd->delete();
+            AppLog::logWarning("CD #{$id} dihapus oleh {$r->userInfo['username']}", $cd);
 
-            AppLog::logWarning("CD #{$id} dihapus oleh {$r->userInfo['name']}");
+            $cd->delete();            
 
             return $this->setStatusCode(204)
                         ->respondWithEmptyBody();
