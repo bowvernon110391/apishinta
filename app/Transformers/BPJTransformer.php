@@ -1,10 +1,10 @@
 <?php
 namespace App\Transformers;
 
-use App\CD;
+use App\BPJ;
 use League\Fractal\TransformerAbstract;
 
-class CDTransformer extends TransformerAbstract {
+class BPJTransformer extends TransformerAbstract {
     // defaultly loaded relations
     protected $defaultIncludes = [
         'penumpang',
