@@ -18,18 +18,28 @@ class CreateBpjTable extends Migration {
 			$table->increments('id');
 			$table->integer('nomor')->nullable();
 			$table->date('tanggal')->nullable();
-			$table->string('penjamin')->nullable();
-			$table->string('npwp')->nullable();
+
+			// identitas
+			$table->enum('jenis_identitas', ['NPWP', 'KTP', 'PASPOR']);
+			$table->string('no_identitas');
 			$table->string('alamat')->nullable();
+
+			// $table->string('npwp')->nullable();
+			
 			$table->string('nomor_jaminan')->nullable();
 			$table->date('tanggal_jaminan')->nullable();
+			$table->string('penjamin')->nullable();
+			$table->string('alamat_penjamin')->nullable();
 			$table->string('bentuk_jaminan')->nullable();
 			$table->decimal('jumlah', 18, 4)->nullable();
 			$table->enum('jenis', array('TUNAI','TERTULIS'))->nullable();
 			$table->date('tanggal_jatuh_tempo')->nullable();
-			$table->integer('pembuat_id')->nullable();
-			$table->boolean('active')->nullable();
-			$table->enum('status', array('AKTIF','DICAIRKAN','BATAL'))->nullable()->default('AKTIF');
+
+			$table->string('nip_pembuat')->nullable();
+			$table->string('nama_pembuat')->nullable();
+
+			$table->boolean('active')->nullable()->default(true);
+			$table->enum('status', array('AKTIF','DICAIRKAN','BATAL', 'DIKEMBALIKAN'))->nullable()->default('AKTIF');
 			
 			$table->string('no_bukti_pengembalian')->nullable();
 			$table->date('tgl_bukti_pengembalian')->nullable();
