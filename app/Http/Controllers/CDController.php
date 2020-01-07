@@ -115,6 +115,9 @@ class CDController extends ApiController
             // log it
             AppLog::logInfo("CD #{$cd->id} diinput oleh {$r->userInfo['username']}", $cd);
 
+            // Update status
+            $cd->appendStatus('CREATED', $lokasi);
+
             // return with array
             return $this->respondWithArray([
                 'id'    => $cd->id,
@@ -268,7 +271,11 @@ class CDController extends ApiController
 
         // attempt deletion
         try {
+            $cdId = $cd->id;
+
             $cd->delete();
+
+            AppLog::logWarning("CD #{$id} dihapus oleh {$r->userInfo['name']}");
 
             return $this->setStatusCode(204)
                         ->respondWithEmptyBody();

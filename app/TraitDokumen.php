@@ -27,9 +27,9 @@ trait TraitDokumen
         return !$this->is_locked;
     }
 
-    public function appendStatus($name) {
+    public function appendStatus($name, $lokasi = null) {
         $this->status()->save(
-            Status::create(['status' => $name])
+            Status::create(['status' => $name, 'lokasi' => $lokasi])
         );
     }
 
