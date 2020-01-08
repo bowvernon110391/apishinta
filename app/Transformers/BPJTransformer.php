@@ -20,8 +20,10 @@ class BPJTransformer extends TransformerAbstract {
     public function transform(BPJ $bpj) {
         $result = [
             'id'                => $bpj->id,
+            'no_dok'            => $bpj->no_dok,
+            'tgl_dok'           => $bpj->tgl_dok,
             'nomor_lengkap'     => $bpj->nomor_lengkap,
-            'tanggal'           => $bpj->tanggal,
+            // 'tanggal'           => $bpj->tanggal,
             'jenis_identitas'   => $bpj->jenis_identitas,
             'no_identitas'      => $bpj->no_identitas,
             'alamat'            => $bpj->alamat,
@@ -57,11 +59,11 @@ class BPJTransformer extends TransformerAbstract {
 
     // include guaranteeable
     public function includeGuaranteeable(BPJ $bpj) {
-        $dokSumber = $bpj->guaranteeable;
-
-        if (!$dokSumber) {
+        if (!$bpj->guaranteeable_id) {
             return null;
         }
+
+        $dokSumber = $bpj->guaranteeable;
 
         // tergantung sumbernya, bisa macem2
         $className = get_class($dokSumber);

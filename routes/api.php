@@ -189,3 +189,15 @@ Route::get('/satuan/{kode}', 'ReferensiController@getSatuanByKode')
 // GET /jenis-detail-sekunder
 Route::get('/jenis-detail-sekunder', 'ReferensiController@getJenisDetailSekunder')
         ->middleware($corsGroup['resourceGroup']);
+
+//====================================================================================================
+// ENDPOINTS BPJ
+// BPJ itu classified, jd kasih guard di api endpointsnya
+//====================================================================================================
+// GET /bpj
+Route::get('/bpj', 'BPJController@index')
+        ->middleware($corsGroup['resourceGroup'], 'role');
+
+// GET /bpj/{id}
+Route::get('/bpj/{id}', 'BPJController@show')
+        ->middleware($corsGroup['singleItem'], 'role');

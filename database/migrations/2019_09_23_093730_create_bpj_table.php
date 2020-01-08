@@ -16,8 +16,8 @@ class CreateBpjTable extends Migration {
 		Schema::create('bpj', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('nomor')->nullable();
-			$table->date('tanggal')->nullable();
+			$table->integer('no_dok')->nullable();
+			$table->date('tgl_dok')->nullable();
 
 			// identitas
 			$table->enum('jenis_identitas', ['NPWP', 'KTP', 'PASPOR']);
