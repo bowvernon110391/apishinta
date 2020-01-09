@@ -7,7 +7,9 @@ use League\Fractal\TransformerAbstract;
 class BPJTransformer extends TransformerAbstract {
     // defaultly loaded relations
     protected $defaultIncludes = [
-        'penumpang'
+        'penumpang',
+        'status',
+        'guaranteeable'
     ];
 
     // available relations, default relations not needed to apply
@@ -19,6 +21,19 @@ class BPJTransformer extends TransformerAbstract {
 
     // basic transformation, without any sweetener
     public function transform(BPJ $bpj) {
+        $dokSumber = null;
+
+        if ($bpj->guaranteeable_id) {
+            $src = $bpj->guaranteeable;
+
+            $dokSumber = [
+                'jenis_dokumen'     => $src->jenis_dokumen,
+                'nomor_lengkap'     => $src->nomor_lengkap,
+                'tgl_dok'           => $src->tgl_dok,
+                'uri'               => $src->uri
+            ];
+        }
+
         $result = [
             'id'                => $bpj->id,
             'no_dok'            => $bpj->no_dok,
@@ -48,7 +63,9 @@ class BPJTransformer extends TransformerAbstract {
             'lokasi'            => $bpj->lokasi->nama,
 
             'last_status'       => $bpj->short_last_status,
-            'is_locked'         => $bpj->is_locked
+            'is_locked'         => $bpj->is_locked,
+
+            'dok_sumber'        => $dokSumber
         ];
 
         return $result;
