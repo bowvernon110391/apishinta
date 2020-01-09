@@ -13,7 +13,8 @@ class BPJTransformer extends TransformerAbstract {
     // available relations, default relations not needed to apply
     protected $availableIncludes = [
         'penumpang',
-        'guaranteeable'
+        'guaranteeable',
+        'status'
     ];
 
     // basic transformation, without any sweetener
@@ -38,16 +39,25 @@ class BPJTransformer extends TransformerAbstract {
             'nip_pembuat'       => $bpj->nip_pembuat,
             'nama_pembuat'      => $bpj->nama_pembuat,
             'active'            => (bool) $bpj->active,
-            'status'            => $bpj->status,
+            // 'status'            => $bpj->status,
             'no_bukti_pengembalian' => $bpj->no_bukti_pengembalian,
             'tgl_bukti_pengembalian'=> $bpj->tgl_bukti_pengembalian,
             'kode_agenda'       => $bpj->kode_agenda,
             'catatan'           => $bpj->catatan,
 
-            'lokasi'            => $bpj->lokasi->nama
+            'lokasi'            => $bpj->lokasi->nama,
+
+            'last_status'       => $bpj->short_last_status,
+            'is_locked'         => $bpj->is_locked
         ];
 
         return $result;
+    }
+
+    // include stats
+    public function includeStatus(BPJ $bpj) {
+        $status = collect($bpj->status()->latest()->get());
+        return $this->collection($status, new StatusTransformer);
     }
 
     // include penumpang?

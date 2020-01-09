@@ -94,6 +94,8 @@ class SSPCPSeed extends Seeder
             $sspcp->total_denda =   ceil($sspcp->details()->sum('denda'));
 
             $sspcp->push();
+            $sspcp->appendStatus('CREATED');
+            $sspcp->appendStatus('AKTIF');
 
             // lock sspcp also locks cd document
             $sspcp->lock();

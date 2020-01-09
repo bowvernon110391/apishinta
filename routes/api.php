@@ -209,3 +209,7 @@ Route::post('/bpj', 'BPJController@store')
 // PUT /bpj/{id}
 Route::put('/bpj/{id}', 'BPJController@update')
         ->middleware($corsGroup['singleItem'], 'role');
+
+// DELETE /bpj/{id}
+Route::delete('/bpj/{id}', 'BPJController@destroy')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,KASI,CONSOLE');

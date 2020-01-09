@@ -51,7 +51,7 @@ class BPJSeeder extends Seeder
             $b->nama_pembuat = $faker->name;
 
             $b->active = true;
-            $b->status = 'AKTIF';
+            // $b->status = 'AKTIF';
 
             // $b->no_bukti_pengembalian = '';
             // $b->tgl_bukti_pengembalian = null
@@ -64,6 +64,7 @@ class BPJSeeder extends Seeder
 
             // save
             $b->setNomorDokumen();
+            $b->appendStatus('CREATED');
             // $b->save();
         }
         

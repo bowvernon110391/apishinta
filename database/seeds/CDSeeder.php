@@ -62,6 +62,7 @@ class CDSeeder extends Seeder
             $p->pembebasan  = $faker->randomElement([0, 500, 1000]);
 
             $p->save();
+            $p->appendStatus('CREATED');
 
             // isi data flag
             $flagCount = random_int(0,6);

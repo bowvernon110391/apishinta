@@ -39,7 +39,7 @@ class CreateBpjTable extends Migration {
 			$table->string('nama_pembuat')->nullable();
 
 			$table->boolean('active')->nullable()->default(true);
-			$table->enum('status', array('AKTIF','DICAIRKAN','BATAL', 'DIKEMBALIKAN'))->nullable()->default('AKTIF');
+			// $table->enum('status', array('AKTIF','DICAIRKAN','BATAL', 'DIKEMBALIKAN'))->nullable()->default('AKTIF');
 			
 			$table->string('no_bukti_pengembalian')->nullable();
 			$table->date('tgl_bukti_pengembalian')->nullable();

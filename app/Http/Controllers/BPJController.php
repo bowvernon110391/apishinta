@@ -254,5 +254,20 @@ class BPJController extends ApiController
         if (!canEdit($bpj->is_locked, $r->userInfo)) {
             return $this->errorForbidden("BPJ sudah terpakai, tidak dapat dibatalkan.");
         }
+
+        // delete it
+        // attempt deletion
+        try {
+            $bpjId = $bpj->id;
+
+            AppLog::logWarning("BPJ #{$bpjId} dihapus oleh {$r->userInfo['username']}", $bpj);
+
+            $bpj->delete();
+            
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 }

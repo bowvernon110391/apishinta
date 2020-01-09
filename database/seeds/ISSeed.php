@@ -101,6 +101,7 @@ class ISSeed extends Seeder
             $is->total_netto =   ceil($is->details()->sum('netto'));
 
             $is->push();
+            $is->appendStatus('CREATED');
 
             // lock cd and is
             // $cd->lock();
