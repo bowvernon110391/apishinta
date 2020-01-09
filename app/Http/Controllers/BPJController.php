@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\AppLog;
 use App\BPJ;
+use App\Lokasi;
+use App\Penumpang;
 use App\Transformers\BPJTransformer;
 use Illuminate\Http\Request;
 
@@ -35,38 +38,93 @@ class BPJController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $r)
     {
         // simpan BPJ
-        // elemen input
-        // $b->penumpang()->associate(App\Penumpang::inRandomOrder()->first());
-        // // associate lokasi
-        // $b->lokasi()->associate(App\Lokasi::inRandomOrder()->first());
+        // validasi dlu
+        try {
+            // pastikan json
+            if (!$r->isJson()) {
+                throw new \Exception("Data harus dalam bentuk JSON");
+            }
+            $tgl_dok = expectSomething($r->get('tgl_dok'), 'Tanggal BPJ');
+            $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
+            $penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
+            $jenis_identitas = expectSomething($r->get('jenis_identitas'), 'Jenis Identitas');
+            $no_identitas = expectSomething($r->get('no_identitas'), 'Nomor Identitas');
+            $alamat = expectSomething($r->get('alamat'),'Alamat');
+            $nomor_jaminan = expectSomething($r->get('nomor_jaminan'),'Nomor Jaminan');
+            $tanggal_jaminan = expectSomething($r->get('tanggal_jaminan'),'Tanggal Jaminan');
+            $penjamin = expectSomething($r->get('penjamin'),'Penjamin');
+            $alamat_penjamin = expectSomething($r->get('alamat_penjamin'),'Alamat Penjamin');
+            $bentuk_jaminan = expectSomething($r->get('bentuk_jaminan'),'Bentuk Jaminan');
+            $jumlah = expectSomething($r->get('jumlah'),'Jumlah Jaminan');
+            $jenis = expectSomething($r->get('jenis'),'Jenis Jaminan');
+            $tanggal_jatuh_tempo = expectSomething($r->get('tanggal_jatuh_tempo'),'Tanggal Jatuh Tempo');
 
-        // $ts = $faker->dateTimeBetween('-2 months')->getTimestamp();
-        // $b->tgl_dok = date('Y-m-d', $ts);
-        // // $b->no_dok = '';
+            $nip_pembuat = expectSomething($r->userInfo['nip'], 'NIP Perekam BPJ');
+            $nama_pembuat = expectSomething($r->userInfo['name'], 'Nama Perekam BPJ');
 
-        // $b->jenis_identitas = 'PASPOR';
-        // $b->no_identitas = $b->penumpang->no_paspor;
-        // $b->alamat = $faker->address;
+            $active = true;
+            $status = 'AKTIF';
+            $catatan = $r->get('catatan');
 
-        // $b->nomor_jaminan = random_int(10, 8929);
-        // $b->tanggal_jaminan = date('Y-m-d', $faker->dateTimeBetween('-2 months')->getTimestamp());
+            // pastikan penumpang valid
+            if (!Penumpang::find($penumpang_id)) {
+                throw new \Exception("Penumpang dengan id {$penumpang_id} tidak ditemukan!");
+            }
 
-        // $b->penjamin = $faker->company;
-        // $b->alamat_penjamin = $faker->address;
-        // $b->bentuk_jaminan = 'TUNAI';
-        
-        // $b->jumlah = $faker->randomFloat(-3, 125000, 15000000);
-        // $b->jenis = 'TUNAI';
-        // $b->tanggal_jatuh_tempo = date('Y-m-d', $faker->dateTimeBetween('+1 months', '+2 months')->getTimestamp());
+            $data = [
+                'tgl_dok'           => $tgl_dok,
+                'jenis_identitas'   => $jenis_identitas,
+                'no_identitas'      => $no_identitas,
+                'alamat'            => $alamat,
+                'nomor_jaminan'     => $nomor_jaminan,
+                'tanggal_jaminan'   => $tanggal_jaminan,
+                'penjamin'          => $penjamin,
+                'alamat_penjamin'   => $alamat_penjamin,
+                'bentuk_jaminan'    => $bentuk_jaminan,
+                'jumlah'            => $jumlah,
+                'jenis'             => $jenis,
+                'tanggal_jatuh_tempo'   => $tanggal_jatuh_tempo,
+                'nip_pembuat'       => $nip_pembuat,
+                'nama_pembuat'      => $nama_pembuat,
+                'active'            => $active,
+                'status'            => $status,
+                'catatan'           => $catatan
+            ];
 
-        // $b->nip_pembuat = $faker->numerify("##################");
-        // $b->nama_pembuat = $faker->name;
+            // return $this->respondWithArray($data);
 
-        // $b->active = true;
-        // $b->status = 'AKTIF';
+            // spawn BPJ
+            $b = new BPJ($data);
+
+            // associate lokasi
+            $b->lokasi()->associate(Lokasi::byName($lokasi)->first());
+
+            // associate dengan penumpang
+            $b->penumpang()->associate(Penumpang::find($penumpang_id));
+
+            // $log = $b->toArray();
+            // return $this->respondWithArray($log);
+
+            // penomoran + save
+            $b->setNomorDokumen();
+
+            // log it
+            AppLog::logInfo("BPJ #{$b->id} diinput oleh {$r->userInfo['username']}", $b);
+
+            // update status
+            $b->appendStatus('CREATED', $lokasi);
+
+            // return with array
+            return $this->respondWithArray([
+                'id'    => $b->id,
+                'uri'   => '/bpj/' . $b->id
+            ]);
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 
     /**
@@ -94,9 +152,87 @@ class BPJController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $r, $id)
     {
-        //
+        // update it
+        try {
+            // pastikan bpjnya ada
+            $b = BPJ::findOrFail($id);
+            // pastikan json
+            if (!$r->isJson()) {
+                throw new \Exception("Data harus dalam bentuk JSON");
+            }
+
+            $tgl_dok = expectSomething($r->get('tgl_dok'), 'Tanggal BPJ');
+            $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
+            $penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
+            $jenis_identitas = expectSomething($r->get('jenis_identitas'), 'Jenis Identitas');
+            $no_identitas = expectSomething($r->get('no_identitas'), 'Nomor Identitas');
+            $alamat = expectSomething($r->get('alamat'),'Alamat');
+            $nomor_jaminan = expectSomething($r->get('nomor_jaminan'),'Nomor Jaminan');
+            $tanggal_jaminan = expectSomething($r->get('tanggal_jaminan'),'Tanggal Jaminan');
+            $penjamin = expectSomething($r->get('penjamin'),'Penjamin');
+            $alamat_penjamin = expectSomething($r->get('alamat_penjamin'),'Alamat Penjamin');
+            $bentuk_jaminan = expectSomething($r->get('bentuk_jaminan'),'Bentuk Jaminan');
+            $jumlah = expectSomething($r->get('jumlah'),'Jumlah Jaminan');
+            $jenis = expectSomething($r->get('jenis'),'Jenis Jaminan');
+            $tanggal_jatuh_tempo = expectSomething($r->get('tanggal_jatuh_tempo'),'Tanggal Jatuh Tempo');
+
+            // $nip_pembuat = expectSomething($r->userInfo['nip'], 'NIP Perekam BPJ');
+            // $nama_pembuat = expectSomething($r->userInfo['name'], 'Nama Perekam BPJ');
+
+            // $active = true;
+            // $status = 'AKTIF';
+            $catatan = $r->get('catatan');
+
+            // pastikan penumpang valid
+            if (!Penumpang::find($penumpang_id)) {
+                throw new \Exception("Penumpang dengan id {$penumpang_id} tidak ditemukan!");
+            }
+
+            // spawn BPJ
+            // $b = new BPJ($data);
+            $b->tgl_dok         = $tgl_dok;
+            $b->jenis_identitas = $jenis_identitas;
+            $b->no_identitas    = $no_identitas;
+            $b->alamat          = $alamat;
+            $b->nomor_jaminan   = $nomor_jaminan;
+            $b->tanggal_jaminan = $tanggal_jaminan;
+            $b->penjamin        = $penjamin;
+            $b->alamat_penjamin = $alamat_penjamin;
+            $b->bentuk_jaminan  = $bentuk_jaminan;
+            $b->jumlah          = $jumlah;
+            $b->jenis           = $jenis;
+            $b->tanggal_jatuh_tempo = $tanggal_jatuh_tempo;
+            $b->catatan         = $catatan;
+
+            // $b->nip_pembuat     = $nip_pembuat;
+            // $b->nama_pembuat    = $nama_pembuat;
+
+            // associate lokasi
+            $b->lokasi()->associate(Lokasi::byName($lokasi)->first());
+
+            // associate dengan penumpang
+            $b->penumpang()->associate(Penumpang::find($penumpang_id));
+
+            // $log = $b->toArray();
+            // return $this->respondWithArray($log);
+
+            // penomoran + save
+            // $b->setNomorDokumen();
+            $b->save();
+
+            // log it
+            AppLog::logInfo("BPJ #{$b->id} diupdate oleh {$r->userInfo['username']}", $b);
+
+            // update status
+            // $b->appendStatus('UPDATED', $lokasi);
+
+            // return with array
+            return $this->setStatusCode(200)->respondWithEmptyBody();
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 
     /**

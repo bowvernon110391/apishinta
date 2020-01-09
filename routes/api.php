@@ -201,3 +201,11 @@ Route::get('/bpj', 'BPJController@index')
 // GET /bpj/{id}
 Route::get('/bpj/{id}', 'BPJController@show')
         ->middleware($corsGroup['singleItem'], 'role');
+
+// POST /bpj
+Route::post('/bpj', 'BPJController@store')
+        ->middleware($corsGroup['resourceGroup'], 'role');
+
+// PUT /bpj/{id}
+Route::put('/bpj/{id}', 'BPJController@update')
+        ->middleware($corsGroup['singleItem'], 'role');

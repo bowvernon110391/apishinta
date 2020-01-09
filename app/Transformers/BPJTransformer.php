@@ -27,7 +27,7 @@ class BPJTransformer extends TransformerAbstract {
             'jenis_identitas'   => $bpj->jenis_identitas,
             'no_identitas'      => $bpj->no_identitas,
             'alamat'            => $bpj->alamat,
-            'no_jaminan'        => $bpj->nomor_jaminan,
+            'nomor_jaminan'     => $bpj->nomor_jaminan,
             'tanggal_jaminan'   => $bpj->tanggal_jaminan,
             'penjamin'          => $bpj->penjamin,
             'alamat_penjamin'   => $bpj->alamat_penjamin,
