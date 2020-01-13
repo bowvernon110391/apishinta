@@ -40,6 +40,7 @@ class BPJTransformer extends TransformerAbstract {
             'tgl_dok'           => $bpj->tgl_dok,
             'nomor_lengkap'     => $bpj->nomor_lengkap,
             // 'tanggal'           => $bpj->tanggal,
+            'penumpang_id'      => $bpj->penumpang_id,
             'jenis_identitas'   => $bpj->jenis_identitas,
             'no_identitas'      => $bpj->no_identitas,
             'alamat'            => $bpj->alamat,
