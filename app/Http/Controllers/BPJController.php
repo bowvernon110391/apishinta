@@ -66,7 +66,7 @@ class BPJController extends ApiController
             $nama_pembuat = expectSomething($r->userInfo['name'], 'Nama Perekam BPJ');
 
             $active = true;
-            $status = 'AKTIF';
+            // $status = 'AKTIF';
             $catatan = $r->get('catatan');
 
             // pastikan penumpang valid
@@ -90,7 +90,7 @@ class BPJController extends ApiController
                 'nip_pembuat'       => $nip_pembuat,
                 'nama_pembuat'      => $nama_pembuat,
                 'active'            => $active,
-                'status'            => $status,
+                // 'status'            => $status,
                 'catatan'           => $catatan
             ];
 
