@@ -32,7 +32,7 @@ class CreateBpjTable extends Migration {
 			$table->string('alamat_penjamin')->nullable();
 			$table->string('bentuk_jaminan')->nullable();
 			$table->decimal('jumlah', 18, 4)->nullable();
-			$table->enum('jenis', array('TUNAI','TERTULIS'))->nullable();
+			// $table->enum('jenis', array('TUNAI','TERTULIS'))->nullable();
 			$table->date('tanggal_jatuh_tempo')->nullable();
 
 			$table->string('nip_pembuat')->nullable();

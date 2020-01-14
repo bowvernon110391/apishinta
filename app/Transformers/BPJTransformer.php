@@ -50,7 +50,7 @@ class BPJTransformer extends TransformerAbstract {
             'alamat_penjamin'   => $bpj->alamat_penjamin,
             'bentuk_jaminan'    => $bpj->bentuk_jaminan,
             'jumlah'            => (float) $bpj->jumlah,
-            'jenis'             => $bpj->jenis,
+            // 'jenis'             => $bpj->jenis,
             'tanggal_jatuh_tempo'   => $bpj->tanggal_jatuh_tempo,
             'nip_pembuat'       => $bpj->nip_pembuat,
             'nama_pembuat'      => $bpj->nama_pembuat,

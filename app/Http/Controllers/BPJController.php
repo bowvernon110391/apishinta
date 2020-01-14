@@ -59,7 +59,7 @@ class BPJController extends ApiController
             $alamat_penjamin = expectSomething($r->get('alamat_penjamin'),'Alamat Penjamin');
             $bentuk_jaminan = expectSomething($r->get('bentuk_jaminan'),'Bentuk Jaminan');
             $jumlah = expectSomething($r->get('jumlah'),'Jumlah Jaminan');
-            $jenis = expectSomething($r->get('jenis'),'Jenis Jaminan');
+            // $jenis = expectSomething($r->get('jenis'),'Jenis Jaminan');
             $tanggal_jatuh_tempo = expectSomething($r->get('tanggal_jatuh_tempo'),'Tanggal Jatuh Tempo');
 
             $nip_pembuat = expectSomething($r->userInfo['nip'], 'NIP Perekam BPJ');
@@ -85,7 +85,7 @@ class BPJController extends ApiController
                 'alamat_penjamin'   => $alamat_penjamin,
                 'bentuk_jaminan'    => $bentuk_jaminan,
                 'jumlah'            => $jumlah,
-                'jenis'             => $jenis,
+                // 'jenis'             => $jenis,
                 'tanggal_jatuh_tempo'   => $tanggal_jatuh_tempo,
                 'nip_pembuat'       => $nip_pembuat,
                 'nama_pembuat'      => $nama_pembuat,
@@ -175,7 +175,7 @@ class BPJController extends ApiController
             $alamat_penjamin = expectSomething($r->get('alamat_penjamin'),'Alamat Penjamin');
             $bentuk_jaminan = expectSomething($r->get('bentuk_jaminan'),'Bentuk Jaminan');
             $jumlah = expectSomething($r->get('jumlah'),'Jumlah Jaminan');
-            $jenis = expectSomething($r->get('jenis'),'Jenis Jaminan');
+            // $jenis = expectSomething($r->get('jenis'),'Jenis Jaminan');
             $tanggal_jatuh_tempo = expectSomething($r->get('tanggal_jatuh_tempo'),'Tanggal Jatuh Tempo');
 
             // $nip_pembuat = expectSomething($r->userInfo['nip'], 'NIP Perekam BPJ');
@@ -202,7 +202,7 @@ class BPJController extends ApiController
             $b->alamat_penjamin = $alamat_penjamin;
             $b->bentuk_jaminan  = $bentuk_jaminan;
             $b->jumlah          = $jumlah;
-            $b->jenis           = $jenis;
+            // $b->jenis           = $jenis;
             $b->tanggal_jatuh_tempo = $tanggal_jatuh_tempo;
             $b->catatan         = $catatan;
 

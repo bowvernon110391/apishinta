@@ -44,7 +44,7 @@ class BPJSeeder extends Seeder
             $b->bentuk_jaminan = 'TUNAI';
             
             $b->jumlah = $faker->randomFloat(-3, 125000, 15000000);
-            $b->jenis = 'TUNAI';
+            // $b->jenis = 'TUNAI';
             $b->tanggal_jatuh_tempo = date('Y-m-d', $faker->dateTimeBetween('+1 months', '+2 months')->getTimestamp());
 
             $b->nip_pembuat = $faker->numerify("##################");
