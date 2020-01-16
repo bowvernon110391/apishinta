@@ -18,8 +18,20 @@ class BPJController extends ApiController
      */
     public function index(Request $r)
     {
+        // is status involved?
+        $status = $r->get('status');
+        $statusNot = $r->get('status_not');
+        
+        $query = BPJ::latest();
+
+        if ($status) {
+            // build query using status first
+            $query = BPJ::byLastStatus($status);
+        } else if ($statusNot) {
+            $query = BPJ::byLastStatusOtherThan($statusNot);
+        }
         // build query
-        $query = BPJ::byQuery(
+        $query = $query->byQuery(
             $r->get('q', ''),
             $r->get('from'),
             $r->get('to')

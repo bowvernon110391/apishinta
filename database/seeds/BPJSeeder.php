@@ -59,7 +59,10 @@ class BPJSeeder extends Seeder
                 // pick random CD, bind to it
                 $cd = App\CD::inRandomOrder()->first();
 
-                $b->guaranteeable()->associate($cd);
+                if (!$cd->bpj) {
+                    // $b->guaranteeable()->associate($cd);
+                    $cd->bpj()->save($b);
+                }
             }
 
             // save

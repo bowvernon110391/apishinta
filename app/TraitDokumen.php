@@ -93,8 +93,16 @@ trait TraitDokumen
      * RELATIONS (injected to all document)
      */
 
-    public function status(){
+    public function status() {
         return $this->morphMany('App\Status', 'statusable');
+    }
+
+    public function billing() {
+        return $this->morphMany('App\Billing', 'billable');
+    }
+
+    public function bpj() {
+        return $this->morphOne('App\BPJ', 'guaranteeable');
     }
 
     /**
