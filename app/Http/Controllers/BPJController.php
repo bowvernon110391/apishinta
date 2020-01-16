@@ -53,7 +53,7 @@ class BPJController extends ApiController
             $jenis_identitas = expectSomething($r->get('jenis_identitas'), 'Jenis Identitas');
             $no_identitas = expectSomething($r->get('no_identitas'), 'Nomor Identitas');
             $alamat = expectSomething($r->get('alamat'),'Alamat');
-            $nomor_jaminan = expectSomething($r->get('nomor_jaminan'),'Nomor Jaminan');
+            $nomor_jaminan = /* expectSomething( */$r->get('nomor_jaminan')/* ,'Nomor Jaminan') */;
             $tanggal_jaminan = expectSomething($r->get('tanggal_jaminan'),'Tanggal Jaminan');
             $penjamin = expectSomething($r->get('penjamin'),'Penjamin');
             $alamat_penjamin = expectSomething($r->get('alamat_penjamin'),'Alamat Penjamin');
@@ -68,6 +68,16 @@ class BPJController extends ApiController
             $active = true;
             // $status = 'AKTIF';
             $catatan = $r->get('catatan');
+
+            // apakah tunai?
+            if ($bentuk_jaminan == 'TUNAI') {
+                // force autonumbering
+                $nomor_jaminan = getSequence('JT');
+            } else if (!$nomor_jaminan) {
+                // in any other case,
+                // emptying it is a fail!!
+                throw new \Exception("Nomor Jaminan tidak boleh kosong!");
+            }
 
             // pastikan penumpang valid
             if (!Penumpang::find($penumpang_id)) {
@@ -169,7 +179,7 @@ class BPJController extends ApiController
             $jenis_identitas = expectSomething($r->get('jenis_identitas'), 'Jenis Identitas');
             $no_identitas = expectSomething($r->get('no_identitas'), 'Nomor Identitas');
             $alamat = expectSomething($r->get('alamat'),'Alamat');
-            $nomor_jaminan = expectSomething($r->get('nomor_jaminan'),'Nomor Jaminan');
+            $nomor_jaminan = /* expectSomething( */$r->get('nomor_jaminan')/* ,'Nomor Jaminan') */;
             $tanggal_jaminan = expectSomething($r->get('tanggal_jaminan'),'Tanggal Jaminan');
             $penjamin = expectSomething($r->get('penjamin'),'Penjamin');
             $alamat_penjamin = expectSomething($r->get('alamat_penjamin'),'Alamat Penjamin');
@@ -188,6 +198,16 @@ class BPJController extends ApiController
             // pastikan penumpang valid
             if (!Penumpang::find($penumpang_id)) {
                 throw new \Exception("Penumpang dengan id {$penumpang_id} tidak ditemukan!");
+            }
+
+            // apakah tunai? maybe it changes from etc into TUNAI?
+            if ($bentuk_jaminan == 'TUNAI' && ($b->bentuk_jaminan !== $bentuk_jaminan) ) {
+                // force autonumbering
+                $nomor_jaminan = getSequence('JT');
+            } else if (!$nomor_jaminan) {
+                // in any other case,
+                // emptying it is a fail!!
+                throw new \Exception("Nomor Jaminan tidak boleh kosong!");
             }
 
             // spawn BPJ
