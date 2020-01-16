@@ -85,11 +85,40 @@ trait TraitDokumen
         return null;
     }
 
+    public function getUriAttribute() {
+        return "/{$this->jenis_dokumen}/{$this->id}";
+    }
+
+    /**
+     * RELATIONS (injected to all document)
+     */
+
     public function status(){
         return $this->morphMany('App\Status', 'statusable');
     }
 
-    public function getUriAttribute() {
-        return "/{$this->jenis_dokumen}/{$this->id}";
+    /**
+     * SCOPES (injected to every relevant class)
+     */
+    public function scopeByLastStatus($query, $status) {
+        // first fetch all BPJ's last status
+        $dokIds = Status::latestPerDoctype()
+                        ->byDocType(get_class())
+                        ->byStatus($status)
+                        ->select(['status.statusable_id'])
+                        ->get();
+        // now find all bpj's whose id is in that
+        return $query->whereIn('id', $dokIds);
+    }
+
+    public function scopeByLastStatusOtherThan($query, $status) {
+        // first fetch all BPJ's last status
+        $dokIds = Status::latestPerDoctype()
+                        ->byDocType(get_class())
+                        ->byStatusOtherThan($status)
+                        ->select(['status.statusable_id'])
+                        ->get();
+        // now find all bpj's whose id is in that
+        return $query->whereIn('id', $dokIds);
     }
 }
