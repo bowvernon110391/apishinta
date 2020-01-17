@@ -78,8 +78,19 @@ class BPJ extends Model
         });
     }
 
+    // scope by lokasi
+    public function scopeByLokasi($query, $lokasi) {
+        return $query->whereHas('lokasi', function($q) use($lokasi) {
+            return $q->where('nama', 'like', "%{$lokasi}%");
+        });
+    }
+
     public function scopeByNoIdentitas($query, $noIdentitas) {
         return $query->where('no_identitas', 'like', "%{$noIdentitas}%");
+    }
+
+    public function scopeNo($query, $no) {
+        return $query->where('no_dok', $no);
     }
 
     public function scopeByQuery($query, $q='', $from, $to) {
@@ -87,6 +98,10 @@ class BPJ extends Model
                 ->orWhere(function ($query) use ($q) {
                     $query->byPenumpang($q);
                 })
+                ->orWhere(function ($query) use ($q) {
+                    $query->byLokasi($q);
+                })
+                ->orWhere('no_dok', $q)
                 ->when($from, function ($query) use ($from) {
                     $query->from($from);
                 })
