@@ -31,17 +31,20 @@ class Status extends Model
                     ->join(
                         DB::raw("
                         (SELECT
-                            a.statusable_id,
-                            MAX(a.id) last_id
+                            statusable_id sid,
+                            statusable_type stype,
+                            MAX(id) maxid
                         FROM
-                            `status` a
+                            `status`
                         GROUP BY
-                            a.statusable_id
+                            statusable_id,
+                            statusable_type
                         ) stat
                         "),
                         function ($join) {
-                            $join->on('status.statusable_id', '=', 'stat.statusable_id');
-                            $join->on('status.id', '=', 'stat.last_id');
+                            $join->on('status.statusable_id', '=', 'stat.sid');
+                            $join->on('status.statusable_type', '=', 'stat.stype');
+                            $join->on('status.id', '=', 'stat.maxid');
                         }
                     );
     }
