@@ -47,10 +47,16 @@ class Status extends Model
     }
 
     public function scopeByStatus($query, $status) {
+        if (is_array($status)) {
+            return $query->whereIn('status', $status);
+        }
         return $query->where('status', '=', $status);
     }
 
     public function scopeByStatusOtherThan($query, $status) {
+        if (is_array($status)) {
+            return $query->whereNotIn('status', $status);
+        }
         return $query->where('status', '<>', $status);
     }
 }

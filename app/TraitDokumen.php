@@ -45,6 +45,13 @@ trait TraitDokumen
         }
         $this->no_dok = getSequence($this->skema_penomoran, $this->tahun_dok);
         $this->save();
+
+        // if this got no status yet, create it
+        $last_status = $this->last_status;
+
+        if (!$last_status) {
+            $this->appendStatus('CREATED');
+        }
     }
 
     //=================================================================================================
