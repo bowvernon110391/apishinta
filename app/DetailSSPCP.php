@@ -12,6 +12,12 @@ class DetailSSPCP extends Model
     
     protected $table = 'sspcp_detail';
 
+    protected $guarded = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
     public function details(){
         return $this->belongsTo('App\SSPCP', 'sspcp_header_id');
     }

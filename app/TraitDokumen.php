@@ -77,7 +77,7 @@ trait TraitDokumen
     }
 
     public function getLastStatusAttribute(){
-        return $this->status()->latest()->first();
+        return $this->status()->latest()->orderBy('id', 'desc')->first();
     }
 
     public function getShortLastStatusAttribute() {

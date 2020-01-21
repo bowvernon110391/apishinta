@@ -9,9 +9,11 @@ use App\DeclareFlag;
 use App\Kurs;
 use App\Lokasi;
 use App\Penumpang;
+use App\SSPCP;
 use App\Transformers\CDTransformer;
 use App\Transformers\DetailCDTransformer;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class CDController extends ApiController
 {
@@ -302,4 +304,68 @@ class CDController extends ApiController
             return $this->errorBadRequest($e->getMessage());
         }
     }
+
+    /**
+     * Penetapan cd
+     */
+    public function storePenetapan($id, Request $r) {
+        // ambil informasi user dlu
+        $nama_pejabat = $r->userInfo['name'];
+        $nip_pejabat = $r->userInfo['nip'];
+
+        // USE TRANSACTION
+        //===========================================================================
+        DB::beginTransaction();
+
+        try {
+            if (!$r->isJson()) {
+                throw new \Exception("Only accepts JSON format!!");
+            }
+
+            // invalid user?
+            if (!$nama_pejabat || !$nip_pejabat || strlen($nama_pejabat) < 6 || strlen($nip_pejabat) < 6) {
+                throw new \Exception("Nama / NIP pejabat yang menetapkan tidak valid!");
+            }
+            // try to find cd first?
+            $cd = CD::findOrFail($id);
+
+            // cd found, now keterangan
+            $keterangan = $r->get('catatan');
+
+            // lokasi
+            $lokasi = Lokasi::byName( expectSomething($r->get('lokasi'), 'Lokasi') )->first();
+
+            if (!$lokasi) {
+                throw new \Exception("Lokasi {$r->get('lokasi')} tidak ditemukan!");
+            }
+
+            $sspcp = SSPCP::createFromCD($cd, $keterangan, $lokasi->id, $nama_pejabat, $nip_pejabat);
+
+            // append status and log for the CD, before lock?
+            $cd->appendStatus('SSPCP', $lokasi->nama);
+
+            // log for CD?
+            AppLog::logInfo("CD #{$cd->id} ditetapkan dengan SSPCP #{$sspcp->id} oleh {$nama_pejabat}", $sspcp);
+
+            // lock that shieeeet!!
+            $sspcp->lock();
+            $cd->lock();
+
+            // commit here
+            DB::commit();
+
+            // return something here
+            return $this->respondWithArray([
+                'id'    => $sspcp->id,
+                'uri'   => '/sspcp/' . $sspcp->id
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * Batalkan penetapan CD
+     */
 }
