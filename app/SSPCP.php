@@ -84,4 +84,43 @@ class SSPCP extends Model implements IDokumen, ILinkable
 
         return $links;
     }
+
+    // STATIC SPECIAL FUNCTIONS
+    static public function createFromCD(CD $cd, $keterangan) {
+        // check if cd is valid
+        if (!$cd) {
+            throw new \Exception("Cannot create SPPBMCP from invalid CD!");
+        }
+
+        // check if cd already has a sspcp?
+        if ($cd->sspcp) {
+            throw new \Exception("CD sudah ditetapkan! batalkan dahulu penetapannya apabila akan ditetapkan ulang!");
+        }
+
+        // first, spawn SPPBMCP, and copy all data from header
+        $pungutan = $cd->simulasi_pungutan;
+
+        if (!$pungutan) {
+            throw new \Exception("Gagal melakukan perhitungan pungutan untuk CD!");
+        }
+
+        $tarif_pph = $pungutan['pph_tarif'];    // one for all (for now, we don't handle special case)
+
+        $sspcp = new SSPCP();
+
+        // fill important fields
+        $sspcp->tgl_dok = date('Y-m-d');
+        $sspcp->total_bm = $pungutan['total_bm'];
+        $sspcp->total_ppn = $pungutan['total_ppn'];
+        $sspcp->total_pph = $pungutan['total_pph'];
+        $sspcp->total_ppnbm = $pungutan['total_ppnbm'];
+
+        // default shit
+        $sspcp->total_fob = 0;
+        $sspcp->total_freight = 0;
+        $sspcp->total_insurance = 0;
+        $sspcp->total_cif = 0;
+        $sspcp->total_nilai_pabean = 0;
+        
+    }
 }

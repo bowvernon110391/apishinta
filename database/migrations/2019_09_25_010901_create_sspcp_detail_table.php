@@ -22,7 +22,7 @@ class CreateSspcpDetailTable extends Migration {
 			$table->decimal('insurance', 18, 4)->nullable();
 			$table->decimal('cif', 18, 4)->nullable();
 			$table->decimal('nilai_pabean', 18, 4)->nullable();
-			$table->decimal('pembebasan', 18, 4)->nullable()->comment('dalam USD');
+			// $table->decimal('pembebasan', 18, 4)->nullable()->comment('dalam USD');
 			$table->decimal('trf_bm', 8, 4)->nullable();
 			$table->decimal('trf_ppn', 8, 4)->nullable();
 			$table->decimal('trf_ppnbm', 8, 4)->nullable();
@@ -32,12 +32,12 @@ class CreateSspcpDetailTable extends Migration {
 			$table->decimal('ppnbm', 18, 4)->nullable();
 			$table->decimal('pph', 18, 4)->nullable();
 			$table->decimal('denda', 18, 4)->nullable();
-			$table->text('keterangan', 65535)->nullable();
+			// $table->text('keterangan', 65535)->nullable();
 			$table->string('kode_valuta', 8)->nullable();
 			$table->string('hs_code', 16)->nullable();
 			$table->decimal('nilai_valuta', 18, 4)->nullable();
-			$table->decimal('brutto', 18, 4);
-			$table->decimal('netto', 18, 4);
+			// $table->decimal('brutto', 18, 4);
+			// $table->decimal('netto', 18, 4);
 			$table->timestamps();
 			$table->softDeletes();
 		});

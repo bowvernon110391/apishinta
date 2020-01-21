@@ -38,18 +38,21 @@ class SSPCPSeed extends Seeder
             $sspcp->no_dok = getSequence('SSPCP/'.$sspcp->lokasi->nama.'/SH', date('Y'));
             $sspcp->tgl_dok = date('Y-m-d');
             // $sspcp->lokasi_id = App\Lokasi::inRandomOrder()->first()->id;
-            $sspcp->total_fob = $cd->details()->sum('fob');
-            $sspcp->total_freight = $faker->randomFloat(4, 0, 200); // $cd->details()->sum('freight');
-            $sspcp->total_insurance = 0.005 * ($sspcp->total_fob + $sspcp->total_freight); // $cd->details()->sum('insurance');
-            $sspcp->total_cif = $sspcp->total_fob + $sspcp->total_freight + $sspcp->total_insurance;
+            // $sspcp->total_fob = $cd->details()->sum('fob');
+            // $sspcp->total_freight = $faker->randomFloat(4, 0, 200); // $cd->details()->sum('freight');
+            // $sspcp->total_insurance = 0.005 * ($sspcp->total_fob + $sspcp->total_freight); // $cd->details()->sum('insurance');
+            // $sspcp->total_cif = $sspcp->total_fob + $sspcp->total_freight + $sspcp->total_insurance;
             $sspcp->nilai_valuta = $faker->randomFloat(NULL,92.82, 14067.999);
             $sspcp->kode_valuta = $faker->randomElement(['JPG', 'USD', 'KRW', 'GBP', 'INR']);
-            $sspcp->total_nilai_pabean = $sspcp->total_cif * $sspcp->nilai_valuta;
-            $sspcp->pembebasan =  $faker->randomElement([0,500,1000]);
+            // $sspcp->total_nilai_pabean = $sspcp->total_cif * $sspcp->nilai_valuta;
+            // $sspcp->pembebasan =  $faker->randomElement([0,500,1000]);
             $sspcp->keterangan =  $faker->sentence(10);
-            $sspcp->pemilik_barang =  $faker->name();
-            $sspcp->ground_handler =  $faker->name();
-            $sspcp->pejabat_id =  $faker->numberBetween(1,10);
+            // $sspcp->pemilik_barang =  $faker->name();
+            // $sspcp->ground_handler =  $faker->name();
+            // $sspcp->pejabat_id =  $faker->numberBetween(1,10);
+            $sspcp->nama_importir   = $faker->name();
+            $sspcp->nama_pejabat   = $faker->name();
+            $sspcp->nip_pejabat   = $faker->numerify("##################");
             
 
             $cd->sspcp()->save($sspcp);
@@ -63,7 +66,7 @@ class SSPCPSeed extends Seeder
                     'insurance'  => $cdd->insurance,
                     'cif'  => $cdd->fob + $cdd->freight + $cdd->insurance,
                     'nilai_pabean'  => 0,
-                    'pembebasan'  => 0,
+                    // 'pembebasan'  => 0,
                     'trf_bm'  => 0.1,
                     'trf_ppn'  => 0.1,
                     'trf_ppnbm'  => 0,
@@ -73,12 +76,12 @@ class SSPCPSeed extends Seeder
                     'ppnbm'  =>  $faker->randomFloat(4,100,1000) * 1000,
                     'pph'  =>  $faker->randomFloat(4,100,1000) * 1000,
                     'denda'=>  $faker->randomFloat(4,100,1000) * 1000,
-                    'keterangan' => $faker->sentence(10),
+                    // 'keterangan' => $faker->sentence(10),
                     'kode_valuta'  => $faker->randomElement(['JPG', 'USD', 'KRW', 'GBP', 'INR']),
                     'hs_code'  => $faker->numerify("########"),
                     'nilai_valuta' => $faker->randomFloat(NULL,92.82, 14067.999),
-                    'brutto' => $faker->randomFloat(5, 500),
-                    'netto' => $faker->randomFloat(5, 500),
+                    // 'brutto' => $faker->randomFloat(5, 500),
+                    // 'netto' => $faker->randomFloat(5, 500),
                 ]);
 
                 // $cd->details()[$b]->save($det);
