@@ -300,6 +300,30 @@ class CDController extends ApiController
 
         try {
             $pungutan = $cd->simulasi_pungutan;
+
+            // append data sspcp (if possible)
+            $sspcp = $cd->sspcp;
+
+            if ($sspcp) {
+                // tambah catatan
+                $pungutan['catatan'] = $sspcp->catatan;
+
+                // sudah dilunasi, tapi pakai apa?
+                // cek bpj
+                $bpj = $cd->bpj;
+
+                if (!$bpj) {
+                    // tunai
+                    $pungutan['jenis_pembayaran'] = "TUNAI";
+                } else {
+                    // pakai jaminan
+                    $pungutan['jenis_pembayaran'] = "JAMINAN";
+
+                    $pungutan['jaminan_id'] = $bpj->id;
+                    $pungutan['catatan_jaminan'] = $bpj->catatan;
+                }
+            }
+
             return $this->respondWithArray($pungutan);
         } catch (\Exception $e) {
             return $this->errorBadRequest($e->getMessage());
