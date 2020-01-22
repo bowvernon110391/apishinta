@@ -51,11 +51,11 @@ class SSPCP extends Model implements IDokumen, ILinkable
     public function lock(){
         $cd = $this->cd;
 
-        if($cd->is_locked)
-            return false;
-        
         if($this->is_locked)
             return $this->is_locked;
+
+        /* if($cd->is_locked)
+            return false; */
         
         return $cd->lock() && $this->traitLock();        
     }
