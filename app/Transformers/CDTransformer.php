@@ -8,7 +8,8 @@ class CDTransformer extends TransformerAbstract {
     // defaultly loaded relations
     protected $defaultIncludes = [
         'penumpang',
-        'ndpbm'
+        'ndpbm',
+        'status'
     ];
 
     // available relations, default relations not needed to apply
