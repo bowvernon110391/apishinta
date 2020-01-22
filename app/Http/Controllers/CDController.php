@@ -358,8 +358,15 @@ class CDController extends ApiController
                     throw new \Exception("BPJ #{$bpj->id} sudah pernah digunakan!");
                 }
 
+                // ambil catatan bpj
+                $catatan_bpj = $r->get('catatan_jaminan');
+
                 // move on, use it
-                $bpj->guaranteeable()->associate($bpj);
+                $bpj->guaranteeable()->associate($cd);
+
+                // set catatan
+                $bpj->catatan = $catatan_bpj;
+                $bpj->save();
 
                 // log it?
                 $bpj->appendLog("BPJ #{$bpj->id} digunakan untuk melunasi CD #{$cd->id}");
