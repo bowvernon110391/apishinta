@@ -99,6 +99,10 @@ class BPJ extends Model
         return $query->where('no_identitas', 'like', "%{$noIdentitas}%");
     }
 
+    public function scopeByNomorJaminan($query, $noJaminan) {
+        return $query->where('nomor_jaminan', 'like', "%{$noJaminan}%");
+    }
+
     public function scopeNo($query, $no) {
         return $query->where('no_dok', $no);
     }
@@ -110,6 +114,9 @@ class BPJ extends Model
                 })
                 ->orWhere(function ($query) use ($q) {
                     $query->byLokasi($q);
+                })
+                ->orWhere(function ($query) use ($q) {
+                    $query->byNomorJaminan($q);
                 })
                 ->orWhere('no_dok', $q)
                 ->when($from, function ($query) use ($from) {
