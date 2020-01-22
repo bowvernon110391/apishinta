@@ -306,7 +306,7 @@ class CDController extends ApiController
 
             if ($sspcp) {
                 // tambah catatan
-                $pungutan['catatan'] = $sspcp->catatan;
+                $pungutan['catatan'] = $sspcp->keterangan;
 
                 // sudah dilunasi, tapi pakai apa?
                 // cek bpj
