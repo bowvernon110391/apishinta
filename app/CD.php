@@ -199,6 +199,13 @@ class CD extends Model implements IDokumen
             ];
         }
 
+        if ($this->bpj) {
+            $links[] = [
+                'rel'   => 'bpj',
+                'uri'   => $this->bpj->uri
+            ];
+        }
+
         return $links;
     }
 
