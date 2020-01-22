@@ -104,6 +104,10 @@ trait TraitDokumen
         return $this->morphMany('App\Status', 'statusable');
     }
 
+    public function statusOrdered() {
+        return $this->status()->latest()->orderBy('id', 'desc')->get();
+    }
+
     public function billing() {
         return $this->morphMany('App\Billing', 'billable');
     }

@@ -74,7 +74,8 @@ class BPJTransformer extends TransformerAbstract {
 
     // include stats
     public function includeStatus(BPJ $bpj) {
-        $status = collect($bpj->status()->latest()->get());
+        // $status = collect($bpj->status()->latest()->get());
+        $status = collect($bpj->statusOrdered());
         return $this->collection($status, new StatusTransformer);
     }
 

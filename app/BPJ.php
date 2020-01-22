@@ -31,6 +31,16 @@ class BPJ extends Model
         'deleted_at'
     ];
 
+    // computed attributes
+    //==========================================
+    public function getIsUsedAttribute() {
+        try {
+            return $this->guaranteeable != null;
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
+
     // relations
     //==========================================
     public function guaranteeable() {

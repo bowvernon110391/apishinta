@@ -87,7 +87,8 @@ class CDTransformer extends TransformerAbstract {
 
      // include last status
     public function includeStatus(CD $cd) {
-        $status = collect($cd->status()->latest()->get());
+        // $status = collect($cd->status()->latest()->get());
+        $status = collect($cd->statusOrdered());
         return $this->collection($status, new StatusTransformer);
     }
 

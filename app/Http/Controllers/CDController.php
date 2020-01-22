@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AppLog;
+use App\BPJ;
 use Illuminate\Http\Request;
 use App\CD;
 use App\DeclareFlag;
@@ -339,6 +340,42 @@ class CDController extends ApiController
                 throw new \Exception("Lokasi {$r->get('lokasi')} tidak ditemukan!");
             }
 
+            // ambil jenis pembayaran
+            $jenis_bayar = expectSomething($r->get('jenis_pembayaran'), "Jenis Pembayaran");
+
+            if ($jenis_bayar == 'TUNAI') {
+                // aman, gk perlu ngapa2in
+                AppLog::logInfo("CD #{$cd->id} dibayar TUNAI", $cd);
+
+                // append status?
+                $cd->appendStatus('LUNAS_TUNAI', $lokasi->nama);
+            } else if ($jenis_bayar == 'JAMINAN') {
+                // ambil jaminan_id, check ketersediaannya
+                $bpj = BPJ::findOrFail(expectSomething($r->get('jaminan_id'), "ID Jaminan"));
+
+                // cek apabila BPJ pernah digunakan
+                if ($bpj->is_used) {
+                    throw new \Exception("BPJ #{$bpj->id} sudah pernah digunakan!");
+                }
+
+                // move on, use it
+                $bpj->guaranteeable()->associate($bpj);
+
+                // log it?
+                $bpj->appendLog("BPJ #{$bpj->id} digunakan untuk melunasi CD #{$cd->id}");
+                $cd->appendLog("CD #{$cd->id} dilunasi dengan BPJ #{$bpj->id}");
+
+                // Append status
+                $bpj->appendStatus("USED", $lokasi->nama);
+                $cd->appendStatus("LUNAS_JAMINAN", $lokasi->nama);
+
+                // lock BPJ
+                $bpj->lock();
+            } else {
+                throw new \Exception("Jenis Pembayaran tidak valid -> {$jenis_bayar}");
+            }
+
+            // ambil cd
             $sspcp = SSPCP::createFromCD($cd, $keterangan, $lokasi->id, $nama_pejabat, $nip_pejabat);
 
             // append status and log for the CD, before lock?
