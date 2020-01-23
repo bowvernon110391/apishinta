@@ -15,8 +15,16 @@ class Negara extends Model
         return $query->where('kode', 'LIKE', "%{$code}%");
     }
 
+    public function scopeByCode3($query, $code) {
+        return $query->where('kode_alpha3', 'LIKE', "%{$code}%");
+    }
+
     public function scopeByExactCode($query, $code) {
         return $query->where('kode', '=', $code);
+    }
+
+    public function scopeByExactCode3($query, $code) {
+        return $query->where('kode_alpha3', '=', $code);
     }
 
     public function scopeByUraian($query, $uraian) {

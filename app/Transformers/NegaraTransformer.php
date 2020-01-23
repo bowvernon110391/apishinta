@@ -16,6 +16,7 @@ class NegaraTransformer extends TransformerAbstract {
         return [
             'id'     => $n->id,
             'kode'   => $n->kode,
+            'kode_alpha3'   => $n->kode_alpha3,
             'uraian' => $n->uraian
         ];
     }
