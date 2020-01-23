@@ -26,7 +26,8 @@ class SeedReferensiNegaraKemasanSatuan extends Migration
             DB::table('referensi_negara')->insert([
                 'id'        => $csvNegara[0],
                 'kode'      => $csvNegara[1],
-                'uraian'    => $csvNegara[2]
+                'kode_alpha3'   => $csvNegara[2],
+                'uraian'    => $csvNegara[3]
             ]);
         }
         
