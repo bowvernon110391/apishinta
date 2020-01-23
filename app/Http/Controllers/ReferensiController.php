@@ -48,23 +48,16 @@ class ReferensiController extends ApiController
                 throw new \Exception("Harus berupa json!");
             }
 
-            $id = $r->get('id');
-            $kode = $r->get('kode');
-            $uraian = $r->get('uraian');
+            $id = expectSomething($r->get('id'), "Country's numeric ID");
+            $kode = expectSomething($r->get('kode'), "Country's 2 alphabetical code");
+            $kode_alpha3 = expectSomething($r->get('kode_alpha3'), "Country's 3 alphabetical code");
+            $uraian = expectSomething($r->get('uraian'), "Nama Negara");
 
-            if (!$id) {
-                throw new \Exception("id negara tidak valid -> ".$r->get('id'));
-            }
-            if (!$kode) {
-                throw new \Exception("kode negara tidak valid -> " . $kode);
-            }
-            if (!$uraian) {
-                throw new \Exception("uraian negara tidak valid -> ".$uraian);
-            }
             // try to save
             $n = new Negara;
             $n->id = $id;
             $n->kode = $kode;
+            $n->kode_alpha3 = $kode_alpha3;
             $n->uraian = $uraian;
 
             $n->save();
