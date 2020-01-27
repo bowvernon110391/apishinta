@@ -15,10 +15,11 @@ class CreateLampiranTable extends Migration {
 		Schema::create('lampiran', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('judul');
+			$table->string('resumable_upload_id');
 			$table->enum('jenis',['GAMBAR','DOKUMEN','LAIN-LAIN']);
 			$table->string('mime_type');
-			$table->string('filename')->unique('filename');
+			$table->string('diskfilename')->unique('diskfilename');
+			$table->string('filename');
 			$table->morphs('attachable');
 			$table->timestamps();
 			$table->softDeletes();

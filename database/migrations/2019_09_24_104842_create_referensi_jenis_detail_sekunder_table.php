@@ -24,7 +24,7 @@ class CreateReferensiJenisDetailSekunderTable extends Migration
             ['nama'=>'IMEI'],
             ['nama'=>'MAC ADDRESS'],
             ['nama'=>'IMSI'],
-            ['nama'=>'INVOICE']
+            /* ['nama'=>'INVOICE'] */
         ]);
     }
 

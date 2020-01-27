@@ -221,8 +221,17 @@ Route::delete('/bpj/{id}', 'BPJController@destroy')
 
 //====================================================================================================
 // ENDPOINTS PDF
-// PDF tetap dikasih guard di routenya, karena berisi data konfidensial
 //====================================================================================================
 // GET /pdf?doc=sspcp&id=2
 Route::get('/pdf', 'PDFController@show')
         ->middleware($corsGroup['singleItem']);
+
+//====================================================================================================
+// ENDPOINTS FILE UPLOADS
+// Perlu diguard agar tidak masuk sepam
+//====================================================================================================
+Route::post('/cd/{id}/lampiran', 'UploadController@handleUpload')
+        ->middleware($corsGroup['resourceGroup']);
+
+Route::get('/cd/{id}/lampiran', 'UploadController@getFileUrl')
+        ->middleware($corsGroup['resourceGroup']);
