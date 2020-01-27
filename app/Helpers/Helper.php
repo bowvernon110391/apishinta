@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Jasny\SSO\Broker;
 // function: getSequence(kode_sequence, tahun)
 // desc: mengembalikan sequence dari database (call getSequence() from database)
