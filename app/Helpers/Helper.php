@@ -200,4 +200,21 @@ if (!function_exists('accumulate')) {
   }
 }
 
+// function formatNpwp
+// to format default npwp into formatted form
+if (!function_exists('formatNpwp')) {
+  function formatNpwp($npwp) {
+    // pertama, ambil angka aja (buang tanda baca)
+    $cleanNpwp = trim(str_replace([" ", ".", "-"], "", $npwp));
+
+    // replace dengan pattern
+    $pattern = '/(\d{2})(\d{3})(\d{3})(\d)(\d{3})(\d{3})/i';
+
+    // replacement
+    $replacement = '${1}.${2}.${3}.${4}-${5}.${6}';
+
+    return preg_replace($pattern, $replacement, $cleanNpwp);
+  }
+}
+
 ?>
