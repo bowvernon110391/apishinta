@@ -219,4 +219,58 @@ if (!function_exists('formatNpwp')) {
   }
 }
 
+// function getBulan
+// ambil nama bulan dalam bahasa indonesia
+if (!function_exists('getBulan')) {
+  function getBulan($sqlDate) {
+    // the mapping
+    $bulan = [
+      '01'  => "Januari",
+      '02'  => "Februari",
+      '03'  => "Maret",
+      '04'  => "April",
+      '05'  => "Mei",
+      '06'  => "Juni",
+      '07'  => "Juli",
+      '08'  => "Agustus",
+      '09'  => "September",
+      '10'  => "Oktober",
+      '11'  => "November",
+      '12'  => "Desember"
+    ];
+    // gotta grab the middle
+    if(preg_match('/\d{4}\-(\d{2})\-\d{2}/i', $sqlDate, $matches)) {
+      if (count($matches) >= 2) {
+        return $bulan[$matches[1]];
+      }
+    }
+    return null;
+  }
+}
+
+// getTahun
+// ambil nomor tahun dari tanggal sqlDate
+if (!function_exists('getTahun')) {
+  function getTahun($sqlDate) {
+    // just grab 4 leftmost char, denying everything
+    return substr($sqlDate, 0, 4);
+  }
+}
+
+// getTanggal
+// ambil data tanggal dari sqlDate
+if (!function_exists('getTanggal')) {
+  function getTanggal($sqlDate) {
+    return substr($sqlDate, -2, 2);
+  }
+}
+
+// formatTanggal
+// format tanggal dalam bahasa Indonesia
+if (!function_exists('formatTanggal')) {
+  function formatTanggal($sqlDate) {
+    return getTanggal($sqlDate) . " " . getBulan($sqlDate) . " " . getTahun($sqlDate);
+  }
+}
+
 ?>

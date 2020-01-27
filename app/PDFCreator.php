@@ -32,9 +32,12 @@ class PDFCreator extends Model
     }
 
     // Add SSPCP
-    public function addSspcp(SSPCP $sspcp) {
+    public function addSspcp(SSPCP $sspcp, CD $cd) {
         // just add new page here, continuing (supposedly from previous pdf instance)
         $pdf = $this->getPdf();
+
+        // grab cd data
+        $cd = $sspcp->cd;
 
         // Print related data
         $kop1 = "Lampiran I";
@@ -44,52 +47,53 @@ class PDFCreator extends Model
         $kop5 =	"Negara Atas Barang Kena Cukai dan Penerimaan Negara yang Berasal Dari"; 	
         $kop6 =	"Pengenaan Denda Administrasi Atas Pengangkutan Barang Tertentu";
 
-        $nmktr1 = "Kantor Pelayanan Utama Bea Cukai Tipe C Soekarno Hatta";
+        // $nmktr1 = "Kantor Pelayanan Utama Bea Cukai Tipe C Soekarno Hatta";
         $nmktr2 = "KPU BC Tipe C Soekarno Hatta";
+        $nmktr1 = $nmktr2;
         // $nmktr2 = $nmktr1;
         $idktr = '050100';
 
-        $jnident = 'PASPOR';
-        $noident = '901023012301230';
+        $jnident = 'PASPOR';            // by default they come with passport
+        $noident = $cd->penumpang->no_paspor;
 
-        $npwp = '-';
-        $nama = 'Tri Mulyadi Wibowo';
-        $alamat = 'Gg Masjid no 50a rt 02/02, Cipondoh, Tangerang';
+        $npwp = $cd->npwp;
+        $nama = $cd->penumpang->nama;
+        $alamat = str_replace("\n", " ", $cd->alamat);  // replace newline to conserve space
         
-        $noCD = '000321/CD/T2F/2020';
-        $tanggalCD = '24-01-2020';
+        $noCD = $cd->nomor_lengkap;
+        $tanggalCD = $cd->tgl_dok;
 
         $trfbm = '';
-        $bmrup = 119000;
+        $bmrup = $sspcp->total_bm;
 
         $trfdenda = '';
         $dendarup = 0;
 
         $trfppn = '';
-        $ppnrup = 211000;
+        $ppnrup = $sspcp->total_ppn;
 
         $trfppnbm = '';
-        $ppnbmrup = 0;
+        $ppnbmrup = $sspcp->total_ppnbm;
 
         $trfpph = '';
-        $pphrup = 422000;
+        $pphrup = $sspcp->total_pph;
 
-        $blnpajak = 'Januari';
-        $thnpajak = '2020';
+        $blnpajak = getBulan($sspcp->tgl_dok);
+        $thnpajak = getTahun($sspcp->tgl_dok);
 
         $tottax = $bmrup + $ppnrup + $pphrup + $ppnbmrup;
 
         $dgnhuruf = "Sekian Juta Rupiah";
 
-        $nmkasir = "Bendahara Penerimaan KPU BC Tipe C Soekarno Hatta";
-        $npwpkasir = "317022183992000";
-        $alamatkasir = "Area Kargo Bandara Soekarno Hatta";
+        $nmkasir = $nmktr1;//"Bendahara Penerimaan KPU BC Tipe C Soekarno Hatta";
+        $npwpkasir = "01.226.772.2-4-2.000";
+        $alamatkasir = "Area Kargo Bandara Int'l Soekarno Hatta";
         
-        $nomorsspcp = '002921/SSPCP/T2F/2020';
-        $tanggalsspcp = '25-01-2020';
+        $nomorsspcp = $sspcp->nomor_lengkap;
+        $tanggalsspcp = formatTanggal($sspcp->tgl_dok);
 
-        $namahgr = "Nama PDTT goes here";
-        $niphgr = "19840223200401001";
+        $namahgr = $sspcp->nama_pejabat;
+        $niphgr = $sspcp->nip_pejabat;
 
         $pdf->SetFont('Arial','B','6');
         $pdf->SetX(120);
