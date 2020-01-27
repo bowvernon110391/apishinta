@@ -273,4 +273,35 @@ if (!function_exists('formatTanggal')) {
   }
 }
 
+// penyebutRupiah
+if (!function_exists('penyebutRupiah')) {
+  function penyebutRupiah($nilai) {
+    $nilai = abs($nilai);
+		$huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+		$temp = "";
+		if ($nilai < 12) {
+			$temp = " ". $huruf[$nilai];
+		} else if ($nilai <20) {
+			$temp = penyebutRupiah($nilai - 10). " belas";
+		} else if ($nilai < 100) {
+			$temp = penyebutRupiah($nilai/10)." puluh". penyebutRupiah($nilai % 10);
+		} else if ($nilai < 200) {
+			$temp = " seratus" . penyebutRupiah($nilai - 100);
+		} else if ($nilai < 1000) {
+			$temp = penyebutRupiah($nilai/100) . " ratus" . penyebutRupiah($nilai % 100);
+		} else if ($nilai < 2000) {
+			$temp = " seribu" . penyebutRupiah($nilai - 1000);
+		} else if ($nilai < 1000000) {
+			$temp = penyebutRupiah($nilai/1000) . " ribu" . penyebutRupiah($nilai % 1000);
+		} else if ($nilai < 1000000000) {
+			$temp = penyebutRupiah($nilai/1000000) . " juta" . penyebutRupiah($nilai % 1000000);
+		} else if ($nilai < 1000000000000) {
+			$temp = penyebutRupiah($nilai/1000000000) . " milyar" . penyebutRupiah(fmod($nilai,1000000000));
+		} else if ($nilai < 1000000000000000) {
+			$temp = penyebutRupiah($nilai/1000000000000) . " trilyun" . penyebutRupiah(fmod($nilai,1000000000000));
+		}     
+		return $temp;
+  }
+}
+
 ?>

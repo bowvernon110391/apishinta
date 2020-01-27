@@ -87,7 +87,7 @@ class PDFCreator extends Model
 
         $tottax = $bmrup + $ppnrup + $pphrup + $ppnbmrup;
 
-        $dgnhuruf = "Sekian Juta Rupiah";
+        $dgnhuruf = strtoupper( trim(penyebutRupiah($tottax)) );
 
         $nmkasir = $nmktr1;//"Bendahara Penerimaan KPU BC Tipe C Soekarno Hatta";
         $npwpkasir = "01.226.772.2-4-2.000";
