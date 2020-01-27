@@ -20,6 +20,7 @@ class PDFCreator extends Model
         // by default spawn new pdf instance here
         $this->pdf = new Fpdf('P', 'mm', 'A4');
         $this->pdf->SetAutoPageBreak(true);
+        // $this->pdf->AddPage();
     }
 
     // getter for pdf instance, no setter
@@ -32,9 +33,12 @@ class PDFCreator extends Model
     }
 
     // Add SSPCP
-    public function addSspcp(SSPCP $sspcp, CD $cd) {
+    public function addSspcp(SSPCP $sspcp) {
         // just add new page here, continuing (supposedly from previous pdf instance)
         $pdf = $this->getPdf();
+
+        // add page
+        $pdf->AddPage();
 
         // grab cd data
         $cd = $sspcp->cd;
@@ -61,7 +65,7 @@ class PDFCreator extends Model
         $alamat = str_replace("\n", " ", $cd->alamat);  // replace newline to conserve space
         
         $noCD = $cd->nomor_lengkap;
-        $tanggalCD = $cd->tgl_dok;
+        $tanggalCD = formatTanggal($cd->tgl_dok);
 
         $trfbm = '';
         $bmrup = $sspcp->total_bm;

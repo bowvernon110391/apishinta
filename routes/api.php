@@ -217,3 +217,12 @@ Route::put('/bpj/{id}', 'BPJController@update')
 // DELETE /bpj/{id}
 Route::delete('/bpj/{id}', 'BPJController@destroy')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,KASI,CONSOLE');
+
+
+//====================================================================================================
+// ENDPOINTS PDF
+// PDF tetap dikasih guard di routenya, karena berisi data konfidensial
+//====================================================================================================
+// GET /pdf?doc=sspcp&id=2
+Route::get('/pdf', 'PDFController@show')
+        ->middleware($corsGroup['singleItem']);
