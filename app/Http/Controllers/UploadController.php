@@ -9,7 +9,8 @@ class UploadController extends ApiController
 {
     public function handleUpload(Request $r) {
         // for now, just store it somewhere
-        Storage::disk('public')->put('Something.txt', 'Some shieeet bieeetch');
+        $uniqueFilename = uniqid() . str_random() . "Something.txt";
+        Storage::disk('public')->put($uniqueFilename, 'Some shieeet bieeetch');
     }
 
     public function getFileUrl(Request $r) {
