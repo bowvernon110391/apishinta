@@ -1,0 +1,83 @@
+id,nama,usable
+217,Packing List,1
+343,Shiping Order,1
+380,Invoice,1
+383,SSTB,1
+410,Surat Sanggup Bayar / SSB,1
+430,Bank Garansi,1
+440,Surat Tanda Bukti Setor / STBS,1
+450,NPWP Pemilik Barang,1
+454,SSPCP,1
+456,Surat Keterangan Bebas (SKB) PPN/PPnBM,1
+457,Surat Keterangan Bebas (SKB) PPh,1
+458,Surat Keterangan Tidak Dipungut (SKTD) PPN,1
+465,L/C,1
+704,Master B/L,1
+705,B/L,1
+740,AWB,1
+741,Master AWB,1
+800,Sertifikat alat perangkat telekom/Postel,1
+803,SATS LN / Dephut,1
+805,Registrasi B3 / KLH,1
+808,Ijin Impor / Polri,1
+810,SM/SPM,1
+811,SIE,1
+813,Dok. Cukai (CK),1
+814,Skep Ijin Ekspor Berkala,1
+815,Skep Ijin Tata Niaga Ekspor,1
+816,Dok. Ekspor (PEB),1
+823,NPPBKC,1
+834,SNI Gula Kristal Mentah  / Deptan,1
+835,Izin dan/atau Pendaft Pestisida / Deptan,1
+836,izin impor  / Deptan,1
+842,SNI / ESDM,1
+843,Nomor Pelumas Terdaftar / ESDM,1
+844,Ijin Usaha Niaga/IU Niaga Terbatas/ESDM,1
+845,Rekomendasi Impor Pelumas / ESDM,1
+846,SKEM,1
+851,Surat Ijin Karantina Tanaman,1
+853,Surat Ijin Karantina Hewan / Ikan,1
+854,Surat Persetujuan Impor BPOM,1
+856,Lap. Pemeriksaan Surveyor (LPS-E),1
+857,Fumigation Certificate,1
+858,Cites Certificate,1
+861,Certificate Of Origin (CO),1
+862,Skep USDFS,1
+871,Nomor Pendaftaran Alat Kesehatan/Depkes,1
+872,Laporan Surveyor / Depkes,1
+873,"IP (Narktk, Prekursor & Psikotr)/Depkes",1
+874,IT (Prekursor & Psikotropika) / Depkes,1
+875,"SPI (Narktk, Prekursor & Psikotr)/Depkes",1
+888,Pengecualian Perijian Tanpa Surat,1
+902,Persetujuan Impor   / Bapeten,1
+911,Surat Keputusan,1
+912,Skep Fasilitas BKPM,1
+913,Skep Fasilitas Pertambangan,1
+914,SKEP KITE IKM,1
+915,Skep Fasilitas Impor Sementara,1
+917,BPBC,1
+936,KH-9a / Izin Impor Karantina Hewan,1
+937,KH-14 / Izin Impor Karantina Hewan,1
+938,KH-17 / Izin Impor Karantina Hewan,1
+939,KT-5 / Izin Impor Karantina Pertanian,1
+940,KT-9 / Izin Impor Karantina Pertanian,1
+941,KT-13 / Izin Impor Karantina Pertanian,1
+942,Izin Impor Karantina Tumbuhan,1
+943,KH-5/Izin Impor Karantina Hewan,1
+944,KH-7/Izin Impor Karantina Hewan,1
+945,KH-12/Izin Impor Karantina Hewan,1
+946,KID-3/Izin Impor Karantina Ikan,1
+947,KID-15/Izin Impor Karantina Ikan,1
+948,NPIK,1
+949,Pengakuan Sbg Imp. Produsen,1
+956,Pengakuan Sbg Imp. Terdaftar,1
+957,SNI/SPB / Depdag,1
+958,Laporan Surveyor / Depdag,1
+959,Srt Persetj Impor Dep. Dag.,1
+993,Surat Ijin Menteri Pertanian,1
+994,Bukti Penerimaan Jaminan (BPJ),1
+995,STBS / SSP-E (pajak Ekspor),1
+996,Surat Sanggup Bayar (SSB),1
+997,Costoms Bond / STTJ,1
+998,Skep Fasilitas Kemudahan Ekspor,1
+999,Lainnya,1
