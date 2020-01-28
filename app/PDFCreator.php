@@ -90,7 +90,7 @@ class PDFCreator extends Model
         $dgnhuruf = strtoupper( trim(penyebutRupiah($tottax)) );
 
         $nmkasir = $nmktr1;//"Bendahara Penerimaan KPU BC Tipe C Soekarno Hatta";
-        $npwpkasir = "01.226.772.2-4-2.000";
+        $npwpkasir = "01.226.772.2-402.000";
         $alamatkasir = "Area Kargo Bandara Int'l Soekarno Hatta";
         
         $nomorsspcp = $sspcp->nomor_lengkap;
