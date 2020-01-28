@@ -11,7 +11,8 @@ class ReferensiJenisDokkap extends Model
 
     protected $guarded = [
         'created_at',
-        'updated_at'
+        'updated_at',
+        'deleted_at'
     ];
 
     // gotta grab by some name or id

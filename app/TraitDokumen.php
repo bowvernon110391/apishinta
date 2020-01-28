@@ -116,6 +116,10 @@ trait TraitDokumen
         return $this->morphOne('App\BPJ', 'guaranteeable');
     }
 
+    public function dokkap() {
+        return $this->morphMany('App\Dokkap', 'master');
+    }
+
     /**
      * SCOPES (injected to every relevant class)
      */
