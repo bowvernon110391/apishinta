@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\PDFCreator;
+use App\Printables\PdfSSPCP;
 use App\SSPCP;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -42,10 +43,10 @@ class PDFController extends ApiController
                         throw new NotFoundHttpException("SSPCP #{$id} was not found");
                     }
 
-                    $pdf = new PDFCreator();
-                    $pdf->addSspcp($sspcp);
+                    $pdf = new PdfSSPCP($sspcp);
+                    $pdf->generateFirstpage();
 
-                    return response($pdf->getPdf()->Output('S'), 200)
+                    return response($pdf->Output('S'), 200)
                             ->header('Content-Type', 'application/pdf');
 
                 default:
@@ -55,6 +56,8 @@ class PDFController extends ApiController
             return $this->errorBadRequest($e->getMessage());
         } catch (NotFoundHttpException $e) {
             return $this->errorNotFound($e->getMessage());
+        } catch (\Exception $e) {
+            return $this->errorInternalServer($e->getMessage());
         }
     }
 }

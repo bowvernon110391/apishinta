@@ -304,4 +304,16 @@ if (!function_exists('penyebutRupiah')) {
   }
 }
 
+// formatTanggalDMY
+if (!function_exists('formatTanggalDMY')) {
+  function formatTanggalDMY($sqlDate) {
+    $matches = null;
+    if (preg_match('/(\d{4})\-(\d{2})\-(\d{2})/i', $sqlDate, $matches)) {
+      return $matches[3] . '-' . $matches[2] . '-' . $matches[1];
+      // return $matches;
+    }
+    return null;
+  }
+}
+
 ?>
