@@ -228,6 +228,10 @@ class CD extends Model implements IDokumen
         $total_hitung = $this
                         ->details
                         ->map(function($e) use ($isKomersil, $pph_tarif) {
+                            // tentukan tarif bm
+                            $tarifBm = $isKomersil ? $e->hs->bm_tarif : 10;
+                            $jenisTarifBm = $e->hs->jenis_tarif;
+
                             // 10% utk non komersil, klo komersil ikut hs
                             $bm = $e->beaMasuk($isKomersil ? null : 10);
                             // ppn by default 10%
@@ -238,14 +242,30 @@ class CD extends Model implements IDokumen
                             $ppnbm = $e->ppnbm($bm);
 
                             return [
+                                'bm_tarif'      => (float) $tarifBm,
+                                'bm_tarif_hs'   => (float) $e->hs->bm_tarif,
+                                'jenis_tarif_bm'=> $jenisTarifBm,
+                                'satuan_spesifik'   => $e->hs->satuan_spesifik,
+
+                                'jumlah_satuan' => $e->jumlah_satuan,
+                                'jenis_satuan'  => $e->jenis_satuan,
+
+                                'ppn_tarif'     => 10.0,
+                                'pph_tarif'     => (float) $pph_tarif,
                                 'ppnbm_tarif'   => (float) $e->ppnbm_tarif,
                                 'nilai_pabean'  => $e->nilai_pabean,
+                                'fob' => $e->fob,
+                                'insurance' => $e->insurance,
+                                'freight' => $e->freight,
                                 'cif' => $e->cif,
                                 'bm' => $bm,
                                 'cukai' => 0,
                                 'ppn'=> $ppn,
                                 'pph'=> $pph,
-                                'ppnbm' => $ppnbm
+                                'ppnbm' => $ppnbm,
+
+                                'valuta' => $e->kurs->kode_valas,
+                                'ndpbm'  => $e->kurs->kurs_idr
                             ];
                         });
 
@@ -273,6 +293,13 @@ class CD extends Model implements IDokumen
             if ($nilai_pabean <= 0.0) {
                 throw new \Exception("Total nilai barang di bawah pembebasan. Perhitungan tidak dapat dilanjutkan", 8008);
             }
+
+            $data_pembebasan = [
+                'nilai_pembebasan'  => $this->pembebasan,
+                'valuta'            => $this->ndpbm->kode_valas,
+                'ndpbm'             => $this->ndpbm->kurs_idr,
+                'nilai_pembebasan_rp'   => $nilai_pembebasan
+            ];
 
             // ambil tarif ppnbm dari tarif maksimum yang diset di barang
             $ppnbm_tarif = $total_hitung->map(function ($e) { return $e['ppnbm_tarif']; })->reduce($cari_maksimum, 0);
@@ -303,7 +330,10 @@ class CD extends Model implements IDokumen
             'total_ppn'  => $total_ppn,
             'total_pph'  => $total_pph,
             'total_ppnbm'  => $total_ppnbm,
-            'total_bm_pajak'    => $total_bm+$total_cukai+$total_ppn+$total_pph+$total_ppnbm
+            'total_bm_pajak'    => $total_bm+$total_cukai+$total_ppn+$total_pph+$total_ppnbm,
+
+            'data_perhitungan'  => $total_hitung,
+            'data_pembebasan'   => $data_pembebasan ?? null
         ];
     }
 }
