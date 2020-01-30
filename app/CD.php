@@ -298,7 +298,9 @@ class CD extends Model implements IDokumen
                 'nilai_pembebasan'  => $this->pembebasan,
                 'valuta'            => $this->ndpbm->kode_valas,
                 'ndpbm'             => $this->ndpbm->kurs_idr,
-                'nilai_pembebasan_rp'   => $nilai_pembebasan
+                'nilai_pembebasan_rp'   => $nilai_pembebasan,
+                'nilai_dasar_perhitungan'   => $nilai_pabean,
+                'tarif_bm_universal'    => 10.0
             ];
 
             // ambil tarif ppnbm dari tarif maksimum yang diset di barang
