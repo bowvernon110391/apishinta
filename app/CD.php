@@ -265,7 +265,9 @@ class CD extends Model implements IDokumen
                                 'ppnbm' => $ppnbm,
 
                                 'valuta' => $e->kurs->kode_valas,
-                                'ndpbm'  => $e->kurs->kurs_idr
+                                'ndpbm'  => $e->kurs->kurs_idr,
+
+                                'long_description'  => $e->long_description
                             ];
                         });
 

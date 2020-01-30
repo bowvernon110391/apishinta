@@ -120,7 +120,11 @@ class DetailCD extends Model
             return "- {$e->referensiJenisDetailSekunder->nama} : {$e->data}";
         });
 
-        $longDesc .= "\n" . implode("; ", $detailSekunders->toArray());
+        $additionalDetail = implode("; ", $detailSekunders->toArray());
+
+        if (strlen($additionalDetail) > 3) {
+            $longDesc .= "\n" . $additionalDetail;
+        }
 
         return $longDesc;
     }
