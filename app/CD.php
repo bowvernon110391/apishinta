@@ -336,7 +336,7 @@ class CD extends Model implements IDokumen
             'total_ppnbm'  => $total_ppnbm,
             'total_bm_pajak'    => $total_bm+$total_cukai+$total_ppn+$total_pph+$total_ppnbm,
 
-            'data_perhitungan'  => $total_hitung,
+            'data_perhitungan'  => $total_hitung->toArray(),
             'data_pembebasan'   => $data_pembebasan ?? null
         ];
     }
