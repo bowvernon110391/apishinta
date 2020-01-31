@@ -46,8 +46,24 @@ class PDFController extends ApiController
                     $pdf = new PdfSSPCP($sspcp);
                     $pdf->generateFirstpage();
 
-                    return response($pdf->Output('S', 'SSPCP.pdf'), 200)
-                            ->header('Content-Type', 'application/pdf');
+                    // build response header
+                    $headers = [
+                        'Content-Type'  => 'application/pdf',
+                    ];
+
+                    // if we'got a filename, then force download
+                    if ($r->get('filename')) {
+                        // fix the filename to ensure pdf extension
+                        $filename = $r->get('filename');
+
+                        if (strtoupper(substr($filename, -4, 4)) != '.PDF') {
+                            $filename .= ".pdf";
+                        }
+
+                        $headers['Content-Disposition'] = "attachment; filename={$filename}";
+                    }
+
+                    return response($pdf->Output('S'), 200, $headers);
 
                 default:
                     throw new BadRequestHttpException("No printing option for doctype: {$doctype}");
