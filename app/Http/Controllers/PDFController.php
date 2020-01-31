@@ -46,7 +46,7 @@ class PDFController extends ApiController
                     $pdf = new PdfSSPCP($sspcp);
                     $pdf->generateFirstpage();
 
-                    return response($pdf->Output('S'), 200)
+                    return response($pdf->Output('S', 'SSPCP.pdf'), 200)
                             ->header('Content-Type', 'application/pdf');
 
                 default:
