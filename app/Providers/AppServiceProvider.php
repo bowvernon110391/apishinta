@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,5 +32,6 @@ class AppServiceProvider extends ServiceProvider
             'sspcp_detail' => 'App\DetailSSPCP',
             'kurs'  => 'App\Kurs'
         ]); */
+        Schema::defaultStringLength(191);
     }
 }
