@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Lampiran extends Model
 {
@@ -18,5 +19,10 @@ class Lampiran extends Model
     // Polymorphic relations
     public function Attachable() {
         return $this->morphTo();
+    }
+
+    // COMPUTED PROPS
+    public function getUrlAttribute() {
+        return asset(Storage::url($this->diskfilename));
     }
 }

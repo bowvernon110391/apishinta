@@ -230,8 +230,8 @@ Route::get('/pdf', 'PDFController@show')
 // ENDPOINTS FILE UPLOADS
 // Perlu diguard agar tidak masuk sepam
 //====================================================================================================
-Route::post('/cd/{id}/lampiran', 'UploadController@handleUpload')
-        ->middleware($corsGroup['resourceGroup']);
+Route::post('/{doctype}/{id}/lampiran', 'UploadController@handleUpload')
+        ->middleware($corsGroup['resourceGroup'], 'role');
 
-Route::get('/cd/{id}/lampiran', 'UploadController@getFileUrl')
-        ->middleware($corsGroup['resourceGroup']);
+Route::get('/{doctype}/{id}/lampiran', 'UploadController@getAttachments')
+        ->middleware($corsGroup['resourceGroup'], 'role');

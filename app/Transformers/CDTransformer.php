@@ -9,7 +9,8 @@ class CDTransformer extends TransformerAbstract {
     protected $defaultIncludes = [
         'penumpang',
         'ndpbm',
-        'status'
+        'status',
+        'lampiran'
     ];
 
     // available relations, default relations not needed to apply
@@ -19,7 +20,8 @@ class CDTransformer extends TransformerAbstract {
         'status',
         'pelabuhan_asal',
         'pelabuhan_tujuan',
-        'ndpbm'
+        'ndpbm',
+        'lampiran'
     ];
 
     // basic transformation, without any sweetener
@@ -106,6 +108,10 @@ class CDTransformer extends TransformerAbstract {
     public function includeNdpbm(CD $cd) {
         $ndpbm = $cd->ndpbm;
         return $this->item($ndpbm, new KursTransformer);
+    }
+
+    public function includeLampiran(CD $cd) {
+        return $this->collection($cd->lampiran, new LampiranTransformer);
     }
 }
 
