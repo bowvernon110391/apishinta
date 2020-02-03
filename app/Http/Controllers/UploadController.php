@@ -123,7 +123,9 @@ class UploadController extends ApiController
             // attach it
             $master->lampiran()->save($l);
 
-            return $this->respondWithArray([
+            return $this->respondWithItem($l, new LampiranTransformer);
+
+            /* return $this->respondWithArray([
                 'id'        => $l->id,
                 'path'      => $path,
                 'jenis'     => $jenis_file,
@@ -137,7 +139,7 @@ class UploadController extends ApiController
                     'type'  => $master_type,
                     'id'    => $master_id
                 ]
-            ]);
+            ]); */
         } catch (\Exception $e) {
             return $this->errorBadRequest($e->getMessage());
         }
