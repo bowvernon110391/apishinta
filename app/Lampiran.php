@@ -47,4 +47,8 @@ class Lampiran extends Model
     public function getBlobSizeAttribute() {
         return strlen($this->blob);
     }
+
+    public function getOwnerTypeAttribute() {
+        return strtolower(class_basename(get_class($this->attachable)));
+    }
 }

@@ -18,6 +18,7 @@ class LampiranTransformer extends TransformerAbstract {
             'filename'      => $l->filename,
             'filesize'      => $l->filesize,
             'url'           => $l->url,
+            'owner_type'    => $l->owner_type,
             'created_at'    => (string) $l->created_at,
             'updated_at'    => (string) $l->updated_at
         ];
@@ -25,7 +26,8 @@ class LampiranTransformer extends TransformerAbstract {
 
     public function includeAttachable(Lampiran $l) {
         $data = $l->attachable;
-        switch (class_basename(get_class($l->attachable))) {
+        switch ($l->owner_type) {
+            case 'cd':
             case 'CD':
                 return $this->item($data, new CDTransformer);
                 break;

@@ -191,6 +191,18 @@ class UploadController extends ApiController
     }
 
 
-    // Dynamic url option
-    
+    // grab specific lampiran
+    public function showAttachment(Request $r, $id) {
+        $l = Lampiran::find($id);
+
+        if (!$l) {
+            return $this->errorNotFound("Lampiran #{$id} was not found.");
+        }
+
+        try {
+            return $this->respondWithItem($l, new LampiranTransformer);
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
 }
