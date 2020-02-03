@@ -43,4 +43,8 @@ class Lampiran extends Model
     public function getUrlAttribute() {
         return asset(Storage::url($this->diskfilename));
     }
+
+    public function getBlobSizeAttribute() {
+        return strlen($this->blob);
+    }
 }
