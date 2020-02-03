@@ -10,6 +10,7 @@ use App\SPMB;
 use App\Transformers\LampiranTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use PDOException;
 
 class UploadController extends ApiController
 {
@@ -140,9 +141,13 @@ class UploadController extends ApiController
                     'id'    => $master_id
                 ]
             ]); */
+        } catch (\InvalidArgumentException $e) {
+            return $this->errorInternalServer($e->getMessage());
+        } catch (PDOException $e) {
+            return $this->errorBadRequest("File too large, bruh! 16 MB Maximum allowed.");
         } catch (\Exception $e) {
             return $this->errorBadRequest($e->getMessage());
-        }
+        } 
 
         
     }
