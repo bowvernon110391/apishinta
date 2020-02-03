@@ -16,6 +16,24 @@ class Lampiran extends Model
         'deleted_at'
     ];
 
+    // METHODS
+    public function existsOnDisk() {
+        return Storage::disk('public')->exists($this->diskfilename);
+    }
+
+    public function instantiateOnDisk() {
+        // force to instantiate on disk
+        $filename   = $this->diskfilename;
+
+        // if file exists on disk, just say it's ok
+        if ($this->existsOnDisk()) {
+            return true;
+        }
+
+        // write it nao...
+        return Storage::disk('public')->put($filename, base64_decode($this->blob));
+    }
+
     // Polymorphic relations
     public function Attachable() {
         return $this->morphTo();
