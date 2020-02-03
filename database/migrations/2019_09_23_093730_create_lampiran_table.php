@@ -22,16 +22,14 @@ class CreateLampiranTable extends Migration {
 			$table->string('filename');
 			$table->morphs('attachable');
 
-			// put a blob of base64 data because server is 
-			// inode count limited
-			$table->binary('blob')->nullable();
-
 			// also store filesize?
 			$table->integer('filesize')->unsigned()->default(0);
 
 			$table->timestamps();
 			$table->softDeletes();
 		});
+
+		DB::Statement('ALTER TABLE `lampiran` ADD `blob` MEDIUMBLOB ');
 	}
 
 
