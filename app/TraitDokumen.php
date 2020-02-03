@@ -6,6 +6,10 @@ namespace App;
  */
 trait TraitDokumen
 {
+    // all dokumen can have lampiran so use its trait
+    use TraitAttachable;
+
+    // default locking mechanism
     public function lock(){
         // if we're locked, do nothing
         if ($this->is_locked)
