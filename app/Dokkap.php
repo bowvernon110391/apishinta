@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dokkap extends Model
 {
+    // Dokkap bisa punya lampiran
+    use TraitAttachable;
+
     protected $table = 'dokkap';
 
     protected $guarded = [
