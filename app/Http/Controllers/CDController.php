@@ -113,7 +113,7 @@ class CDController extends ApiController
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
 
             // penomoran
-            $cd->setNomorDokumen();
+            // $cd->setNomorDokumen();  // diset nanti pas penetapan
 
             // log it
             AppLog::logInfo("CD #{$cd->id} diinput oleh {$r->userInfo['username']}", $cd);
