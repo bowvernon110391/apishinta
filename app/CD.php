@@ -242,6 +242,7 @@ class CD extends Model implements IDokumen
                             $ppnbm = $e->ppnbm($bm);
 
                             return [
+                                'hs_code'       => $e->hs->kode,
                                 'bm_tarif'      => (float) $tarifBm,
                                 'bm_tarif_hs'   => (float) $e->hs->bm_tarif,
                                 'jenis_tarif_bm'=> $jenisTarifBm,
@@ -253,19 +254,19 @@ class CD extends Model implements IDokumen
                                 'ppn_tarif'     => 10.0,
                                 'pph_tarif'     => (float) $pph_tarif,
                                 'ppnbm_tarif'   => (float) $e->ppnbm_tarif,
-                                'nilai_pabean'  => $e->nilai_pabean,
-                                'fob' => $e->fob,
-                                'insurance' => $e->insurance,
-                                'freight' => $e->freight,
-                                'cif' => $e->cif,
-                                'bm' => $bm,
+                                'nilai_pabean'  => (float) $e->nilai_pabean,
+                                'fob' => (float) $e->fob,
+                                'insurance' => (float) $e->insurance,
+                                'freight' => (float) $e->freight,
+                                'cif' => (float) $e->cif,
+                                'bm' => (float) $bm,
                                 'cukai' => 0,
-                                'ppn'=> $ppn,
-                                'pph'=> $pph,
-                                'ppnbm' => $ppnbm,
+                                'ppn'=> (float) $ppn,
+                                'pph'=> (float) $pph,
+                                'ppnbm' => (float) $ppnbm,
 
                                 'valuta' => $e->kurs->kode_valas,
-                                'ndpbm'  => $e->kurs->kurs_idr,
+                                'ndpbm'  => (float) $e->kurs->kurs_idr,
 
                                 'long_description'  => $e->long_description
                             ];
