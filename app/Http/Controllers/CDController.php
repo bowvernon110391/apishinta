@@ -365,7 +365,7 @@ class CDController extends ApiController
             }
 
             // ambil jenis pembayaran
-            $jenis_bayar = expectSomething($r->get('jenis_pembayaran'), "Jenis Pembayaran");
+            $jenis_bayar = 'TUNAI'; //expectSomething($r->get('jenis_pembayaran'), "Jenis Pembayaran");
 
             if ($jenis_bayar == 'TUNAI') {
                 // aman, gk perlu ngapa2in
