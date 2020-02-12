@@ -54,6 +54,7 @@ class CDController extends ApiController
             $penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
             $npwp_nib = $r->get('npwp_nib');
             $no_flight = expectSomething($r->get('no_flight'), 'Nomor flight');
+            $kd_airline = $r->get('kd_airline');
             $tgl_kedatangan = expectSomething($r->get('tgl_kedatangan'), 'Tanggal Kedatangan');
             $kd_pelabuhan_asal = expectSomething($r->get('kd_pelabuhan_asal'), 'Kode Pelabuhan Asal');
             $kd_pelabuhan_tujuan = expectSomething($r->get('kd_pelabuhan_tujuan'), 'Kode Pelabuhan Tujuan');
@@ -73,10 +74,18 @@ class CDController extends ApiController
                 throw new \Exception("Penumpang dengan id {$penumpang_id} tidak ditemukan!");
             }
 
+            // force kode airline
+            if (strlen($kd_airline) < 2 && strlen($no_flight) < 5) {
+                throw new \Exception("Data penerbangan tidak valid. Cek kembali nomor flightnya");
+            } else if (strlen($kd_airline) < 2) {
+                $kd_airline = strtoupper(substr($no_flight, 0, 2));
+            }
+
             $cd = new CD([
                 'tgl_dok'   => $tgl_dok,
                 'penumpang_id'    => $penumpang_id,
                 'no_flight'    => $no_flight,
+                'kd_airline'    => $kd_airline,
                 'tgl_kedatangan'    => $tgl_kedatangan,
                 'kd_pelabuhan_asal'    => $kd_pelabuhan_asal,
                 'kd_pelabuhan_tujuan'    => $kd_pelabuhan_tujuan,
@@ -195,6 +204,7 @@ class CDController extends ApiController
             $cd->tgl_dok = expectSomething($r->get('tgl_dok'), 'Tanggal Dokumen');
             $cd->penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
             $cd->no_flight = expectSomething($r->get('no_flight'), 'Nomor flight');
+            $kd_airline = $r->get('kd_airline');
             $cd->tgl_kedatangan = expectSomething($r->get('tgl_kedatangan'), 'Tanggal Kedatangan');
             $cd->kd_pelabuhan_asal = expectSomething($r->get('kd_pelabuhan_asal'), 'Kode Pelabuhan Asal');
             $cd->kd_pelabuhan_tujuan = expectSomething($r->get('kd_pelabuhan_tujuan'), 'Kode Pelabuhan Tujuan');
@@ -222,6 +232,14 @@ class CDController extends ApiController
                 throw new \Exception("Penumpang dengan id {$cd->penumpang_id} tidak ditemukan!");
             }
 
+            // force kode airline
+            if (strlen($kd_airline) < 2 && strlen($cd->no_flight) < 5) {
+                throw new \Exception("Data penerbangan tidak valid. Cek kembali nomor flightnya");
+            } else if (strlen($kd_airline) < 2) {
+                $kd_airline = strtoupper(substr($cd->no_flight, 0, 2));
+            }
+
+            $cd->kd_airline = $kd_airline;
             // $cd->ndpbm_id = $ndpbm['data']['id'];
 
             // ndpbm
