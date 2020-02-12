@@ -17,8 +17,8 @@ class CreateAirlineTable extends Migration
             $table->increments('id');
 
             // consists of only code and name
-            $table->string('kode', 4)->index();
-            $table->string('uraian', 255)->index();
+            $table->string('kode', 4)->index('kode');
+            $table->string('uraian')->index('uraian');
 
             $table->timestamps();
         });
