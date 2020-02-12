@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Airline;
 use App\AppLog;
 use App\DetailSekunder;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use App\Kemasan;
 use App\Pelabuhan;
 use App\Satuan;
 use App\ReferensiJenisDetailSekunder;
+use App\Transformers\AirlineTransformer;
 use App\Transformers\HsCodeTransformer;
 use App\Transformers\NegaraTransformer;
 use App\Transformers\KategoriTransformer;
@@ -244,5 +246,23 @@ class ReferensiController extends ApiController
         return $this->respondWithCollection($data, new ReferensiJenisDetailSekunderTransformer);
 
         // return $this->respondWithArray($data);
+    }
+
+    // GET /airline
+    public function getAllAirline() {
+        $data = Airline::all();
+
+        return $this->respondWithCollection($data, new AirlineTransformer);
+    }
+
+    // GET /airline/{kode}
+    public function getAirlineByKode($kode) {
+        $data = Airline::byExactCode($kode)->first();
+
+        if (!$data) {
+            return $this->errorNotFound("Airline with code {$kode} was not found.");
+        }
+
+        return $this->respondWithItem($data, new AirlineTransformer);
     }
 }

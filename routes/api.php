@@ -194,6 +194,14 @@ Route::get('/satuan/{kode}', 'ReferensiController@getSatuanByKode')
 Route::get('/jenis-detail-sekunder', 'ReferensiController@getJenisDetailSekunder')
         ->middleware($corsGroup['resourceGroup']);
 
+// GET /airline
+Route::get('/airline', 'ReferensiController@getAllAirline')
+        ->middleware($corsGroup['resourceGroup']);
+
+// Get /airline/{kode}
+Route::get('/airline/{kode}', 'ReferensiController@getAirlineByKode')
+        ->middleware($corsGroup['singleItem']);
+
 //====================================================================================================
 // ENDPOINTS BPJ
 // BPJ itu classified, jd kasih guard di api endpointsnya
