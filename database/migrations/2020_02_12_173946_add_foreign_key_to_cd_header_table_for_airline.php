@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignKeyToCdHeaderTable extends Migration
+class AddForeignKeyToCdHeaderTableForAirline extends Migration
 {
     /**
      * Run the migrations.
@@ -15,10 +15,10 @@ class AddForeignKeyToCdHeaderTable extends Migration
     {
         Schema::table('cd_header', function (Blueprint $table) {
             // add new column and subsequently index to it
-            $table->string('kd_flight', 4);
+            $table->string('kd_airline', 4);
 
             // add index
-            $table->foreign('kd_flight')->references('kode')->on('airline');
+            $table->foreign('kd_airline', 'kd_airline_airline_kode')->references('kode')->on('airline');
         });
     }
 
@@ -30,7 +30,8 @@ class AddForeignKeyToCdHeaderTable extends Migration
     public function down()
     {
         Schema::table('cd_header', function (Blueprint $table) {
-            //
+            // gotta drop foreign first?
+            $table->dropForeign('kd_airline_airline_kode');
         });
     }
 }

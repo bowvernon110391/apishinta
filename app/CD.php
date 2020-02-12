@@ -40,6 +40,10 @@ class CD extends Model implements IDokumen
         'ndpbm'
     ];
 
+    public function airline(){
+        return $this->belongsTo('App\Airline', 'kd_airline', 'kode');
+    }
+
     public function ndpbm(){
         return $this->belongsTo('App\Kurs', 'ndpbm_id');
     }

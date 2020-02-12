@@ -1,5 +1,6 @@
 <?php
 
+use App\Airline;
 use App\HsCode;
 use App\Kurs;
 use App\Lokasi;
@@ -55,7 +56,12 @@ class CDSeeder extends Seeder
             );
 
             $p->tgl_kedatangan  = $faker->date('Y-m-d');
-            $p->no_flight       = strtoupper($faker->bothify("?? ####"));
+
+            // associate with random airline?
+            $a = Airline::inRandomOrder()->first();
+            $p->no_flight       = $a->kode . ' ' . strtoupper($faker->bothify("###"));
+            $p->airline()->associate($a);
+
             $p->jml_anggota_keluarga    = $faker->numberBetween(0, 5);
             $p->jml_bagasi_dibawa       = $faker->numberBetween(1, 5);
             $p->jml_bagasi_tdk_dibawa = $faker->numberBetween(0, 5);

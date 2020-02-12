@@ -21,7 +21,8 @@ class CDTransformer extends TransformerAbstract {
         'pelabuhan_asal',
         'pelabuhan_tujuan',
         'ndpbm',
-        'lampiran'
+        'lampiran',
+        'airline'
     ];
 
     // basic transformation, without any sweetener
@@ -49,6 +50,7 @@ class CDTransformer extends TransformerAbstract {
 
             'npwp_nib'      => (string) ($cd->nib ? $cd->nib : $cd->npwp),
             'no_flight'     => (string) $cd->no_flight,
+            'kd_airline'    => (string) $cd->kd_airline,
             'tgl_kedatangan'    => (string) $cd->tgl_kedatangan,
 
             'kd_pelabuhan_asal' => (string) $cd->kd_pelabuhan_asal,
@@ -103,6 +105,11 @@ class CDTransformer extends TransformerAbstract {
     public function includePelabuhanTujuan(CD $cd) {
         $pt = $cd->pelabuhanTujuan;
         return $this->item($pt, new PelabuhanTransformer);
+    }
+
+    public function includeAirline(CD $cd) {
+        $airline = $cd->airline;
+        return $this->item($airline, new AirlineTransformer);
     }
 
     public function includeNdpbm(CD $cd) {
