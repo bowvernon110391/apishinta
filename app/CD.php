@@ -84,6 +84,10 @@ class CD extends Model implements IDokumen
         return $this->hasOne('App\SPMB','cd_header_id');
     }
 
+    public function spp() {
+        return $this->hasOne('App\SPP', 'cd_header_id');
+    }
+
     // SCOPES
     // scope by number
     public function scopeNo($query, $no) {
@@ -207,6 +211,13 @@ class CD extends Model implements IDokumen
             $links[] = [
                 'rel'   => 'bpj',
                 'uri'   => $this->bpj->uri
+            ];
+        }
+
+        if ($this->spp) {
+            $links[] = [
+                'rel'   => 'spp',
+                'uri'   => $this->spp->uri
             ];
         }
 
