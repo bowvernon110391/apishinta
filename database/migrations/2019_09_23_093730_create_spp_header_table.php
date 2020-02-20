@@ -41,6 +41,7 @@ class CreateSppHeaderTable extends Migration {
 
 			$table->decimal('nilai_valuta', 18, 4)->nullable();
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 
