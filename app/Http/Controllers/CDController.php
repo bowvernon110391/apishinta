@@ -351,7 +351,7 @@ class CDController extends ApiController
     /**
      * Penetapan cd
      */
-    public function storePenetapan($id, Request $r) {
+    public function storePenetapan(Request $r, $id) {
         // ambil informasi user dlu
         $nama_pejabat = $r->userInfo['name'];
         $nip_pejabat = $r->userInfo['nip'];
@@ -454,4 +454,12 @@ class CDController extends ApiController
     /**
      * Batalkan penetapan CD
      */
+
+
+    /**
+     * Penetapan ST?
+     */
+    public function createST(Request $r, $id) {
+
+    }
 }

@@ -17,4 +17,22 @@ class Pelabuhan extends Model
     public function scopeByNama($query, $nama) {
         return $query->where('nama', 'like', "%$nama%");
     }
+
+    public function scopeByKodeNegara($query, $negara) {
+        return $query->where('kode', 'like', "$negara%");
+    }
+
+    // ==================COMPUTED ATTRIBUTES=====================
+    // make relation to country?
+    public function getNegaraAttribute() {
+        $code = $this->kode_negara;
+
+        $negara = Negara::byExactCode($code)->first();
+
+        return $negara;
+    }
+
+    public function getKodeNegaraAttribute() {
+        return substr($this->kode, 0, 2);
+    }
 }
