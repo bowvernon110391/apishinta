@@ -34,7 +34,10 @@ class CreateStHeaderTable extends Migration {
 			$table->text('keterangan', 65535)->nullable();
 			$table->string('kode_valuta', 8)->nullable();
 			$table->string('pemilik_barang')->nullable();
-			$table->integer('pejabat_id')->unsigned();
+			// $table->integer('pejabat_id')->unsigned();
+			$table->string('nama_pejabat');
+			$table->string('nip_pejabat');
+
 			$table->decimal('nilai_valuta', 18, 4)->nullable();
 			$table->decimal('total_brutto', 18, 4);
 			$table->decimal('total_netto', 18, 4);
