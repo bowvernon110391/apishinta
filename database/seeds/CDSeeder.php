@@ -33,7 +33,8 @@ class CDSeeder extends Seeder
 
             // associate with random pelabuhan
             $p->pelabuhanAsal()->associate(App\Pelabuhan::inRandomOrder()->first());
-            $p->pelabuhanTujuan()->associate(App\Pelabuhan::inRandomOrder()->first());
+            // $p->pelabuhanTujuan()->associate(App\Pelabuhan::inRandomOrder()->first());
+            $p->kd_pelabuhan_tujuan = 'IDCGK';
 
             // get fake timestamp between 2 years ago and now
             $ts = $faker->dateTimeBetween('-2 years')->getTimestamp();
