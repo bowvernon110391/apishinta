@@ -45,6 +45,10 @@ class SPP extends Model
         return $this->belongsTo('App\Lokasi', 'lokasi_id');
     }
 
+    public function kurs() {
+        return $this->belongsTo('App\Kurs', 'kurs_id');
+    }
+
     // =============================================
     // TRAIT OVERRIDES
     // =============================================
@@ -165,5 +169,42 @@ class SPP extends Model
 
         // return it
         return $s;
+    }
+
+    //=================================================================================================
+    // SCOPES!!
+    //=================================================================================================
+    // scope by lokasi
+    public function scopeByLokasi($query, $lokasi) {
+        return $query->whereHas('lokasi', function($q) use($lokasi) {
+            return $q->where('nama', 'like', "%{$lokasi}%");
+        });
+    }
+
+    // scope based on CD
+    public function scopeByCD($qquery, $q, $from=null, $to=null) {
+        return $qquery->whereHas('cd', function ($query) use ($q, $from, $to) {
+            return CD::queryScope($query, $q, $from, $to);
+        });
+    }
+
+    // based on nama pejabat
+    public function scopeByPejabat($query, $q) {
+        // name or nip
+        return $query->where('nama_pejabat', 'like', "%{$q}%")
+                    ->orWhere('nip_pejabat', 'like', "%{$q}%");
+    }
+
+    // wildcard query
+    public function scopeByQuery($query, $q='', $from=null, $to=null) {
+        return $query->byLokasi($q)
+                    ->orWhere(function ($query) use ($q) {
+                        $query->byPejabat($q);
+                    })
+                    ->orWhere(function ($query) use ($q, $from, $to) {
+                        $query->byCD($q, $from, $to);
+                    })
+                    ->latest()
+                    ->orderBy('tgl_dok', 'desc');
     }
 }

@@ -138,7 +138,7 @@ class CD extends Model implements IDokumen
     }
 
     // scope by q (WILD QUERY)
-    public function scopeByQuery($query, $q='', $from=null, $to=null) {
+    public static function queryScope($query, $q, $from, $to) {
         return $query->where('npwp', 'like', "%{$q}%")
                         ->orWhere('nib', 'like', "%{$q}%")
                         ->orWhere('alamat', 'like', "%{$q}%")
@@ -161,6 +161,10 @@ class CD extends Model implements IDokumen
                         })
                         ->latest()
                         ->orderBy('tgl_dok', 'desc');
+    }
+
+    public function scopeByQuery($query, $q='', $from=null, $to=null) {
+        return CD::queryScope($query, $q, $from, $to);
     }
 
     // extrak data declareflags dalam bentuk flat array

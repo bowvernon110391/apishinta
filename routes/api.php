@@ -140,6 +140,39 @@ Route::delete('/cd/details/{id}', 'DetailCDController@destroy')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,KASI,CONSOLE');
 
 //====================================================================================================
+// ENDPOINTS SPP
+// SPP itu classified, jd kasih guard di api endpointsnya
+//====================================================================================================
+// GET /spp
+Route::get('/spp', 'SPPController@index')
+        ->middleware($corsGroup['resourceGroup'], 'role');
+
+// GET /spp/2  => ambil data cd + relasinya
+Route::get('/spp/{id}', 'SPPController@show')
+        ->middleware($corsGroup['singleItem'], 'role');
+
+// GET /cd/2/spp        => ambil data spp by cd
+Route::get('/cd/{id}/spp', 'SPPController@showByCD')
+        ->middleware($corsGroup['singleItem'], 'role');
+
+// POST /cd/2/spp     => store data cd baru
+Route::post('/cd/{id}/spp', 'SPPController@store')
+        ->middleware($corsGroup['resourceGroup'], 'role:PDTT,CONSOLE');
+
+// GET /cd/2/spp_mockup
+Route::get('/cd/{id}/spp_mockup', 'SPPController@generateMockup')
+        -> middleware($corsGroup['singleItem'], 'role');
+
+// PUT /cd/{id} => update data cd
+/* Route::put('/spp/{id}', 'CDController@update')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE'); */
+
+// DELETE /cd/{id} => hapus data cd
+Route::delete('/spp/{id}', 'SPPController@destroy')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE,KASI');
+
+
+//====================================================================================================
 // ENDPOINTS untuk data referensi umum (negara, satuan, kemasan, hs)
 //====================================================================================================
 // GET /negara
