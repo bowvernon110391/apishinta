@@ -182,7 +182,7 @@ class SPP extends Model
     }
 
     // scope based on CD
-    public function scopeByCD($qquery, $q, $from=null, $to=null) {
+    public function scopeByCD($qquery, $q, $from, $to) {
         return $qquery->whereHas('cd', function ($query) use ($q, $from, $to) {
             return CD::queryScope($query, $q, $from, $to);
         });
@@ -195,6 +195,15 @@ class SPP extends Model
                     ->orWhere('nip_pejabat', 'like', "%{$q}%");
     }
 
+    // tanggal dok query
+    public function scopeFrom($query, $d) {
+        return $query->where('tgl_dok', '>=', $d);
+    }
+
+    public function scopeTo($query, $d) {
+        return $query->where('tgl_dok', '<=', $d);
+    }
+
     // wildcard query
     public function scopeByQuery($query, $q='', $from=null, $to=null) {
         return $query->byLokasi($q)
@@ -203,6 +212,12 @@ class SPP extends Model
                     })
                     ->orWhere(function ($query) use ($q, $from, $to) {
                         $query->byCD($q, $from, $to);
+                    })
+                    ->when($from, function ($query) use ($from) {
+                        $query->from($from);
+                    })
+                    ->when($to, function ($query) use ($to) {
+                        $query->to($to);
                     })
                     ->latest()
                     ->orderBy('tgl_dok', 'desc');
