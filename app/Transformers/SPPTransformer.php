@@ -50,7 +50,11 @@ class SPPTransformer extends TransformerAbstract {
             'nama_pejabat'      => $s->nama_pejabat,
             'nip_pejabat'       => (string) $s->nip_pejabat,
 
-            'pemilik_barang'    => $s->pemilik_barang
+            'pemilik_barang'    => $s->pemilik_barang,
+
+            'last_status'       => $s->short_last_status,
+
+            'is_locked'         => $s->is_locked
 
         ];
 
