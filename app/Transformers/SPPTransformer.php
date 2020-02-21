@@ -54,7 +54,12 @@ class SPPTransformer extends TransformerAbstract {
 
             'last_status'       => $s->short_last_status,
 
-            'is_locked'         => $s->is_locked
+            'is_locked'         => $s->is_locked,
+
+            'package_summary'   => $s->cd ? $s->cd->package_summary : null,
+            'package_summary_string'    => $s->cd ? $s->cd->package_summary_string : null,
+            'total_brutto'      => $s->cd ? $s->cd->getTotalValue('brutto') : null,
+            'uraian_summary'    => $s->cd ? $s->cd->uraian_summary : []
 
         ];
 

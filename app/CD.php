@@ -239,7 +239,44 @@ class CD extends Model implements IDokumen
         return $this->declareFlags()->byName("KOMERSIL")->count() > 0;
     }
 
-    // get first value of
+    // get package summary
+    public function getPackageSummaryAttribute() {
+        $package_data = [];
+
+        foreach ($this->details as $d) {
+            if (isset($package_data[$d->jenis_kemasan])) {
+                // add it
+                $package_data[$d->jenis_kemasan]    += $d->jumlah_kemasan;
+            } else {
+                // new key
+                $package_data[$d->jenis_kemasan]    = $d->jumlah_kemasan;
+            }
+        }
+
+        return $package_data;
+    }
+
+    // get package summary as string
+    public function getPackageSummaryStringAttribute() {
+        $p = $this->package_summary;
+
+        $raw = [];
+
+        foreach ($p as $jenis_kemasan => $jumlah_kemasan) {
+            $raw[] = $jumlah_kemasan . ' ' . $jenis_kemasan;
+        }
+
+        return implode(", ", $raw);
+    }
+
+    // get summary of uraian
+    public function getUraianSummaryAttribute() {
+        return $this->details->map(function ($e) {
+            return $e->uraian;
+        });
+    }
+
+    // get first value of items
     public function getFirstValue() {
         $data_hitung = $this->simulasi_pungutan;
 
@@ -316,7 +353,10 @@ class CD extends Model implements IDokumen
                                 'valuta' => $e->kurs->kode_valas,
                                 'ndpbm'  => (float) $e->kurs->kurs_idr,
 
-                                'long_description'  => $e->long_description
+                                'long_description'  => $e->long_description,
+
+                                'short_description' => $e->uraian,
+                                'brutto'    => (float) $e->brutto
                             ];
                         });
 
