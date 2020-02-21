@@ -93,6 +93,8 @@ class CDSeeder extends Seeder
             $detailCount = random_int(1, 14);
 
             $j = 0;
+
+            $kursRef = App\Kurs::inRandomOrder()->first();
             while($j++ < $detailCount) {
                 $d = new App\DetailCD();
                 // fill detail data
@@ -116,7 +118,7 @@ class CDSeeder extends Seeder
 
                 // $d->kode_valuta = $kurs->kode_valas; //$faker->randomElement(['USD','AUD','SGD','INR','MYR']);
                 // $d->nilai_valuta    = $kurs->kurs_idr; //$faker->randomFloat(4, 100.0, 40000.0);
-                $d->kurs()->associate($kurs);
+                $d->kurs()->associate($kursRef);
 
 
                 $p->details()->save($d);

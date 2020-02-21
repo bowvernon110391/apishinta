@@ -31,7 +31,10 @@ class CreateSppHeaderTable extends Migration {
 			$table->decimal('total_pph', 18, 4)->nullable();
 			$table->decimal('total_denda', 18, 4)->nullable();
 			$table->text('keterangan', 65535)->nullable();
-			$table->string('kode_valuta', 8)->nullable();
+
+			// $table->string('kode_valuta', 8)->nullable();
+			$table->unsignedInteger('kurs_id');
+			
 			$table->string('pemilik_barang')->nullable();
 			$table->string('ground_handler')->nullable();
 			// $table->integer('pejabat_id')->unsigned();

@@ -25,7 +25,7 @@ class CDController extends ApiController
      */
     public function index(Request $request)
     {
-        $query = CD::byQuery(
+        $query = CD::pure()->byQuery(
             $request->get('q', ''),
             $request->get('from'),
             $request->get('to')

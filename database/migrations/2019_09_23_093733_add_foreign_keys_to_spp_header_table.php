@@ -18,6 +18,8 @@ class AddForeignKeysToSppHeaderTable extends Migration {
 			$table->foreign('lokasi_id', 'spp_header_ibfk_2')->references('id')->on('lokasi');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 			// kode negara
 			$table->foreign('kd_negara_asal', 'kd_ref_negara')->references('kode')->on('referensi_negara');
+			// kurs id
+			$table->foreign('kurs_id', 'spp_kurs_id')->references('id')->on('kurs');
 		});
 	}
 
@@ -34,6 +36,7 @@ class AddForeignKeysToSppHeaderTable extends Migration {
 			$table->dropForeign('spp_header_ibfk_1');
 			$table->dropForeign('spp_header_ibfk_2');
 			$table->dropForeign('kd_ref_negara');
+			$table->dropForeign('spp_kurs_id');
 		});
 	}
 

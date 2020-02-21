@@ -98,4 +98,58 @@ class SPP extends Model
 
         return $links;
     }
+
+    // Helpers
+    static public function createFromCD(CD $cd) {
+        if (!$cd) {
+            return null;
+        }
+
+        // it's valid? must not be locked yet
+        if ($cd->is_locked) {
+            throw new \Exception("CD #{$cd->id} is locked already.");
+        }
+
+        // perhaps there's already st for this thing?
+        if ($cd->spp) {
+            throw new \Exception("CD #{$cd->id} is already postponed!");
+        }
+
+        // grab most recent kurs
+        $first = $cd->getFirstValue();
+
+        // $data_hitung    = $cd->simulasi_pungutan;
+
+        // compute something
+        $total_fob = $cd->getTotalValue('fob');
+        $total_insurance = $cd->getTotalValue('insurance');
+        $total_freight = $cd->getTotalValue('freight');
+        $total_cif = $total_fob + $total_insurance + $total_freight;
+
+        $kurs = Kurs::kode($first['valuta'])
+                ->perTanggal(date('Y-m-d'))
+                ->first();
+        
+        if (!$kurs) {
+            throw new \Exception("Cannot find recent data for kurs {$first['valuta']}");
+        }
+
+        // create it
+        $s = new SPP([
+            'tgl_dok'   => date('Y-m-d'),
+            'total_fob' => $total_fob,
+            'total_insurance'   => $total_insurance,
+            'total_freight'     => $total_freight,
+            'total_cif' => $total_cif,
+            'kurs_id'   => $kurs->id,
+            'keterangan'        => "",
+            'pemilik_barang'    => $cd->penumpang->nama
+        ]);
+
+        // link to cd
+        $s->cd()->associate($cd);
+
+        // return it
+        return $s;
+    }
 }

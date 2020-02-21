@@ -17,8 +17,8 @@ class SeedLokasiTable extends Migration
             ['nama'=>'T2F'],
             ['nama'=>'T3'],
             ['nama'=>'KANTOR'],
-            ['nama'=>'TPP'],
-            ['nama'=>'GUDANG']
+            // ['nama'=>'TPP'],
+            // ['nama'=>'GUDANG']
         ]);
     }
 

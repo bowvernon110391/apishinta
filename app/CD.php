@@ -89,6 +89,12 @@ class CD extends Model implements IDokumen
     }
 
     // SCOPES
+    // pure CD onleeeeh (not ST-ed, not SPP-ed, not Impor Sementara-ed)
+    public function scopePure($query) {
+        return $query->doesntHave('spp')
+                    ->doesntHave('imporSementara');
+    }
+
     // scope by number
     public function scopeNo($query, $no) {
         return $query->where('no', $no);
@@ -227,6 +233,29 @@ class CD extends Model implements IDokumen
     // apakah importasi termasuk komersil?
     public function getKomersilAttribute() {
         return $this->declareFlags()->byName("KOMERSIL")->count() > 0;
+    }
+
+    // get first value of
+    public function getFirstValue() {
+        $data_hitung = $this->simulasi_pungutan;
+
+        // check if it has any data_perhitungan
+        if (count($data_hitung['data_perhitungan']) < 1) {
+            return null;
+        }
+
+        // kembaliin data pertama?
+        return $data_hitung['data_perhitungan'][0];
+    }
+
+    // get total fob
+    public function getTotalValue($param_name) {
+        $data_hitung = $this->simulasi_pungutan;
+        // return array_reduce($data_hitung['data_perhitungan'], function ($acc, $e) { return $acc + $e; }, 0);
+
+        $fobs = array_map(function ($e) use ($param_name) { return $e[$param_name]; }, $data_hitung['data_perhitungan']);
+
+        return array_reduce($fobs, function ($acc, $e) { return $acc+$e; }, 0);
     }
 
     // simulasi perhitungan
