@@ -118,13 +118,15 @@ class SPP extends Model
         // grab most recent kurs
         $first = $cd->getFirstValue();
 
-        // $data_hitung    = $cd->simulasi_pungutan;
+        $data_hitung    = $cd->simulasi_pungutan;
 
         // compute something
         $total_fob = $cd->getTotalValue('fob');
         $total_insurance = $cd->getTotalValue('insurance');
         $total_freight = $cd->getTotalValue('freight');
         $total_cif = $total_fob + $total_insurance + $total_freight;
+
+        $total_nilai_pabean = $cd->getTotalValue('nilai_pabean');
 
         $kurs = Kurs::kode($first['valuta'])
                 ->perTanggal(date('Y-m-d'))
@@ -133,6 +135,8 @@ class SPP extends Model
         if (!$kurs) {
             throw new \Exception("Cannot find recent data for kurs {$first['valuta']}");
         }
+
+        $pembebasan = $data_hitung['data_pembebasan'] ? $data_hitung['data_pembebasan']['nilai_pembebasan_rp'] : 0;
 
         // create it
         $s = new SPP([
@@ -143,7 +147,17 @@ class SPP extends Model
             'total_cif' => $total_cif,
             'kurs_id'   => $kurs->id,
             'keterangan'        => "",
-            'pemilik_barang'    => $cd->penumpang->nama
+            'pemilik_barang'    => $cd->penumpang->nama,
+
+            'total_nilai_pabean'    => $total_nilai_pabean,
+            'pembebasan'    => $pembebasan,
+
+            'total_bm'      => $data_hitung['total_bm'],
+            'total_ppn'     => $data_hitung['total_ppn'],
+            'total_pph'     => $data_hitung['total_pph'],
+            'total_ppnbm'   => $data_hitung['total_ppnbm'],
+            'total_denda'   => 0,   // by default tidak ada denda
+            'kd_negara_asal'    => $cd->pelabuhanAsal->negara->kode
         ]);
 
         // link to cd
