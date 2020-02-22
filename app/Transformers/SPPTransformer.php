@@ -8,14 +8,16 @@ class SPPTransformer extends TransformerAbstract {
     // defaultly loaded relations
     protected $defaultIncludes = [
         'kurs',
-        'negara_asal'
+        'negara_asal',
+        'status'
     ];
 
     // available relations, default relations not needed to apply
     protected $availableIncludes = [
         'kurs',
         'cd',
-        'negara_asal'
+        'negara_asal',
+        'status'
     ];
 
     // basic transformation, without any sweetener
@@ -64,6 +66,12 @@ class SPPTransformer extends TransformerAbstract {
         ];
 
         return $result;
+    }
+
+    // include status
+    public function includeStatus(SPP $s) {
+        $status = collect($s->statusOrdered());
+        return $this->collection($status, new StatusTransformer);
     }
 
     // include negara asal

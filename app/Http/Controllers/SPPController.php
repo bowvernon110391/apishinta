@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\AppLog;
 use App\CD;
+use App\Lokasi;
 use App\SPP;
 use App\Transformers\SPPTransformer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class SPPController extends ApiController
@@ -40,6 +42,8 @@ class SPPController extends ApiController
      */
     public function store(Request $r, $cdId)
     {
+        DB::beginTransaction();
+
         try {
             // ambil data CD dulu
             $cd = CD::find($cdId);
@@ -48,11 +52,53 @@ class SPPController extends ApiController
                 throw new NotFoundResourceException("CD #{$cdId} was not found");
             }
 
-            // coba ambil data pelengkap?
+            // yang diperlukan hanya catatan,
+            // dan lokasi, data pejabat, etc
+            $keterangan = $r->get('keterangan', '');
 
+            // grab some user data
+            $nama_pejabat   = $r->userInfo['name'];
+            $nip_pejabat    = $r->userInfo['nip'];
+
+            // data lokasi
+            $nama_lokasi    = expectSomething($r->get('lokasi'), "Lokasi Perekaman");
+            $lokasi     = Lokasi::byName($nama_lokasi)->first();
+
+            // spawn a SPP from that cd
+            $spp = SPP::createFromCD($cd);
+
+            // fill in the blanks
+            $spp->lokasi()->associate($lokasi);
+            $spp->nama_pejabat  = $nama_pejabat;
+            $spp->nip_pejabat   = $nip_pejabat;
+            $spp->keterangan    = $keterangan;
+
+            // save and then log
+            $spp->save();
+
+            // log
+            AppLog::logInfo("SPP #{$spp->id} diinput oleh {$r->userInfo['username']}", $spp);
+
+            // add initial status for spp
+            $spp->appendStatus('CREATED', $nama_lokasi);
+
+            // directly lock
+            $spp->lock();
+
+            // commit transaction
+            DB::commit();
+
+            // return something
+            return $this->respondWithArray([
+                'id'    => $spp->id,
+                'uri'   => '/spp/' . $spp->id
+            ]);
         } catch (NotFoundResourceException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("CD #{$cdId} was not found");
         } catch (\Exception $e) {
-            //throw $th;
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
         }
     }
 
