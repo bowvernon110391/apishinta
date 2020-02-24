@@ -13,7 +13,7 @@ class PdfSPP extends Fpdf {
         $this->spp = $s;
 
         parent::__construct('P', 'mm', 'A4');
-        $this->SetAutoPageBreak(true);
+        $this->SetAutoPageBreak(true, 14);
     }
 
     public function generateFirstpage() {
