@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\PDFCreator;
+use App\Printables\PdfSPP;
 use App\Printables\PdfSSPCP;
+use App\SPP;
 use App\SSPCP;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -34,6 +36,23 @@ class PDFController extends ApiController
                 throw new BadRequestHttpException("Print request denied. Explain yerself!");
             }
 
+            // build response header
+            $headers = [
+                'Content-Type'  => 'application/pdf',
+            ];
+
+            // if we'got a filename, then force download
+            if ($r->get('filename')) {
+                // fix the filename to ensure pdf extension
+                $filename = $r->get('filename');
+
+                if (strtoupper(substr($filename, -4, 4)) != '.PDF') {
+                    $filename .= ".pdf";
+                }
+
+                $headers['Content-Disposition'] = "attachment; filename={$filename}";
+            }
+
             switch ($doctype) {
                 case 'sspcp':
                 case 'SSPCP':
@@ -46,22 +65,18 @@ class PDFController extends ApiController
                     $pdf = new PdfSSPCP($sspcp);
                     $pdf->generateFirstpage();
 
-                    // build response header
-                    $headers = [
-                        'Content-Type'  => 'application/pdf',
-                    ];
+                    return response($pdf->Output('S'), 200, $headers);
+                
+                case 'spp':
+                case 'SPP':
+                    $spp = SPP::find($id);
 
-                    // if we'got a filename, then force download
-                    if ($r->get('filename')) {
-                        // fix the filename to ensure pdf extension
-                        $filename = $r->get('filename');
-
-                        if (strtoupper(substr($filename, -4, 4)) != '.PDF') {
-                            $filename .= ".pdf";
-                        }
-
-                        $headers['Content-Disposition'] = "attachment; filename={$filename}";
+                    if (!$spp) {
+                        throw new NotFoundHttpException("SPP #{$id} was not found");
                     }
+
+                    $pdf = new PdfSPP($spp);
+                    $pdf->generateFirstpage();
 
                     return response($pdf->Output('S'), 200, $headers);
 
