@@ -208,6 +208,9 @@ class SPP extends Model
     public function scopeByQuery($query, $q='', $from=null, $to=null) {
         return $query->byLokasi($q)
                     ->orWhere(function ($query) use ($q) {
+                        $query->where('no_dok', $q);
+                    })
+                    ->orWhere(function ($query) use ($q) {
                         $query->byPejabat($q);
                     })
                     ->orWhere(function ($query) use ($q, $from, $to) {
