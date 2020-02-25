@@ -91,7 +91,7 @@ class CDSeeder extends Seeder
             }
 
             // create teh details
-            $detailCount = random_int(1, 14);
+            $detailCount = random_int(1, 4);
 
             $j = 0;
 
