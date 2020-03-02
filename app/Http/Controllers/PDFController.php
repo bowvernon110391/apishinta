@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\PDFCreator;
+use App\Printables\PdfBPPM;
 use App\Printables\PdfSPP;
-use App\Printables\PdfSSPCP;
 use App\SPP;
 use App\SSPCP;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -56,14 +53,15 @@ class PDFController extends ApiController
             switch ($doctype) {
                 case 'sspcp':
                 case 'SSPCP':
+                case 'bppm':
+                case 'BPPM':
                     $sspcp = SSPCP::find($id);
 
                     if (!$sspcp) {
                         throw new NotFoundHttpException("SSPCP #{$id} was not found");
                     }
 
-                    $pdf = new PdfSSPCP($sspcp);
-                    $pdf->generateFirstpage();
+                    $pdf = PdfBPPM::createFromSSPCP($sspcp);
 
                     return response($pdf->Output('S'), 200, $headers);
                 
