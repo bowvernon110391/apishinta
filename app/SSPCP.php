@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 class SSPCP extends Model implements IDokumen, ILinkable
 {
@@ -45,7 +44,7 @@ class SSPCP extends Model implements IDokumen, ILinkable
     }
 
     public function getSkemaPenomoranAttribute(){
-        return 'SSPCP/'. $this->lokasi->nama . '/SH';
+        return 'BPPM';
     }
 
     public function lock(){

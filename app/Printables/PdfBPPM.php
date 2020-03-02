@@ -186,11 +186,38 @@ class PdfBPPM extends Fpdf {
         $this->jumlah_pembayaran    = number_format($total);
         $this->jumlah_pembayaran_text = strtoupper(trim(penyebutRupiah($total)));
 
-        $this->no_bppm  = $s->nomor_lengkap;
+        $this->no_bppm  = $this->formatBppmSequence($s->no_dok, $s->tgl_dok, $this->kode_kantor);
         $this->tgl_bppm = formatTanggalDMY($s->tgl_dok);
 
         $this->nama_pejabat = $s->nama_pejabat;
         $this->nip_pejabat  = $s->nip_pejabat;
+    }
+
+    // function to create number of BPPM
+    protected function formatBppmSequence($nomor, $sqlDate, $kode_kantor) {
+        $monthLetter = [
+            '01'    => 'A',
+            '02'    => 'B',
+            '03'    => 'C',
+            '04'    => 'D',
+            '05'    => 'E',
+            '06'    => 'F',
+            '07'    => 'G',
+            '08'    => 'H',
+            '09'    => 'I',
+            '10'    => 'J',
+            '11'    => 'K',
+            '12'    => 'L',
+        ];
+
+        $month  = substr($sqlDate, 5, 2);
+        
+        $part1  = substr($sqlDate, 2, 2);
+        $part2  = $kode_kantor;
+        $part3  = $monthLetter[$month];
+        $part4  = str_pad($nomor, 7, '0', STR_PAD_LEFT);
+
+        return $part1.$part2.$part3.$part4;
     }
 
     // make from SSPCP
