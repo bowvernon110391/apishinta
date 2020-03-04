@@ -13,7 +13,6 @@ use App\Penumpang;
 use App\SSPCP;
 use App\Transformers\CDTransformer;
 use App\Transformers\DetailCDTransformer;
-use Exception;
 use Illuminate\Support\Facades\DB;
 
 class CDController extends ApiController
@@ -67,7 +66,7 @@ class CDController extends ApiController
             $pembebasan = expectSomething($r->get('pembebasan'), 'Jumlah Pembebasan');
             $jml_anggota_keluarga = expectSomething($r->get('jml_anggota_keluarga'), 'Jumlah Anggota Keluarga');
             $pph_tarif = expectSomething($r->get('pph_tarif'), 'Tarif PPh');
-            $ndpbm = expectSomething($r->get('ndpbm'), 'NDPBM');
+            // $ndpbm = expectSomething($r->get('ndpbm'), 'NDPBM');
 
             // pastikan id penumpang valid
             if (!Penumpang::find($penumpang_id)) {
@@ -106,11 +105,11 @@ class CDController extends ApiController
             $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
 
             // ndpbm
-            $kursNdpbm = Kurs::find($ndpbm['data']['id']);
+            $kursNdpbm = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first(); //Kurs::find($ndpbm['data']['id']);
 
             // if not found, refuse further processing
             if (!$kursNdpbm) {
-                throw new \Exception("Kurs NDPBM invalid");
+                throw new \Exception("Kurs NDPBM (USD) invalid. Pastikan data kurs terupdate");
             }
 
             $cd->ndpbm()->associate($kursNdpbm);
@@ -220,7 +219,7 @@ class CDController extends ApiController
             $declare_flags  = $r->get('declare_flags');
             $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
             $npwp_nib = $r->get('npwp_nib');
-            $ndpbm = expectSomething($r->get('ndpbm'), 'NDPBM');
+            // $ndpbm = expectSomething($r->get('ndpbm'), 'NDPBM');
 
             // set npwp/nib
             if ($npwp_nib) {
@@ -243,11 +242,11 @@ class CDController extends ApiController
             // $cd->ndpbm_id = $ndpbm['data']['id'];
 
             // ndpbm
-            $kursNdpbm = Kurs::find($ndpbm['data']['id']);
+            $kursNdpbm = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first(); //Kurs::find($ndpbm['data']['id']);
 
             // if not found, refuse further processing
             if (!$kursNdpbm) {
-                throw new \Exception("Kurs NDPBM invalid");
+                throw new \Exception("Kurs NDPBM invalid. Pastikan data kurs up-to-date");
             }
 
             $cd->ndpbm()->associate($kursNdpbm);
