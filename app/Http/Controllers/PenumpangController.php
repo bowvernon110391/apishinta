@@ -27,7 +27,9 @@ class PenumpangController extends ApiController
                                         ->orWhere("pekerjaan", "LIKE", $qSearch)
                                         ->orWhere(function ($query) use ($q) {
                                             $query->byNegara($q);
-                                        });
+                                        })
+                                        ->orWhere("email", "LIKE", $qSearch)
+                                        ->orWhere("phone", "LIKE", $qSearch);
         } else {
             // pake parameter lain
             $qNama = $request->get('nama');
@@ -103,13 +105,19 @@ class PenumpangController extends ApiController
         if (!$no_paspor) {
             return $this->errorBadRequest('no paspor tidak valid => ' . $no_paspor);
         }
-        if (!$pekerjaan) {
+        if (/* !$pekerjaan */false) {
             return $this->errorBadRequest('Pekerjaan tidak valid => ' . $pekerjaan);
         }
+
+
 
         // attempt to store it
         // use try catch
         try {
+            $email      = expectSomething($request->get('email'), 'e-mail');
+            $phone      = expectSomething($request->get('phone'), 'nomor handphone');
+
+
             $penumpang = new Penumpang;
 
             $penumpang->nama = $nama;
@@ -117,6 +125,8 @@ class PenumpangController extends ApiController
             $penumpang->no_paspor   = $no_paspor;
             $penumpang->kebangsaan  = $kebangsaan;
             $penumpang->pekerjaan   = $pekerjaan;
+            $penumpang->email       = $email;
+            $penumpang->phone       = $phone;
 
             // coba save
             if (!$penumpang->save())
@@ -136,10 +146,10 @@ class PenumpangController extends ApiController
                 return $this->errorInternalServer();
             }
             // ada data yg gk bisa diinput ke db. mgkn krn default value gk diset?
-            return $this->errorBadRequest("Cek kembali data inputannya ada yg gk sesuai");
+            return $this->errorBadRequest("Cek kembali data inputannya ada yg gk sesuai: " . $e->getMessage());
         } catch (\Exception $e) {
             // last straw. error apaan yak? kasitau aja dah bodo amat
-            return $this->errorServiceUnavailable($e->getMessage());
+            return $this->errorBadRequest($e->getMessage());
         }
     }
 
@@ -185,7 +195,7 @@ class PenumpangController extends ApiController
         $pekerjaan  = $request->get('pekerjaan');
 
         // check if all parameter exists
-        if (!$nama || !$tgl_lahir || !$kebangsaan || !$no_paspor || !$pekerjaan) {
+        if (!$nama || !$tgl_lahir || !$kebangsaan || !$no_paspor /* || !$pekerjaan */) {
             // shiet, one of em is missing. return error
             return $this->errorBadRequest("Data penumpang tidak lengkap. Silahkan lengkapi");
         }
@@ -201,6 +211,9 @@ class PenumpangController extends ApiController
             $penumpang->no_paspor   = $no_paspor;
             $penumpang->kebangsaan  = $kebangsaan;
             $penumpang->pekerjaan   = $pekerjaan;
+
+            $penumpang->email   = expectSomething($request->get('email'), 'e-mail');
+            $penumpang->phone   = expectSomething($request->get('phone'), 'nomor telepon');
 
             // coba save
             if (!$penumpang->save())
@@ -218,10 +231,10 @@ class PenumpangController extends ApiController
                 return $this->errorInternalServer();
             }
             // ada data yg gk bisa diinput ke db. mgkn krn default value gk diset?
-            return $this->errorBadRequest("Cek kembali data inputannya ada yg gk sesuai");
+            return $this->errorBadRequest("Cek kembali data inputannya ada yg gk sesuai: ".$e->getMessage());
         } catch (\Exception $e) {
             // last straw. error apaan yak? kasitau aja dah bodo amat
-            return $this->errorServiceUnavailable($e->getMessage());
+            return $this->errorBadRequest($e->getMessage());
         }
     }
 

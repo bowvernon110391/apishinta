@@ -23,9 +23,12 @@ class PenumpangSeeder extends Seeder
             $p = new App\Penumpang(); 
             $p->nama        = $faker->name;
             $p->tgl_lahir   = $faker->date('Y-m-d');
-            $p->pekerjaan   = $faker->jobTitle;
+            $p->pekerjaan   = '-';
             $p->no_paspor   = $faker->tollFreePhoneNumber;
             $p->kebangsaan  = $faker->countryCode;
+
+            $p->email       = $faker->email;
+            $p->phone       = $faker->phoneNumber;
 
             $p->save();
         }
