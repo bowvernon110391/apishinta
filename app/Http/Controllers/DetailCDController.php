@@ -48,8 +48,8 @@ class DetailCDController extends ApiController
             // grab all essential data, then attempt updating
             $uraian = expectSomething($data['uraian'], 'Uraian');
 
-            $jumlah_satuan = expectSomething($data['satuan']['jumlah'], 'Jumlah Satuan');
-            $jenis_satuan = expectSomething($data['satuan']['jenis'], 'Jenis Satuan');
+            $jumlah_satuan = $data['satuan']['jumlah'] ?? 0; // expectSomething($data['satuan']['jumlah'], 'Jumlah Satuan');
+            $jenis_satuan = $data['satuan']['jenis'] ?? 'PCE'; // expectSomething($data['satuan']['jenis'], 'Jenis Satuan');
 
             $jumlah_kemasan = expectSomething($data['kemasan']['jumlah'], 'Jumlah Kemasan');
             $jenis_kemasan = expectSomething($data['kemasan']['jenis'], 'Jenis Kemasan');
@@ -151,8 +151,8 @@ class DetailCDController extends ApiController
             $data = $r->json()->all();
             // grab all essential data, then attempt updating
             $uraian = expectSomething($data['uraian'], 'Uraian');
-            $jumlah_satuan = expectSomething($data['satuan']['jumlah'], 'Jumlah Satuan');
-            $jenis_satuan = expectSomething($data['satuan']['jenis'], 'Jenis Satuan');
+            $jumlah_satuan = $data['satuan']['jumlah'] ?? 0; //expectSomething($data['satuan']['jumlah'], 'Jumlah Satuan');
+            $jenis_satuan = $data['satuan']['jenis'] ?? 'PCE'; //expectSomething($data['satuan']['jenis'], 'Jenis Satuan');
             $jumlah_kemasan = expectSomething($data['kemasan']['jumlah'], 'Jumlah Kemasan');
             $jenis_kemasan = expectSomething($data['kemasan']['jenis'], 'Jenis Kemasan');
             $hs_code = expectSomething($data['hscode'], 'Kode HS');
