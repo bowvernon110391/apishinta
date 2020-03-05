@@ -336,6 +336,9 @@ class CD extends Model implements IDokumen
                                 'jumlah_satuan' => $e->jumlah_satuan,
                                 'jenis_satuan'  => $e->jenis_satuan,
 
+                                'jumlah_kemasan'    => $e->jumlah_kemasan,
+                                'jenis_kemasan'     => $e->jenis_kemasan,
+
                                 'ppn_tarif'     => 10.0,
                                 'pph_tarif'     => (float) $pph_tarif,
                                 'ppnbm_tarif'   => (float) $e->ppnbm_tarif,

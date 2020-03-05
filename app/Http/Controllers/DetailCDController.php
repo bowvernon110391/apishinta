@@ -57,7 +57,7 @@ class DetailCDController extends ApiController
             $hs_code = expectSomething($data['hscode'], 'Kode HS');
             $fob = expectSomething($data['fob'], 'FOB');
             $brutto = expectSomething($data['brutto'], 'Brutto');
-            $netto = expectSomething($data['netto'], 'Netto');
+            $netto = $data['netto']; //expectSomething($data['netto'], 'Netto');
             $freight = $r->get('freight', 0);
             $insurance = $r->get('insurance', 0);
             $ppnbm_tarif = $r->get('ppnbm_tarif');
@@ -158,7 +158,7 @@ class DetailCDController extends ApiController
             $hs_code = expectSomething($data['hscode'], 'Kode HS');
             $fob = expectSomething($data['fob'], 'FOB');
             $brutto = expectSomething($data['brutto'], 'Brutto');
-            $netto = expectSomething($data['netto'], 'Netto');
+            $netto = $data['netto']; //expectSomething($data['netto'], 'Netto');
             $freight = $r->get('freight', 0);
             $insurance = $r->get('insurance', 0);
             $ppnbm_tarif = $r->get('ppnbm_tarif');
