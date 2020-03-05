@@ -114,7 +114,8 @@ class DetailCD extends Model
     // long desc gabungan antara uraian + jumlah/jenis kms + satuan, brutto + any other specs
     public function getLongDescriptionAttribute() {
         // simple desc at first
-        $longDesc = "{$this->uraian} \n-- {$this->jumlah_kemasan} {$this->jenis_kemasan} \n-- {$this->jumlah_satuan} {$this->jenis_satuan} \n-- brutto {$this->brutto} KG \n-- netto {$this->netto} KG";
+        // $longDesc = "{$this->uraian} \n-- {$this->jumlah_kemasan} {$this->jenis_kemasan} \n-- {$this->jumlah_satuan} {$this->jenis_satuan} \n-- brutto {$this->brutto} KG \n-- netto {$this->netto} KG";
+        $longDesc = "{$this->uraian} \n-- {$this->jumlah_kemasan} {$this->jenis_kemasan} \n-- brutto {$this->brutto} KG";
         // grab all detail sekunders in a long string?
         $detailSekunders = $this->detailSekunders->map(function ($e) {
             return "\n--> {$e->referensiJenisDetailSekunder->nama} : {$e->data}";
