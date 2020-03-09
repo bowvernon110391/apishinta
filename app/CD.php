@@ -87,12 +87,17 @@ class CD extends Model implements IDokumen
     public function spp() {
         return $this->hasOne('App\SPP', 'cd_header_id');
     }
+    
+    public function st() {
+        return $this->hasOne('App\ST', 'cd_header_id');
+    }
 
     // SCOPES
     // pure CD onleeeeh (not ST-ed, not SPP-ed, not Impor Sementara-ed)
     public function scopePure($query) {
         return $query->doesntHave('spp')
-                    ->doesntHave('imporSementara');
+                    ->doesntHave('imporSementara')
+                    ->doesntHave('st');
     }
 
     // scope by number
@@ -228,6 +233,13 @@ class CD extends Model implements IDokumen
             $links[] = [
                 'rel'   => 'spp',
                 'uri'   => $this->spp->uri
+            ];
+        }
+
+        if ($this->st) {
+            $links[] = [
+                'rel'   => 'st',
+                'uri'   => $this->st->uri
             ];
         }
 

@@ -30,7 +30,7 @@ class CreateStHeaderTable extends Migration {
 			$table->decimal('total_ppnbm', 18, 4)->nullable();
 			$table->decimal('total_pph', 18, 4)->nullable();
 			$table->decimal('total_denda', 18, 4)->nullable();
-			$table->enum('jenis', array('Kantor','Terminal'));
+			$table->enum('jenis', array('KANTOR','TERMINAL'));
 			$table->text('keterangan', 65535)->nullable();
 			$table->string('kode_valuta', 8)->nullable();
 			$table->string('pemilik_barang')->nullable();
@@ -38,10 +38,14 @@ class CreateStHeaderTable extends Migration {
 			$table->string('nama_pejabat');
 			$table->string('nip_pejabat');
 
+			$table->string('kd_negara_asal', 4);
+			$table->unsignedInteger('kurs_id')->index();
+
 			$table->decimal('nilai_valuta', 18, 4)->nullable();
-			$table->decimal('total_brutto', 18, 4);
-			$table->decimal('total_netto', 18, 4);
+			// $table->decimal('total_brutto', 18, 4);
+			// $table->decimal('total_netto', 18, 4);
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

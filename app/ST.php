@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SPP extends Model
+class ST extends Model
 {
     use TraitLoggable;
     use TraitDokumen {
@@ -16,11 +16,12 @@ class SPP extends Model
     use SoftDeletes;
 
     // table name
-    protected $table = 'spp_header';
+    protected $table = 'st_header';
 
     // default values
     protected $attributes = [
         'no_dok'    => 0,
+        'jenis'     => 'KANTOR'
     ];
 
     // fillables/guarded
@@ -77,12 +78,12 @@ class SPP extends Model
     // COMPUTED PROPERTIES GO HERE!!
     //=================================================================================================
     public function getJenisDokumenAttribute() {
-        return 'spp';
+        return 'st';
     }
 
     public function getSkemaPenomoranAttribute()
     {
-        return 'SPP/' . $this->lokasi->nama . '/SH';
+        return 'ST/' . $this->lokasi->nama . '/SH';
     }
 
     public function getLinksAttribute() {
@@ -115,8 +116,8 @@ class SPP extends Model
         }
 
         // perhaps there's already st for this thing?
-        if ($cd->spp || $cd->st) {
-            throw new \Exception("CD #{$cd->id} is already postponed!");
+        if ($cd->st || $cd->spp) {
+            throw new \Exception("CD #{$cd->id} is already on detention!");
         }
 
         // grab most recent kurs
@@ -143,7 +144,7 @@ class SPP extends Model
         $pembebasan = $data_hitung['data_pembebasan'] ? $data_hitung['data_pembebasan']['nilai_pembebasan_rp'] : 0;
 
         // create it
-        $s = new SPP([
+        $s = new ST([
             'tgl_dok'   => date('Y-m-d'),
             'total_fob' => $total_fob,
             'total_insurance'   => $total_insurance,
@@ -202,6 +203,17 @@ class SPP extends Model
 
     public function scopeTo($query, $d) {
         return $query->where('tgl_dok', '<=', $d);
+    }
+
+    // jenis
+    public function scopeJenis($query, $jenis) {
+        // is it array?
+        // make sure it is
+        if (!is_array($jenis)) {
+            $jenis = [$jenis];
+        }
+
+        return $query->whereIn('jenis', $jenis);
     }
 
     // wildcard query

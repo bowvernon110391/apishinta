@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\AppLog;
 use App\CD;
 use App\Lokasi;
-use App\SPP;
-use App\Transformers\SPPTransformer;
+use App\ST;
+use App\Transformers\STTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
-class SPPController extends ApiController
+class STController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -22,17 +22,19 @@ class SPPController extends ApiController
     {
         $jenis  = $r->get('jenis');
         // pure query?
-        $query = SPP::byQuery(
+        $query = ST::byQuery(
             $r->get('q', ''),
             $r->get('from'),
             $r->get('to')
-        );
+        )->when($jenis, function ($query) use ($jenis) {
+            $query->jenis($jenis);
+        });
 
         $paginator = $query
                     ->paginate($r->get('number'))
                     ->appends($r->except('page'));
 
-        return $this->respondWithPagination($paginator, new SPPTransformer);
+        return $this->respondWithPagination($paginator, new STTransformer);
     }
 
     /**
@@ -56,6 +58,7 @@ class SPPController extends ApiController
             // yang diperlukan hanya catatan,
             // dan lokasi, data pejabat, etc
             $keterangan = $r->get('keterangan', '');
+            $jenis      = expectSomething($r->get('jenis'), 'Jenis ST');
 
             // grab some user data
             $nama_pejabat   = $r->userInfo['name'];
@@ -66,33 +69,34 @@ class SPPController extends ApiController
             $lokasi     = Lokasi::byName($nama_lokasi)->first();
 
             // spawn a SPP from that cd
-            $spp = SPP::createFromCD($cd);
+            $st = ST::createFromCD($cd);
 
             // fill in the blanks
-            $spp->lokasi()->associate($lokasi);
-            $spp->nama_pejabat  = $nama_pejabat;
-            $spp->nip_pejabat   = $nip_pejabat;
-            $spp->keterangan    = $keterangan;
+            $st->lokasi()->associate($lokasi);
+            $st->nama_pejabat  = $nama_pejabat;
+            $st->nip_pejabat   = $nip_pejabat;
+            $st->keterangan    = $keterangan;
+            $st->jenis         = $jenis;
 
             // save and then log
-            $spp->save();
+            $st->save();
 
             // log
-            AppLog::logInfo("SPP #{$spp->id} diinput oleh {$r->userInfo['username']}", $spp);
+            AppLog::logInfo("ST #{$st->id} diinput oleh {$r->userInfo['username']}", $st);
 
             // add initial status for spp
-            $spp->appendStatus('CREATED', $nama_lokasi);
+            $st->appendStatus('CREATED', $nama_lokasi);
 
             // directly lock
-            $spp->lock();
+            $st->lock();
 
             // commit transaction
             DB::commit();
 
             // return something
             return $this->respondWithArray([
-                'id'    => $spp->id,
-                'uri'   => '/spp/' . $spp->id
+                'id'    => $st->id,
+                'uri'   => '/st/' . $st->id
             ]);
         } catch (NotFoundResourceException $e) {
             DB::rollBack();
@@ -111,13 +115,13 @@ class SPPController extends ApiController
      */
     public function show($id)
     {
-        $spp = SPP::find($id);
+        $st = ST::find($id);
 
-        if (!$spp) {
-            return $this->errorNotFound("SPP #{$id} was not found!");
+        if (!$st) {
+            return $this->errorNotFound("ST #{$id} was not found!");
         }
 
-        return $this->respondWithItem($spp, new SPPTransformer);
+        return $this->respondWithItem($st, new STTransformer);
     }
 
     public function showByCD($id) {
@@ -128,13 +132,13 @@ class SPPController extends ApiController
         }
 
         // grab spp
-        $spp = $cd->spp;
+        $st = $cd->st;
 
-        if (!$spp) {
-            return $this->errorNotFound("CD #{$id} tidak memiliki relasi dengan SPP manapun");
+        if (!$st) {
+            return $this->errorNotFound("CD #{$id} tidak memiliki relasi dengan ST manapun");
         }
 
-        return $this->respondWithItem($spp, new SPPTransformer);
+        return $this->respondWithItem($st, new STTransformer);
     }
 
     /**
@@ -158,22 +162,22 @@ class SPPController extends ApiController
     public function destroy(Request $r, $id)
     {
         //
-        $spp = SPP::find($id);
+        $st = ST::find($id);
 
-        if (!$spp) {
-            return $this->errorNotFound("SPP #{$id} was not found");
+        if (!$st) {
+            return $this->errorNotFound("ST #{$id} was not found");
         }
 
         // are we authorized?
-        if (!canEdit($spp->is_locked, $r->userInfo)) {
-            return $this->errorForbidden("SPP sudah terkunci, dan privilege anda tidak cukup untuk operasi ini");
+        if (!canEdit($st->is_locked, $r->userInfo)) {
+            return $this->errorForbidden("ST sudah terkunci, dan privilege anda tidak cukup untuk operasi ini");
         }
 
         // attempt deletion
         try {
-            AppLog::logWarning("SPP #{$id} dihapus oleh {$r->userInfo['username']}", $spp);
+            AppLog::logWarning("ST #{$id} dihapus oleh {$r->userInfo['username']}", $st);
 
-            $spp->delete();
+            $st->delete();
 
             return $this->setStatusCode(204)
                         ->respondWithEmptyBody();
@@ -196,9 +200,9 @@ class SPPController extends ApiController
             }
 
             // generate mockup spp based on that
-            $spp = SPP::createFromCD($cd);
+            $st = ST::createFromCD($cd);
 
-            return $this->respondWithItem($spp, new SPPTransformer);
+            return $this->respondWithItem($st, new STTransformer);
         } catch (NotFoundResourceException $e) {
             return $this->errorNotFound("CD #{$cdId} was not found");
         } catch (\Exception $e) {
