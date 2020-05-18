@@ -87,7 +87,8 @@ if (!function_exists('grabsKursData')) {
 			for ($i = 0; $i < count($matches[0]); $i++) {
 				$kdValuta = $matches[1][$i];
 
-				$nilai = str_replace(',', '', $matches[2][$i]);
+				$nilai = str_replace('.', '', $matches[2][$i]);
+				$nilai = str_replace(',', '.', $nilai);
 
 				$kurs = $nilai * 1;
 
