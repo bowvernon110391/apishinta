@@ -164,6 +164,9 @@ class CD extends Model implements IDokumen
                         ->when($to, function ($query) use ($to) {
                             $query->to($to);
                         })
+                        ->orWhere(function ($query) use ($q) {
+                            $query->byNomorLengkap($q);
+                        })
                         ->latest()
                         ->orderBy('tgl_dok', 'desc');
     }

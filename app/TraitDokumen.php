@@ -156,4 +156,9 @@ trait TraitDokumen
         // now find all bpj's whose id is in that
         return $query->whereIn('id', $dokIds);
     }
+
+    public function scopeByNomorLengkap($query, $nomor_lengkap) {
+        // just query teh nomor_lengkap_dok column
+        return $query->where('nomor_lengkap_dok', 'like', "%{$nomor_lengkap}%");
+    }
 }

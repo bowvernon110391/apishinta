@@ -228,6 +228,9 @@ class ST extends Model
                     ->orWhere(function ($query) use ($q, $from, $to) {
                         $query->byCD($q, $from, $to);
                     })
+                    ->orWhere(function ($query) use ($q) {
+                        $query->byNomorLengkap($q);
+                    })
                     ->when($from, function ($query) use ($from) {
                         $query->from($from);
                     })
