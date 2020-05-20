@@ -47,7 +47,15 @@ trait TraitDokumen
                 return ;
             }
         }
+
+        // set no_dok
         $this->no_dok = getSequence($this->skema_penomoran, $this->tahun_dok);
+        // set nomor_lengkap_dok using nomor_lengkap attribute
+        $this->nomor_lengkap_dok = $this->nomor_lengkap;
+
+        // $doctype = get_class($this);
+        // echo "Setting doc number of {$doctype} using {$this->no_dok} and {$this->nomor_lengkap}\n";
+        // save it
         $this->save();
 
         // if this got no status yet, create it

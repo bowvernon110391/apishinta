@@ -47,6 +47,44 @@ class SSPCP extends Model implements IDokumen, ILinkable
         return 'BPPM';
     }
 
+    // Skema penomoran BPPM
+    protected function formatBppmSequence($nomor, $sqlDate, $kode_kantor) {
+        $monthLetter = [
+            '01'    => 'A',
+            '02'    => 'B',
+            '03'    => 'C',
+            '04'    => 'D',
+            '05'    => 'E',
+            '06'    => 'F',
+            '07'    => 'G',
+            '08'    => 'H',
+            '09'    => 'I',
+            '10'    => 'J',
+            '11'    => 'K',
+            '12'    => 'L',
+        ];
+
+        $month  = substr($sqlDate, 5, 2);
+        
+        $part1  = substr($sqlDate, 2, 2);
+        $part2  = $kode_kantor;
+        $part3  = $monthLetter[$month];
+        $part4  = str_pad($nomor, 7, '0', STR_PAD_LEFT);
+
+        return $part1.$part2.$part3.$part4;
+    }
+
+    // BPPM punya skema penomoran sendiri
+    public function getNomorLengkapAttribute() {
+        if ($this->no_dok == 0) {
+            return null;
+        }
+        
+        $nomorLengkap = $this->formatBppmSequence($this->no_dok, $this->tgl_dok, $this->kode_kantor);
+
+        return $nomorLengkap;
+    }
+
     public function lock(){
         $cd = $this->cd;
 
@@ -124,6 +162,7 @@ class SSPCP extends Model implements IDokumen, ILinkable
 
         // fill important fields
         $sspcp->no_dok = 0;
+        $sspcp->kode_kantor = $cd->kode_kantor;
         $sspcp->tgl_dok = date('Y-m-d');
         $sspcp->total_bm = $pungutan['total_bm'];
         $sspcp->total_ppn = $pungutan['total_ppn'];
@@ -193,6 +232,8 @@ class SSPCP extends Model implements IDokumen, ILinkable
         }
 
         // return sspcp
+        // $sspcp->save();
+        // $sspcp->setNomorDokumen(true);
         return $sspcp;
     }
 }

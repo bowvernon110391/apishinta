@@ -1,9 +1,11 @@
 <?php
 
+use App\MigrationTraitDokumen;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateCdHeaderTable extends Migration {
+	use MigrationTraitDokumen;
 
 	/**
 	 * Run the migrations.
@@ -15,6 +17,9 @@ class CreateCdHeaderTable extends Migration {
 		Schema::create('cd_header', function(Blueprint $table)
 		{
 			$table->increments('id');
+
+			$this->addDokumenColumns($table);
+
 			$table->integer('no_dok')->unsigned()->default(0);
 			$table->string('no_hp', 32)->default('');
 			$table->date('tgl_dok');

@@ -51,10 +51,10 @@ class CDSeeder extends Seeder
             );
 
             // generate valid sequence using helper
-            $p->no_dok          = getSequence(
+            /* $p->no_dok          = getSequence(
                 'CD/' . $p->lokasi->nama . '/SH',  // grab its name
                 (int)date('Y', strtotime($p->tgl_dok))      // grab the year of tgl_dok
-            );
+            ); */
 
             $p->tgl_kedatangan  = $faker->date('Y-m-d');
 
@@ -68,6 +68,7 @@ class CDSeeder extends Seeder
             $p->jml_bagasi_tdk_dibawa = $faker->numberBetween(0, 5);
             $p->pembebasan  = $faker->randomElement([0, 500, 1000]);
 
+            $p->setNomorDokumen();
             $p->save();
             $p->appendStatus('CREATED');
 

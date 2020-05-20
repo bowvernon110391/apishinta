@@ -186,7 +186,7 @@ class PdfBPPM extends Fpdf {
         $this->jumlah_pembayaran    = number_format($total);
         $this->jumlah_pembayaran_text = strtoupper(trim(penyebutRupiah($total)));
 
-        $this->no_bppm  = $this->formatBppmSequence($s->no_dok, $s->tgl_dok, $this->kode_kantor);
+        $this->no_bppm  = $s->nomor_lengkap_dok; //$this->formatBppmSequence($s->no_dok, $s->tgl_dok, $this->kode_kantor);
         $this->tgl_bppm = formatTanggalDMY($s->tgl_dok);
 
         $this->nama_pejabat = $s->nama_pejabat;

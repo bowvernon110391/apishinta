@@ -1,9 +1,11 @@
 <?php
 
+use App\MigrationTraitDokumen;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateSspcpHeaderTable extends Migration {
+	use MigrationTraitDokumen;
 
 	/**
 	 * Run the migrations.
@@ -15,6 +17,9 @@ class CreateSspcpHeaderTable extends Migration {
 		Schema::create('sspcp_header', function(Blueprint $table)
 		{
 			$table->increments('id');
+
+			$this->addDokumenColumns($table);
+
 			$table->integer('cd_header_id')->unsigned()->index('fk_st_header_cd_id_cd_header_id');
 			$table->integer('no_dok')->unsigned();
 			$table->date('tgl_dok');
