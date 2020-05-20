@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Printables\PdfBPPM;
 use App\Printables\PdfSPP;
+use App\Printables\PdfST;
 use App\SPP;
 use App\SSPCP;
+use App\ST;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -51,6 +53,7 @@ class PDFController extends ApiController
             }
 
             switch ($doctype) {
+                // Cetakan BPPM
                 case 'sspcp':
                 case 'SSPCP':
                 case 'bppm':
@@ -65,6 +68,7 @@ class PDFController extends ApiController
 
                     return response($pdf->Output('S'), 200, $headers);
                 
+                // Cetakan SPP
                 case 'spp':
                 case 'SPP':
                     $spp = SPP::find($id);
@@ -74,6 +78,20 @@ class PDFController extends ApiController
                     }
 
                     $pdf = new PdfSPP($spp);
+                    $pdf->generateFirstpage();
+
+                    return response($pdf->Output('S'), 200, $headers);
+
+                // Cetakan ST
+                case 'st':
+                case 'ST':
+                    $st = ST::find($id);
+
+                    if (!$st) {
+                        throw new NotFoundHttpException("ST #{$id} was not found");
+                    }
+
+                    $pdf = new PdfST($st);
                     $pdf->generateFirstpage();
 
                     return response($pdf->Output('S'), 200, $headers);

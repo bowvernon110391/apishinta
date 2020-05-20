@@ -1,16 +1,16 @@
 <?php
 namespace App\Printables;
 
-use App\SPP;
+use App\ST;
 use Fpdf\Fpdf;
 
-class PdfSPP extends Fpdf {
-    protected $spp = null;
+class PdfST extends Fpdf {
+    protected $st = null;
 
     // constructor follow usual style
-    public function __construct(SPP $s)
+    public function __construct(ST $s)
     {
-        $this->spp = $s;
+        $this->st = $s;
 
         parent::__construct('P', 'mm', 'A4');
         $this->SetAutoPageBreak(true, 14);
@@ -18,20 +18,22 @@ class PdfSPP extends Fpdf {
 
     public function generateFirstpage() {
         // throw error if there's nothing here
-        if (!$this->spp) {
-            return new \Exception("SPP data not provided!");
+        if (!$this->st) {
+            return new \Exception("st data not provided!");
         }
 
         // ========================================================================
         // data surat
-        $s  = $this->spp;
+        $s  = $this->st;
 
-        $no_lengkap     = $s->nomor_lengkap;    //'200312/SPP/2F/SH/2020';
+        $no_lengkap     = $s->nomor_lengkap;    //'200312/st/2F/SH/2020';
         $tgl_surat      = formatTanggal($s->tgl_dok);
 
         $nama   = $s->pemilik_barang;
         $alamat = str_replace("\n", " ", $s->cd->alamat);  //"GG. MASJID NO 50 A, RT 02/RW 02, KEL. KENANGA, KEC. CIPONDOH, KOTA TANGERANG, BANTEN";
         $no_paspor  = $s->cd->penumpang->no_paspor; //"290103-2323-22132";
+        $phone  = $s->cd->penumpang->phone;
+        $email  = $s->cd->penumpang->email;
         $kebangsaan = $s->cd->penumpang->negara->uraian; //"INDONESIA";
         $no_flight  = "{$s->cd->no_flight} ({$s->cd->airline->uraian})";
         $negara_asal    = $s->negara->uraian;
@@ -77,9 +79,9 @@ class PdfSPP extends Fpdf {
 
         // Kop surat
         $p->SetFont('Arial', 'BU', 8);
-        $p->Cell(0, 4, 'PERSETUJUAN PENANGGUHAN PENGELUARAN', 0, 1, 'C');
+        $p->Cell(0, 4, 'TANDA BUKTI PENAHANAN/PENITIPAN', 0, 1, 'C');
         $p->SetFont('Arial', 'BI', 8);
-        $p->Cell(0, 4, 'RELEASE POSTPONEMENT APPROVAL', 0, 1, 'C');
+        $p->Cell(0, 4, 'RECEIPT OF DETENTION/DEPOSIT', 0, 1, 'C');
 
         // no + tgl surat
         $p->SetFont('Arial', '', 8);
@@ -101,6 +103,30 @@ class PdfSPP extends Fpdf {
 
         $p->Ln(1);
 
+        // Telephone
+        $p->Cell($p->GetStringWidth("Nomor Telepon/"), 4, "Nomor Telepon/");
+        $p->SetFont('Arial', 'I');
+        $p->Cell(0, 4, 'Phone');
+        $p->SetFont('Arial');
+
+        $p->SetX($tabPos);
+        $p->Cell(5, 4, ":");
+        $p->Cell(0, 4, $phone, 0, 1);
+
+        $p->Ln(1);
+
+        // email
+        $p->Cell($p->GetStringWidth("E-mail"), 4, "E-mail");
+        // $p->SetFont('Arial', 'I');
+        // $p->Cell(0, 4, 'Phone');
+        // $p->SetFont('Arial');
+
+        $p->SetX($tabPos);
+        $p->Cell(5, 4, ":");
+        $p->Cell(0, 4, $email, 0, 1);
+
+        $p->Ln(1);
+
         // Alamat
         $p->Cell($p->GetStringWidth("Alamat/"), 4, "Alamat/");
         $p->SetFont('Arial', 'I');
@@ -114,7 +140,7 @@ class PdfSPP extends Fpdf {
 
         $p->Ln(1);
 
-        // Nama
+        // Paspor
         $p->Cell($p->GetStringWidth("Paspor/"), 4, "Paspor/");
         $p->SetFont('Arial', 'I');
         $p->Cell(0, 4, 'Passport No.');
