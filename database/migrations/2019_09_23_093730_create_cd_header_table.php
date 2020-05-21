@@ -20,9 +20,9 @@ class CreateCdHeaderTable extends Migration {
 
 			$this->addDokumenColumns($table);
 
-			$table->integer('no_dok')->unsigned()->default(0);
+			// $table->integer('no_dok')->unsigned()->default(0);
 			$table->string('no_hp', 32)->default('');
-			$table->date('tgl_dok');
+			// $table->date('tgl_dok');
 			$table->string('npwp', 32)->default('');
 			$table->integer('penumpang_id')->unsigned()->index('fk_cd_header_penumpang_id_penumpang_id');
 			$table->string('nib', 32)->default('');

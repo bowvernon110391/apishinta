@@ -47,7 +47,14 @@ if (!function_exists('grabsKursData')) {
 			),
 		);  
 		// source data
-		$html = file_get_contents('http://www.fiskal.kemenkeu.go.id/dw-kurs-db.asp', false, stream_context_create($arrContextOptions) );
+		try {
+			//code...
+			$html = file_get_contents('https://fiskal.kemenkeu.go.id/dw-kurs-db.asp', false, stream_context_create($arrContextOptions) );
+		} catch (\Exception $e) {
+			// return empty data, will be interpreted as service unavailable
+			return null;
+		}
+		
 
 		// echo $html;
 
@@ -87,8 +94,21 @@ if (!function_exists('grabsKursData')) {
 			for ($i = 0; $i < count($matches[0]); $i++) {
 				$kdValuta = $matches[1][$i];
 
-				$nilai = str_replace('.', '', $matches[2][$i]);
-				$nilai = str_replace(',', '.', $nilai);
+				// FIX: AUTO-DETECT NUMBER FORMAT. CHECK RIGHT MOST
+				$comma = substr($matches[2][$i], -3, 1);
+
+				if ($comma == ',') {
+					// some idiot at BKF decides to use comma as decimal separator					
+					$nilai = str_replace('.', '', $matches[2][$i]);
+					$nilai = str_replace(',', '.', $nilai);
+				} else if ($comma == '.') {
+					// the usual format. just remove all commas
+					$nilai = str_replace(',', '', $matches[2][$i]);
+				} else {
+					// must be error. throw something
+					throw new \Exception("Unknown decimal separator '{$comma}'", 400);
+				}
+				
 
 				$kurs = $nilai * 1;
 

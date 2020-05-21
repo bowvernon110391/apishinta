@@ -1,10 +1,12 @@
 <?php
 
+use App\MigrationTraitDokumen;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateBpjTable extends Migration {
+	use MigrationTraitDokumen;
 
 	/**
 	 * Run the migrations.
@@ -16,8 +18,9 @@ class CreateBpjTable extends Migration {
 		Schema::create('bpj', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('no_dok')->nullable();
-			$table->date('tgl_dok')->nullable();
+			// $table->integer('no_dok')->nullable();
+			// $table->date('tgl_dok')->nullable();
+			$this->addDokumenColumns($table);
 
 			// identitas
 			$table->enum('jenis_identitas', ['NPWP', 'KTP', 'PASPOR']);

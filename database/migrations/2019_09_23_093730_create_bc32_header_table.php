@@ -1,9 +1,11 @@
 <?php
 
+use App\MigrationTraitDokumen;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateBc32HeaderTable extends Migration {
+	use MigrationTraitDokumen;
 
 	/**
 	 * Run the migrations.
@@ -14,10 +16,13 @@ class CreateBc32HeaderTable extends Migration {
 	{
 		Schema::create('bc32_header', function(Blueprint $table)
 		{
-			$table->integer('id')->unsigned()->primary();
+			$table->increments('id');
+
+			$this->addDokumenColumns($table);
+
 			$table->integer('cd_header_id')->unsigned();
-			$table->integer('no_dok')->unsigned();
-			$table->date('tgl_dok');
+			// $table->integer('no_dok')->unsigned();
+			// $table->date('tgl_dok');
 			$table->enum('fl_wakil', array('ORANG LAIN','PERUSAHAAN'))->nullable();
 			$table->integer('pemilik_id')->unsigned()->nullable();
 			$table->string('nama_perusahaan')->nullable();

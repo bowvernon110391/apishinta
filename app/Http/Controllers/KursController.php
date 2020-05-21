@@ -229,7 +229,13 @@ class KursController extends ApiController
 
     // pull from BKF
     public function pullFromBKF(Request $r) {
-        $kursData = grabKursData();
+        try {
+            //code...
+            $kursData = grabKursData();
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+        
 
         $inserted = 0;
         $updated = 0;
