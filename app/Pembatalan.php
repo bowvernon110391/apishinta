@@ -84,4 +84,9 @@ class Pembatalan extends Model
     public function scopeKeterangan($query, $keterangan) {
         return $query->where('keterangan', 'LIKE', "%{$keterangan}%");
     }
+
+    // got the unlocked
+    public function scopeUnlocked($query) {
+        return $query->byLastStatusOtherThan('CLOSED');
+    }
 }
