@@ -45,4 +45,43 @@ class Pembatalan extends Model
     public function bpj() {
         return $this->morphedByMany(BPJ::class, 'cancellable', 'cancellable');
     }
+
+    // scopes
+    // ===============================================================================
+    public function scopeByQuery($query, $q, $from, $to) {
+        return $query->where('nomor_lengkap_dok', 'LIKE', "%{$q}%")
+                    ->orWhere(function ($query) use ($q) {
+                        $query->pejabat($q);
+                    })
+                    ->when(strlen($q) >= 5 && !is_numeric($q), function ($query) use ($q) {
+                        $query->orWhere( function ($query) use ($q) {
+                            $query->keterangan($q);
+                        } );
+                    })
+                    ->when($from, function ($query) use ($from) {
+                        $query->from($from);
+                    })
+                    ->when($to, function ($query) use ($to) {
+                        $query->from($to);
+                    })
+                    ->latest()
+                    ->orderBy('tgl_dok', 'desc');
+    }
+
+    public function scopeFrom($query, $tgl) {
+        return $query->where('tgl_dok', '>=', $tgl);
+    }
+
+    public function scopeTo($query, $tgl) {
+        return $query->where('tgl_dok', '<=', $tgl);
+    }
+
+    public function scopePejabat($query, $namanip) {
+        return $query->where('nama_pejabat', 'LIKE', "%{$namanip}%")
+                    ->orWhere('nip_pejabat', 'LIKE', "%{$namanip}%");
+    }
+
+    public function scopeKeterangan($query, $keterangan) {
+        return $query->where('keterangan', 'LIKE', "%{$keterangan}%");
+    }
 }
