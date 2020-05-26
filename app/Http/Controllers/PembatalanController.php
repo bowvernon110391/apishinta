@@ -13,7 +13,7 @@ class PembatalanController extends ApiController
      */
     public function index()
     {
-        //
+        // list semua dokumen pembatalan
     }
 
     /**
