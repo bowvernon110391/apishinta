@@ -1,4 +1,5 @@
 <?php
+namespace App\Transformers;
 
 use App\Cancellable;
 use League\Fractal\TransformerAbstract;

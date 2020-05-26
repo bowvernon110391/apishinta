@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Pembatalan;
 use Illuminate\Http\Request;
+use App\Transformers\PembatalanTransformer;
 
 class PembatalanController extends ApiController
 {
@@ -11,9 +13,20 @@ class PembatalanController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $r)
     {
         // list semua dokumen pembatalan
+        $query = Pembatalan::byQuery(
+            $r->get('q', ''),
+            $r->get('from'),
+            $r->get('to')
+        );
+
+        $paginator = $query
+                    ->paginate($r->get('number'))
+                    ->appends($r->except('page'));
+
+        return $this->respondWithPagination($paginator, new PembatalanTransformer);
     }
 
     /**

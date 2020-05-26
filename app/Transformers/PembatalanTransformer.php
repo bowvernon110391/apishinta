@@ -1,4 +1,5 @@
 <?php
+namespace App\Transformers;
 
 use App\Pembatalan;
 use App\Transformers\StatusTransformer;
