@@ -314,3 +314,31 @@ Route::get('/{doctype}/{id}/lampiran', 'UploadController@getAttachments')
 // GET /lampiran/{id}   -> get specific attachments
 Route::get('/lampiran/{id}', 'UploadController@showAttachment')
         ->middleware($corsGroup['singleItem'], 'role');
+
+
+//====================================================================================================
+// ENDPOINTS PEMBATALAN
+//====================================================================================================
+// GET /pembatalan      -> list pembatalan
+Route::get('/pembatalan', 'PembatalanController@index')
+        ->middleware($corsGroup['resourceGroup'], 'role');
+
+// POST /pembatalan     -> rekam pembatalan
+Route::post('/pembatalan', 'PembatalanController@create')
+        ->middleware($corsGroup['resourceGroup'], 'role:KASI,CONSOLE');
+
+// PUT /pembatalan/:id  -> update data pembatalan
+Route::put('/pembatalan/{id}', 'PembatalanController@update')
+        ->middleware($corsGroup['singleItem'], 'ROLE:KASI,CONSOLE');
+
+// PUT /pembatalan/:id/:doctype/:docid  -> rekam pembatalan dokumen menggunakan pembatalan id tertentu
+Route::put('/pembatalan/{id}/{doctype}/{docid}', 'PembatalanController@addDokumen')
+        ->middleware($corsGroup['singleItem'], 'role:KASI,CONSOLE');
+
+// DELETE /pembatalan/:id       -> hapus surat pembatalan
+Route::delete('/pembatalan/{id}', 'PembatalanController@destroy')
+        ->middleware($corsGroup['singleItem'], 'ROLE:KASI,CONSOLE');
+
+// DELETE /pembatalan/detail/:id        -> hapus pembatalan dokumen dgn detil id pembatalan tertentu
+Route::delete('/pembatalan/detail/{id}', 'PembatalanController@delDokumen')
+        ->middleware($corsGroup['singleItem'], 'ROLE:KASI,CONSOLE');
