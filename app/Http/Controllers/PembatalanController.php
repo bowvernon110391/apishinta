@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Pembatalan;
 use Illuminate\Http\Request;
 
 class PembatalanController extends ApiController
@@ -13,16 +12,6 @@ class PembatalanController extends ApiController
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
     {
         //
     }
@@ -41,21 +30,10 @@ class PembatalanController extends ApiController
     /**
      * Display the specified resource.
      *
-     * @param  \App\Pembatalan  $pembatalan
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Pembatalan $pembatalan)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Pembatalan  $pembatalan
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Pembatalan $pembatalan)
+    public function show($id)
     {
         //
     }
@@ -64,10 +42,10 @@ class PembatalanController extends ApiController
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Pembatalan  $pembatalan
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pembatalan $pembatalan)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -75,10 +53,10 @@ class PembatalanController extends ApiController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Pembatalan  $pembatalan
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pembatalan $pembatalan)
+    public function destroy($id)
     {
         //
     }
