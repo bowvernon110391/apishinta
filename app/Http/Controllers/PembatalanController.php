@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PembatalanController extends ApiController
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of Surat Pembatalan.
      *
      * @return \Illuminate\Http\Response
      */
@@ -46,7 +46,7 @@ class PembatalanController extends ApiController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Surat Pembatalan in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -109,7 +109,7 @@ class PembatalanController extends ApiController
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Surat Pembatalan.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -134,7 +134,7 @@ class PembatalanController extends ApiController
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified Surat Pembatalan in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -198,7 +198,7 @@ class PembatalanController extends ApiController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified Surat Pembatalan from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -339,7 +339,7 @@ class PembatalanController extends ApiController
     }
 
     /**
-     * Tambah dokumen untuk dibatalkan
+     * Hapus detail pembatalan dokumen (batalkan pembatalan)
      */
     public function delDokumen(Request $r, $id) {
         try {
