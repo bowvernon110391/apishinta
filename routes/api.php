@@ -341,8 +341,8 @@ Route::put('/pembatalan/{id}/{doctype}/{docid}', 'PembatalanController@addDokume
 
 // DELETE /pembatalan/:id       -> hapus surat pembatalan
 Route::delete('/pembatalan/{id}', 'PembatalanController@destroy')
-        ->middleware($corsGroup['singleItem'], 'ROLE:KASI,CONSOLE');
+        ->middleware($corsGroup['singleItem'], 'role:KASI,CONSOLE');
 
 // DELETE /pembatalan/detail/:id        -> hapus pembatalan dokumen dgn detil id pembatalan tertentu
 Route::delete('/pembatalan/detail/{id}', 'PembatalanController@delDokumen')
-        ->middleware($corsGroup['singleItem'], 'ROLE:KASI,CONSOLE');
+        ->middleware($corsGroup['singleItem'], 'role:KASI,CONSOLE');

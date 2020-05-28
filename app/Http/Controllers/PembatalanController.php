@@ -192,8 +192,46 @@ class PembatalanController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $r, $id)
     {
-        //
+        // delete the data itself
+        try {
+            DB::beginTransaction();
+
+            // find it
+            $p = Pembatalan::find($id);
+
+            if (!$p) {
+                throw new NotFoundHttpException("Pembatalan #{$id} was not found");
+            }
+
+            // do we have sufficient privilege?
+            // fail when: it's locked already AND user is not CONSOLE
+            if ($p->is_locked && !userHasRole('CONSOLE', $r->userInfo)) {
+                throw new AccessDeniedHttpException("Insufficient privilege");
+            }
+
+            // log it first
+            AppLog::logWarning("{$r->userInfo['username']} menghapus Pembatalan #{$id}", $p, true);
+
+            // do the deletion
+            $p->delete();
+
+            // commit it
+            DB::commit();
+
+            // return empty response
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (NotFoundHttpException $e) {
+            DB::rollBack();
+            return $this->errorNotFound($e->getMessage());
+        } catch (AccessDeniedHttpException $e) {
+            DB::rollBack();
+            return $this->errorForbidden($e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 }
