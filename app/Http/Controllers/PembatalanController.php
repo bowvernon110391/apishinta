@@ -27,6 +27,11 @@ class PembatalanController extends ApiController
             $r->get('to')
         );
 
+        // perhaps it's only grab the unlocked ones?
+        if (($status = $r->get('status'))) {
+            $query = $query->byStatus($status);
+        }
+
         $paginator = $query
                     ->paginate($r->get('number'))
                     ->appends($r->except('page'));

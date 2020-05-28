@@ -99,8 +99,26 @@ class Pembatalan extends Model
         return $query->where('keterangan', 'LIKE', "%{$keterangan}%");
     }
 
+    // by status
+    public function scopeByStatus($query, $status) {
+        $status = strtoupper($status);
+
+        if ($status == 'LOCKED') {
+            return $query->locked();
+        } else if ($status == 'UNLOCKED') {
+            return $query->unlocked();
+        } 
+
+        return $query;
+    }
+
     // got the unlocked
     public function scopeUnlocked($query) {
         return $query->byLastStatusOtherThan('CLOSED');
+    }
+
+    // got the locked
+    public function scopeLocked($query) {
+        return $query->byLastStatus('CLOSED');
     }
 }
