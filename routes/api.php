@@ -323,13 +323,17 @@ Route::get('/lampiran/{id}', 'UploadController@showAttachment')
 Route::get('/pembatalan', 'PembatalanController@index')
         ->middleware($corsGroup['resourceGroup'], 'role');
 
+// GET /pembatalan/:id  -> lihat isi pembatalan
+Route::get('/pembatalan/{id}', 'PembatalanController@show')
+        ->middleware($corsGroup['singleItem'], 'role');
+
 // POST /pembatalan     -> rekam pembatalan
-Route::post('/pembatalan', 'PembatalanController@create')
+Route::post('/pembatalan', 'PembatalanController@store')
         ->middleware($corsGroup['resourceGroup'], 'role:KASI,CONSOLE');
 
 // PUT /pembatalan/:id  -> update data pembatalan
 Route::put('/pembatalan/{id}', 'PembatalanController@update')
-        ->middleware($corsGroup['singleItem'], 'ROLE:KASI,CONSOLE');
+        ->middleware($corsGroup['singleItem'], 'role:KASI,CONSOLE');
 
 // PUT /pembatalan/:id/:doctype/:docid  -> rekam pembatalan dokumen menggunakan pembatalan id tertentu
 Route::put('/pembatalan/{id}/{doctype}/{docid}', 'PembatalanController@addDokumen')

@@ -9,7 +9,8 @@ class PembatalanTransformer extends TransformerAbstract {
     // includes
     protected $availableIncludes = [
         'cancellable',
-        'status'
+        'status',
+        'lampiran'
     ];
 
     protected $defaultIncludes = [
@@ -45,5 +46,11 @@ class PembatalanTransformer extends TransformerAbstract {
     public function includeCancellable(Pembatalan $p) {
         $cancellable = collect($p->cancellable);
         return $this->collection($cancellable, new CancellableTransformer);
+    }
+
+    // include lampiran?
+    public function includeLampiran(Pembatalan $p) {
+        $lampiran = collect($p->lampiran);
+        return $this->collection($lampiran, new LampiranTransformer);
     }
 }

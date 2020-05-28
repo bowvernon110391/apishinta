@@ -18,10 +18,13 @@ class AppLog extends Model
         return $this->morphTo();
     }
     
-    static public function logInfo($message, $object = NULL){
+    static public function logInfo($message, $object = NULL, $saveJSON = true){
         $log = new AppLog;
         $log->message = $message;
-        $log->object = json_encode($object);
+
+        if ($saveJSON && $object) 
+            $log->object = json_encode($object);
+        
         $log->tipe = 'INFO';
         // $log->save();
 
@@ -38,10 +41,13 @@ class AppLog extends Model
         return $log;
     }
 
-    static public function logWarning($message, $object = NULL){
+    static public function logWarning($message, $object = NULL, $saveJSON){
         $log = new AppLog;
         $log->message = $message;
-        $log->object = json_encode($object);
+
+        if ($object && $saveJSON)
+            $log->object = json_encode($object);
+        
         $log->tipe = 'WARNING';
         // $log->save();
 
@@ -58,10 +64,13 @@ class AppLog extends Model
         return $log;
     }
 
-    static public function logError($message, $object = NULL){
+    static public function logError($message, $object = NULL, $saveJSON = true){
         $log = new AppLog;
         $log->message = $message;
-        $log->object = json_encode($object);
+
+        if ($object && $saveJSON)
+            $log->object = json_encode($object);
+            
         $log->tipe = 'ERROR';
         // $log->save();
 
