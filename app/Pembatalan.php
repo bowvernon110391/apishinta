@@ -18,6 +18,20 @@ class Pembatalan extends Model
         'deleted_at'
     ];
 
+    // pembatalan
+    public function lock() {
+        // if we're locked, do nothing
+        if ($this->is_locked)
+            return $this->is_locked;
+
+        // bagusnya dikasih transaction guard biar 
+        // databasenya selalu ACID
+        
+        $this->appendStatus('CLOSED');
+        // $this->setNomorDokumen();
+        return $this->is_locked;
+    }
+
     // all cancellable
     public function cancellable() {
         return $this->hasMany(Cancellable::class, 'pembatalan_id', 'id');

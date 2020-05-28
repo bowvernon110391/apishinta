@@ -7,6 +7,7 @@ use App\Pembatalan;
 use Illuminate\Http\Request;
 use App\Transformers\PembatalanTransformer;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -145,6 +146,11 @@ class PembatalanController extends ApiController
                 throw new NotFoundHttpException("Pembatalan #{$id} was not found");
             }
 
+            // make sure we can edit that shiet
+            if (!canEdit($p->is_locked, $r->userInfo)) {
+                throw new AccessDeniedHttpException("Insufficient privilege");
+            }
+
             // log before save? rollbacked anyway if fail
             AppLog::logInfo("{$r->userInfo['username']} mengupdate Pembatalan #{$id}", $p);
 
@@ -168,6 +174,9 @@ class PembatalanController extends ApiController
             // return 204
             return $this->setStatusCode(204)
                         ->respondWithEmptyBody();
+        } catch (AccessDeniedHttpException $e) {
+            DB::rollBack();
+            return $this->errorForbidden($e->getMessage());
         } catch (NotFoundHttpException $e) {
             DB::rollBack();
             return $this->errorNotFound($e->getMessage());
