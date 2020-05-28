@@ -18,7 +18,40 @@ class Pembatalan extends Model
         'deleted_at'
     ];
 
-    // pembatalan
+    // shared between instances (global too)
+    // list of cancellable document
+    protected static $supported = [
+        'cd'    => CD::class,
+        'is'    => IS::class,
+        'bpj'   => BPJ::class,
+        'st'    => ST::class,
+        'spp'   => SPP::class
+    ];
+
+    // helper to instantiate class
+    public static function instantiate($classname, $id) {
+        if (!array_key_exists($classname, Pembatalan::$supported)) {
+            return null;
+        }
+
+        // it's supported. return it
+        return call_user_func(Pembatalan::$supported[$classname]."::find", $id);
+    }
+
+    // helper to return qualified class name
+    public static function getSupportedClassname($classname) {
+        if (!array_key_exists($classname, Pembatalan::$supported)) {
+            if (!class_exists($classname)) {
+                return null;
+            } else {
+                return $classname;
+            }
+        }
+
+        return Pembatalan::$supported[$classname];
+    }
+
+    // kunci pembatalan
     public function lock() {
         // if we're locked, do nothing
         if ($this->is_locked)

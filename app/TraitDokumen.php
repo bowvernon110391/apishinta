@@ -9,6 +9,9 @@ trait TraitDokumen
     // all dokumen can have lampiran so use its trait
     use TraitAttachable;
 
+    // all dokumen can be cancelled
+    use TraitCancellable;
+
     // default locking mechanism
     public function lock(){
         // if we're locked, do nothing

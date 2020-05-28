@@ -346,3 +346,7 @@ Route::delete('/pembatalan/{id}', 'PembatalanController@destroy')
 // DELETE /pembatalan/detail/:id        -> hapus pembatalan dokumen dgn detil id pembatalan tertentu
 Route::delete('/pembatalan/detail/{id}', 'PembatalanController@delDokumen')
         ->middleware($corsGroup['singleItem'], 'role:KASI,CONSOLE');
+
+// PUT /pembatalan/:id/lock     -> kunci dokumen pembatalan
+Route::put('/pembatalan/{id}/lock', 'PembatalanController@lockPembatalan')
+        ->middleware($corsGroup['singleItem'], 'role:KASI,CONSOLE');

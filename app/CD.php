@@ -9,7 +9,6 @@ class CD extends Model implements IDokumen
 {
     use TraitLoggable;
     use TraitDokumen;
-    use TraitCancellable;
     // enable soft Deletion
     use SoftDeletes;
 

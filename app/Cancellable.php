@@ -30,4 +30,12 @@ class Cancellable extends Model
 
         return null;
     }
+
+    // custom query
+    public function scopeByDocTypeId($query, $doctype, $id) {
+        $classname = Pembatalan::getSupportedClassname($doctype);
+
+        return $query->where('cancellable_type', $classname)
+                    ->where('cancellable_id', $id);
+    }
 }

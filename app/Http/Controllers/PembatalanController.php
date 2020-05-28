@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\AppLog;
+use App\BPJ;
+use App\Cancellable;
+use App\CD;
+use App\IS;
 use App\Pembatalan;
+use App\SPP;
+use App\ST;
 use Illuminate\Http\Request;
 use App\Transformers\PembatalanTransformer;
 use Illuminate\Support\Facades\DB;
@@ -239,4 +245,159 @@ class PembatalanController extends ApiController
             return $this->errorBadRequest($e->getMessage());
         }
     }
+
+    /**
+     * Kunci dokumen pembatalan
+     */
+    public function lockPembatalan(Request $r, $id) {
+        try {
+            DB::beginTransaction();
+
+            $p = Pembatalan::find($id);
+
+            if (!$p) {
+                throw new NotFoundHttpException("Pembatalan #{$id} was not found");
+            }
+
+            // it's there, let's lock it
+            // locking is idempotent. should always return true
+            // unless something happened
+            if (!$p->lock()) {
+                throw new \Exception("Something weird really happened. Dunno what though");
+            }
+
+            // success! log it
+            AppLog::logInfo("{$r->userInfo['username']} locked Pembatalan #{$id}", $p, false);
+
+            DB::commit();
+
+            // success? return 204
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (NotFoundHttpException $e) {
+            DB::rollBack();
+            return $this->errorNotFound($e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * Tambah dokumen untuk dibatalkan
+     */
+    public function addDokumen(Request $r, $id, $doctype, $docid) {
+        try {
+            DB::beginTransaction();
+
+            // check if we found it?
+            $p = Pembatalan::find($id);
+
+            if (!$p) {
+                throw new NotFoundHttpException("Pembatalan #{$id} was not found");
+            }
+
+            // we found it. but is it locked?
+            if ($p->is_locked) {
+                throw new BadRequestHttpException("Pembatalan #{$id} was already locked. Unlock it first (if you can)");
+            }
+
+            // is it supported though?
+            $doc = Pembatalan::instantiate($doctype, $docid);
+
+            if (!$doc) {
+                throw new BadRequestHttpException("Either {$doctype} #{$docid} does not exist or it was not supported for cancellation");
+            }
+
+            // it was supported. Steps for cancellation
+            // 1. mark it for cancellation
+            $doc->pembatalan()->syncWithoutDetaching($p);
+            // 2. delete it
+            // 3. log it before deleting though
+            AppLog::logWarning("{$r->userInfo['username']} delete {$doctype} #{$docid}", $doc, true);
+            AppLog::logWarning("{$r->userInfo['username']} delete {$doctype} #{$docid} using Pembatalan #{$id}", $p, false);
+
+            // delete it
+            $doc->delete();
+
+            DB::commit();
+
+            // return 204? because pivot data can't be queried 
+            // precisely
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (NotFoundHttpException $e) {
+            DB::rollBack();
+            return $this->errorNotFound($e->getMessage());
+        } catch (BadRequestHttpException $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * Tambah dokumen untuk dibatalkan
+     */
+    public function delDokumen(Request $r, $id) {
+        try {
+            DB::beginTransaction();
+
+            // check if we found it?
+            $d = Cancellable::find($id);
+
+            if (!$d) {
+                // detail not found
+                throw new NotFoundHttpException("Detail Pembatalan #{$id} was not found");
+            }
+
+            // grab instance of surat pembatalan
+            $p = $d->header();
+
+            if (!$p) {
+                throw new NotFoundHttpException("Pembatalan #{$id} was not found");
+            }
+
+            // we found it. but is it locked?
+            if ($p->is_locked) {
+                throw new BadRequestHttpException("Pembatalan #{$id} was already locked. Unlock it first (if you can)");
+            }
+
+            // is it supported though?
+            $doc = $d->instance;
+
+            if (!$doc) {
+                throw new BadRequestHttpException("The deleted document seems to not be restorable :(");
+            }
+
+            // it was supported. Steps for cancelling cancellation
+            // 1. restore it
+            $doc->restore();
+
+            // 2. unmark it
+            $doc->pembatalan()->sync([]);
+
+            // 3. log it
+            AppLog::logWarning("{$r->userInfo['username']} restore the deleted document {get_class($doc)} #{$doc->id}", $doc, false);
+            AppLog::logWarning("{$r->userInfo['username']} cancel the deletion of Detail Pembatalan {$id}", $p, false);
+
+            DB::commit();
+
+            // return 204
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (NotFoundHttpException $e) {
+            DB::rollBack();
+            return $this->errorNotFound($e->getMessage());
+        } catch (BadRequestHttpException $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
 }
+
