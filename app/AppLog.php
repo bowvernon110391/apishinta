@@ -41,7 +41,7 @@ class AppLog extends Model
         return $log;
     }
 
-    static public function logWarning($message, $object = NULL, $saveJSON){
+    static public function logWarning($message, $object = NULL, $saveJSON = true){
         $log = new AppLog;
         $log->message = $message;
 
