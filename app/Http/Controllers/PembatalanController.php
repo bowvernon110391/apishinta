@@ -66,7 +66,7 @@ class PembatalanController extends ApiController
 
             $kode_kantor    = $data['kode_kantor'] ?? '050100';
             $no_dok      = $data['no_dok'] ?? 0;
-            $nomor_lengkap_dok  = expectSomething($data['nomor_lengkap_dok'], "Nomor Lengkap Surat Pembatalan");
+            $nomor_lengkap_dok  = expectSomething($data['nomor_lengkap'], "Nomor Lengkap Surat Pembatalan");
             $tgl_dok        = expectSomething($data['tgl_dok'], "Tanggal Surat Pembatalan");
             $nip_pejabat    = expectSomething($data['nip_pejabat'], "NIP Pejabat Pemberi Ijin Pembatalan");
             $nama_pejabat   = expectSomething($data['nama_pejabat'], "Nama Pejabat Pemberi Ijin Pembatalan");
@@ -170,7 +170,7 @@ class PembatalanController extends ApiController
 
             $p->kode_kantor     = $data['kode_kantor'] ?? $p->kode_kantor;
             $p->no_dok          = $data['no_dok'] ?? $p->no_dok;
-            $p->nomor_lengkap_dok  = expectSomething($data['nomor_lengkap_dok'], "Nomor Lengkap Surat Pembatalan");
+            $p->nomor_lengkap_dok  = expectSomething($data['nomor_lengkap'], "Nomor Lengkap Surat Pembatalan");
             $p->tgl_dok         = expectSomething($data['tgl_dok'], "Tanggal Surat Pembatalan");
             $p->nip_pejabat     = expectSomething($data['nip_pejabat'], "NIP Pejabat Pemberi Ijin Pembatalan");
             $p->nama_pejabat    = expectSomething($data['nama_pejabat'], "Nama Pejabat Pemberi Ijin Pembatalan");

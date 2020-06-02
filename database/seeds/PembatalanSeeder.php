@@ -32,6 +32,8 @@ class PembatalanSeeder extends Seeder
             $p->keterangan  = $faker->sentences(5, true);
 
             $p->save();
+
+            $p->appendStatus('CREATED');
         }
 
         echo "Pembatalans generated.\n";
