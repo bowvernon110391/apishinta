@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\CD;
+use App\Observers\CDObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Schema;
@@ -33,5 +35,8 @@ class AppServiceProvider extends ServiceProvider
             'kurs'  => 'App\Kurs'
         ]); */
         Schema::defaultStringLength(191);
+
+        // register our observers here
+        CD::observe(CDObserver::class);
     }
 }
