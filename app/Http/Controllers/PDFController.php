@@ -8,6 +8,8 @@ use App\Printables\PdfST;
 use App\SPP;
 use App\SSPCP;
 use App\ST;
+use App\CD;
+use App\Printables\PdfLembarHitungCD;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -93,6 +95,20 @@ class PDFController extends ApiController
 
                     $pdf = new PdfST($st);
                     $pdf->generateFirstpage();
+
+                    return response($pdf->Output('S'), 200, $headers);
+
+                // Cetakan Lembar Perhitungan CD
+                case 'lembarhitungcd':
+                case 'lembarcd':
+                    $cd = CD::find($id);
+
+                    if (!$cd) {
+                        throw new NotFoundHttpException("CD #{$id} was not found");
+                    }
+
+                    $pdf = new PdfLembarHitungCD($cd);
+                    $pdf->generateFirstPage();
 
                     return response($pdf->Output('S'), 200, $headers);
 

@@ -19,7 +19,7 @@ class PdfSSPCP extends Fpdf {
     public function generateFirstpage() {
         // throw error if there's nothing here
         if (!$this->sspcp) {
-            return new \Exception("SSPCP data not provided!");
+            throw new \Exception("SSPCP data not provided!");
         }
 
         $pdf = $this;
