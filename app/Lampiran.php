@@ -34,6 +34,13 @@ class Lampiran extends Model
         return Storage::disk('public')->put($filename, base64_decode($this->blob));
     }
 
+    public function deleteOnDisk() {
+        if ($this->existsOnDisk()) {
+            return Storage::disk('public')->delete($this->diskfilename);
+        }
+        return true;
+    }
+
     // Polymorphic relations
     public function Attachable() {
         return $this->morphTo();

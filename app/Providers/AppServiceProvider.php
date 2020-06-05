@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\CD;
+use App\Lampiran;
 use App\Observers\CDObserver;
+use App\Observers\LampiranObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Schema;
@@ -38,5 +40,6 @@ class AppServiceProvider extends ServiceProvider
 
         // register our observers here
         CD::observe(CDObserver::class);
+        Lampiran::observe(LampiranObserver::class);
     }
 }

@@ -212,4 +212,22 @@ class UploadController extends ApiController
             return $this->errorBadRequest($e->getMessage());
         }
     }
+
+    // delete specific lampiran
+    public function deleteAttachment(Request $r, $id) {
+        $l = Lampiran::find($id);
+
+        if (!$l) {
+            return $this->errorNotFound("Lampiran #{$id} was not found.");
+        }
+
+        try {
+            // attempt deletion here
+            if ($l->existsOnDisk()) {
+                
+            }
+        } catch (\Exception $e) {
+
+        }
+    }
 }
