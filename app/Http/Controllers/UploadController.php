@@ -223,11 +223,27 @@ class UploadController extends ApiController
 
         try {
             // attempt deletion here
-            if ($l->existsOnDisk()) {
+            // first, make sure if we have parent
+            if (!$l->Attachable) {
+                // no parent, safe to delete
+                $l->delete();
+
+                return $this->setStatusCode(204)
+                            ->respondWithEmptyBody();
+            } else {
+                // welp, we have parent. check if we're locked
+                if ($l->Attachable->is_locked) {
+                    throw new \Exception("Can't do that, our parent document is locked already!");
+                }
+
+                // safe to delete
+                $l->delete();
                 
+                return $this->setStatusCode(204)
+                            ->respondWithEmptyBody();
             }
         } catch (\Exception $e) {
-
+            return $this->errorBadRequest($e->getMessage());
         }
     }
 }

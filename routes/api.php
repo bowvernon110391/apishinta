@@ -319,6 +319,9 @@ Route::get('/{doctype}/{id}/lampiran', 'UploadController@getAttachments')
 Route::get('/lampiran/{id}', 'UploadController@showAttachment')
         ->middleware($corsGroup['singleItem'], 'role');
 
+// DELETE /lampiran/{id}-> delete specific attachment
+Route::delete('/lampiran/{id}', 'UploadController@deleteAttachment')
+        ->middleware($corsGroup['singleItem'], 'role');
 
 //====================================================================================================
 // ENDPOINTS PEMBATALAN
