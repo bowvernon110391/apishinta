@@ -301,4 +301,44 @@ class KursController extends ApiController
             return $this->errorServiceUnavailable("Situs BKF lagi down kayaknya");
         }
     }
+
+    // get from BKF
+    public function getFromBKF(Request $r) {
+        try {
+            //code...
+            $kursData = grabKursData();
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+        
+    
+        if ($kursData) {
+            $kursArray = [];
+    
+            try {
+                // save for each kurs
+                foreach ($kursData['data'] as $valas => $nilaiKurs) {
+                    // new shiet. save it
+                    $k = new Kurs();
+                    $k->kode_valas = $valas;
+                    $k->jenis = 'KURS_PAJAK';
+                    $k->tanggal_awal = trim($kursData['dateStart']);
+                    $k->tanggal_akhir = trim($kursData['dateEnd']);
+                    $k->kurs_idr = $nilaiKurs;
+
+                    $kursArray[] = $k;
+                }
+
+                // directly return data
+                return $this->respondWithCollection(collect($kursArray), new KursTransformer);
+                
+            } catch (\Exception $e) {
+                return $this->errorInternalServer($e->getMessage());
+            }
+        } else {
+            // failed to grab data...for whatever reason
+            // flag server error
+            return $this->errorServiceUnavailable("Situs BKF lagi down kayaknya");
+        }
+    }
 }

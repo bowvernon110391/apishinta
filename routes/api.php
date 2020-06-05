@@ -64,6 +64,10 @@ Route::delete('/kurs/{id}', 'KursController@destroy')
 Route::post('/kurs/bkf', 'KursController@pullFromBKF')
         ->middleware($corsGroup['resourceGroup'], 'role');
 
+// GET /kurs/bkf        => ambil data kurs dari bkf
+Route::get('/kurs/bkf', 'KursController@getFromBkf')
+        ->middleware($corsGroup['resourceGroup']);
+
 //====================================================================================================
 // ENDPOINTS PENUMPANG
 // Data penumpang adalah data rahasia, jd kasih guard di endpointsnya
