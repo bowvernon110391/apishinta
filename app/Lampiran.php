@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class Lampiran extends Model
 {
+    use SoftDeletes;
     // setup tables and default relations
     protected $table = 'lampiran';
 
