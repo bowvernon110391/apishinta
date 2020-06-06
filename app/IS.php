@@ -54,7 +54,11 @@ class IS extends Model implements IDokumen, ILinkable
     {
         return 'is';
     }
-
+    
+    public function getJenisDokumenLengkapAttribute()
+    {
+        return 'Impor Sementara (BC 2.1)';
+    }
     public function getSkemaPenomoranAttribute()
     {
         return 'IS/SH';

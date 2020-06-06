@@ -14,8 +14,8 @@ class AddForeignKeysToSspcpHeaderTable extends Migration {
 	{
 		Schema::table('sspcp_header', function(Blueprint $table)
 		{
-			$table->foreign('cd_header_id', 'sspcp_header_ibfk_1')->references('id')->on('cd_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
-			$table->foreign('lokasi_id', 'sspcp_header_ibfk_2')->references('id')->on('lokasi');//->onUpdate('CASCADE')->onDelete('RESTRICT');
+			// $table->foreign('cd_header_id', 'sspcp_header_ibfk_1')->references('id')->on('cd_header');//->onUpdate('CASCADE')->onDelete('RESTRICT');
+			// $table->foreign('lokasi_id', 'sspcp_header_ibfk_2')->references('id')->on('lokasi');//->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
 	}
 
@@ -29,8 +29,8 @@ class AddForeignKeysToSspcpHeaderTable extends Migration {
 	{
 		Schema::table('sspcp_header', function(Blueprint $table)
 		{
-			$table->dropForeign('sspcp_header_ibfk_1');
-			$table->dropForeign('sspcp_header_ibfk_2');
+			// $table->dropForeign('sspcp_header_ibfk_1');
+			// $table->dropForeign('sspcp_header_ibfk_2');
 		});
 	}
 

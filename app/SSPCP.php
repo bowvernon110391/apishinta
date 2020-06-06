@@ -27,12 +27,16 @@ class SSPCP extends Model implements IDokumen, ILinkable
         'no_dok'    => 0
     ];
 
-    public function details(){
+    /* public function details(){
         return $this->hasMany('App\DetailSSPCP', 'sspcp_header_id');
-    }
+    } */
 
     public function cd(){
         return $this->belongsTo('App\CD','cd_header_id');
+    }
+
+    public function billable() {
+        return $this->morphTo('billable');
     }
     
     public function lokasi(){
@@ -42,7 +46,10 @@ class SSPCP extends Model implements IDokumen, ILinkable
     public function getJenisDokumenAttribute(){
         return 'sspcp';
     }
-
+    
+    public function getJenisDokumenLengkapAttribute(){
+        return 'Surat Setoran Pabean Cukai PDRI';
+    }
     public function getSkemaPenomoranAttribute(){
         return 'BPPM';
     }
@@ -86,7 +93,8 @@ class SSPCP extends Model implements IDokumen, ILinkable
     }
 
     public function lock(){
-        $cd = $this->cd;
+        // $cd = $this->cd;
+        $b = $this->billable;
 
         if($this->is_locked)
             return $this->is_locked;
@@ -94,7 +102,7 @@ class SSPCP extends Model implements IDokumen, ILinkable
         /* if($cd->is_locked)
             return false; */
         
-        return $cd->lock() && $this->traitLock();        
+        return $b->lock() && $this->traitLock();        
     }
 
      public function unlock(){
@@ -134,6 +142,69 @@ class SSPCP extends Model implements IDokumen, ILinkable
     }
 
     // STATIC SPECIAL FUNCTIONS
+    static public function createFromBillable($b, $keterangan, $nama_pejabat, $nip_pejabat, $kode_kantor = '050100') {
+        if (!$b) {
+            throw new \Exception("Passing invalid billable doc to make a bill. Pathetic...");
+            return null;
+        }
+
+        if (!($b instanceof IBillable)) {
+            throw new \Exception("Payment for this type of document is unsupported.");
+        }
+
+        $bi = $b->billing_info;
+
+        if (!$bi) {
+            throw new \Exception("Billed document is not billable yet.");
+            return null;
+        }
+
+        // just create it
+        $s = new SSPCP([
+            // DOKUMEN
+            'keterangan'    => $bi['dokumen']['keterangan'] ?? $keterangan,
+
+            // TAGIHAN
+            'total_bm'  => $bi['tagihan']['total_bm'],
+            'total_ppn'  => $bi['tagihan']['total_ppn'],
+            'total_pph'  => $bi['tagihan']['total_pph'],
+            'total_ppnbm'  => $bi['tagihan']['total_ppnbm'],
+            'total_denda'  => $bi['tagihan']['total_denda'],
+
+            // KURS?
+            'kode_valuta'   => $bi['kurs']['valuta'],
+            'nilai_valuta'  => $bi['kurs']['nilai'],
+
+            // WAJIB BAYAR
+            'nama_wajib_bayar'  => $bi['wajib_bayar']['nama'],
+            'alamat_wajib_bayar'=> $bi['wajib_bayar']['alamat'],
+            'npwp_wajib_bayar'  => $bi['wajib_bayar']['npwp'],
+            'no_identitas_wajib_bayar'  => $bi['wajib_bayar']['identitas']['nomor'],
+            'jenis_identitas_wajib_bayar' => $bi['wajib_bayar']['identitas']['jenis'],
+
+            // PEJABAT
+            'nama_pejabat'  => $bi['pejabat']['nama'] ?? $nama_pejabat,
+            'nip_pejabat'   => $bi['pejabat']['nip'] ?? $nip_pejabat
+        ]);
+
+        // set tgl dan nomor?
+        $s->tgl_dok = date('Y-m-d');
+        $s->kode_kantor = $kode_kantor;
+
+        // save?
+        if (!method_exists($b, 'sspcp')) {
+            throw new \Exception("The document is not payable");
+            return null;
+        }
+
+        $b->sspcp()->save($s);
+
+        // set nomor
+        $s->setNomorDokumen();
+
+        return $s;
+    }
+
     static public function createFromCD(CD $cd, $keterangan, $lokasi_id, $nama_pejabat, $nip_pejabat) {
         // check if cd is valid
         if (!$cd) {

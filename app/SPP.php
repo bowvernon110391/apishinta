@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SPP extends Model
+class SPP extends Model implements IDokumen
 {
     use TraitLoggable;
     use TraitDokumen {
@@ -79,7 +79,10 @@ class SPP extends Model
     public function getJenisDokumenAttribute() {
         return 'spp';
     }
-
+    
+    public function getJenisDokumenLengkapAttribute() {
+        return 'Surat Penundaan Pengeluaran';
+    }
     public function getSkemaPenomoranAttribute()
     {
         return 'SPP/' . $this->lokasi->nama . '/SH';

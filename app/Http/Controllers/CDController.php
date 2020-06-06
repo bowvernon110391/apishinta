@@ -424,13 +424,14 @@ class CDController extends ApiController
             }
 
             // ambil cd
-            $sspcp = SSPCP::createFromCD($cd, $keterangan, $lokasi->id, $nama_pejabat, $nip_pejabat);
+            // $sspcp = SSPCP::createFromCD($cd, $keterangan, $lokasi->id, $nama_pejabat, $nip_pejabat);
+            $sspcp = SSPCP::createFromBillable($cd, $keterangan, $nama_pejabat, $nip_pejabat);
 
             // append status and log for the CD, before lock?
             $cd->appendStatus('SSPCP', $lokasi->nama);
 
             // log for CD?
-            AppLog::logInfo("CD #{$cd->id} ditetapkan dengan SSPCP #{$sspcp->id} oleh {$nama_pejabat}", $sspcp);
+            AppLog::logInfo("CD #{$cd->id} ditetapkan dengan Id#{$sspcp->id} oleh {$nama_pejabat}", $sspcp, false);
 
             // lock that shieeeet!!
             $sspcp->lock();

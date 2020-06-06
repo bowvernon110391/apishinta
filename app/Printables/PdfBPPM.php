@@ -117,20 +117,20 @@ class PdfBPPM extends Fpdf {
         protected $nama_pejabat   = 'Tri Mulyadi Wibowo';
         protected $nip_pejabat    = '199103112012101001';
          */
-        $cd = $s->cd;
-        if (!$cd) {
-            throw new \Exception("Dokumen ini bukan berasal dari CD!");
+        $doc = $s->billable;
+        if (!$doc) {
+            throw new \Exception("Dokumen ini tidak ada parentnya!");
         }
 
-        $this->no_identitas     = $cd->penumpang->no_paspor;
-        $this->nama_penumpang   = $cd->penumpang->nama;
-        $this->alamat           = $cd->alamat;
+        $this->no_identitas     = $s->no_identitas_wajib_bayar; //$cd->penumpang->no_paspor;
+        $this->nama_penumpang   = $s->nama_wajib_bayar; //$cd->penumpang->nama;
+        $this->alamat           = $s->alamat_wajib_bayar; //$cd->alamat;
 
-        $this->npwp_pt  = strlen($cd->npwp) > 13 ? $cd->npwp : '-';
+        $this->npwp_pt  = $s->npwp ?? '-'; //strlen($cd->npwp) > 13 ? $cd->npwp : '-';
 
-        $this->jenis_dokumen_dasar  = 'CUSTOMS DECLARATION (BC 2.2)';
-        $this->nomor_dokumen_dasar  = $cd->nomor_lengkap;
-        $this->tgl_dokumen_dasar    = formatTanggalDMY($cd->tgl_dok);
+        $this->jenis_dokumen_dasar  = $doc->jenis_dokumen_lengkap; //'CUSTOMS DECLARATION (BC 2.2)';
+        $this->nomor_dokumen_dasar  = $doc->nomor_lengkap_dok; //$cd->nomor_lengkap;
+        $this->tgl_dokumen_dasar    = formatTanggalDMY($doc->tgl_dok);
 
         // gotta put something into data pungutan
         $this->data_pungutan    = [];

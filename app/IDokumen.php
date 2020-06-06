@@ -6,6 +6,7 @@ interface IDokumen
 {
     public function getNomorLengkapAttribute();
     public function getJenisDokumenAttribute();
+    public function getJenisDokumenLengkapAttribute();
     public function getSkemaPenomoranAttribute();
     public function getLastStatusAttribute();
     public function getShortLastStatusAttribute();

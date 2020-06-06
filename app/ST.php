@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ST extends Model
+class ST extends Model implements IDokumen
 {
     use TraitLoggable;
     use TraitDokumen {
@@ -80,7 +80,10 @@ class ST extends Model
     public function getJenisDokumenAttribute() {
         return 'st';
     }
-
+    
+    public function getJenisDokumenLengkapAttribute() {
+        return 'Tanda Bukti Penegahan';
+    }
     public function getSkemaPenomoranAttribute()
     {
         return 'ST/' . $this->lokasi->nama . '/SH';

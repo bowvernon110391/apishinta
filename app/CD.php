@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CD extends Model implements IDokumen
+class CD extends Model implements IDokumen, IBillable
 {
     use TraitLoggable;
     use TraitDokumen;
@@ -73,7 +73,8 @@ class CD extends Model implements IDokumen
     }
 
     public function sspcp(){
-        return $this->hasOne('App\SSPCP','cd_header_id');
+        // return $this->hasOne('App\SSPCP','cd_header_id');
+        return $this->morphOne('App\SSPCP', 'billable');
     }
 
     public function imporSementara(){
@@ -189,7 +190,10 @@ class CD extends Model implements IDokumen
     public function getJenisDokumenAttribute(){
         return 'cd';
     }
-
+    
+    public function getJenisDokumenLengkapAttribute(){
+        return 'Customs Declaration (BC 2.2)';
+    }
     public function getSkemaPenomoranAttribute(){
         return 'CD/'. $this->lokasi->nama . '/SH';
     }
@@ -446,5 +450,39 @@ class CD extends Model implements IDokumen
             'data_perhitungan'  => $total_hitung->toArray(),
             'data_pembebasan'   => $data_pembebasan ?? null
         ];
+    }
+
+    // get billing_info attribute
+    public function getBillingInfoAttribute() {
+        // if we have no details, return null?
+        try {
+            $p = $this->simulasi_pungutan;
+
+            return [
+                'tagihan'   => [
+                    'total_bm'  => $p['total_bm'],
+                    'total_ppn' => $p['total_ppn'],
+                    'total_pph' => $p['total_pph'],
+                    'total_ppnbm'   => $p['total_ppnbm'],
+                    'total_denda'   => 0
+                ],
+                'wajib_bayar'   => [
+                    'nama'  => $this->penumpang->nama,
+                    'alamat'=> $this->alamat,
+                    'npwp'  => strlen(trim($this->npwp)) == 15 ? $this->npwp : '',
+                    'identitas' => [
+                        'nomor' => $this->penumpang->no_paspor,
+                        'jenis' => 'PASPOR'
+                    ]
+                ],
+                'kurs'  => [
+                    'valuta'    => $this->ndpbm->kode_valas,
+                    'nilai'     => $this->ndpbm->kurs_idr
+                ]
+            ];
+        } catch (\Exception $e) {
+            throw $e;
+            return null;
+        }
     }
 }
