@@ -161,7 +161,10 @@ class SSPCP extends Model implements IDokumen, ILinkable
 
         // just create it
         $s = new SSPCP([
-            // DOKUMEN
+            // UMUM
+            'jenis'     => $bi['jenis'],
+            
+            // DOKUMEN            
             'keterangan'    => $bi['dokumen']['keterangan'] ?? $keterangan,
 
             // TAGIHAN

@@ -459,6 +459,7 @@ class CD extends Model implements IDokumen, IBillable
             $p = $this->simulasi_pungutan;
 
             return [
+                'jenis' => 'IMPOR',
                 'tagihan'   => [
                     'total_bm'  => $p['total_bm'],
                     'total_ppn' => $p['total_ppn'],

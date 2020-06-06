@@ -122,11 +122,13 @@ class PdfBPPM extends Fpdf {
             throw new \Exception("Dokumen ini tidak ada parentnya!");
         }
 
+        $this->jenis_penerimaan_negara  = $s->jenis;
+
         $this->no_identitas     = $s->no_identitas_wajib_bayar; //$cd->penumpang->no_paspor;
         $this->nama_penumpang   = $s->nama_wajib_bayar; //$cd->penumpang->nama;
         $this->alamat           = $s->alamat_wajib_bayar; //$cd->alamat;
 
-        $this->npwp_pt  = $s->npwp ?? '-'; //strlen($cd->npwp) > 13 ? $cd->npwp : '-';
+        $this->npwp_pt  = $s->npwp_wajib_bayar ?? '-'; //strlen($cd->npwp) > 13 ? $cd->npwp : '-';
 
         $this->jenis_dokumen_dasar  = $doc->jenis_dokumen_lengkap; //'CUSTOMS DECLARATION (BC 2.2)';
         $this->nomor_dokumen_dasar  = $doc->nomor_lengkap_dok; //$cd->nomor_lengkap;

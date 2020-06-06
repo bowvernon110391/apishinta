@@ -24,6 +24,9 @@ class CreateSspcpHeaderTable extends Migration {
 			$table->morphs('billable');
 			$table->text('keterangan', 65535)->nullable();
 
+			// GENERIC
+			$table->string('jenis', 32);
+
 			// $table->integer('cd_header_id')->unsigned()->index('fk_st_header_cd_id_cd_header_id');
 			// $table->integer('no_dok')->unsigned();
 			// $table->date('tgl_dok');
