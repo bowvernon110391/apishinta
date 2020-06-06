@@ -6,6 +6,7 @@ use App\CD;
 use App\Dokkap;
 use App\IS;
 use App\Lampiran;
+use App\Pembatalan;
 use App\SPMB;
 use App\Transformers\LampiranTransformer;
 use Illuminate\Http\Request;
@@ -18,7 +19,8 @@ class UploadController extends ApiController
         'cd',
         'is',
         'spmb',
-        'dokkap'
+        'dokkap',
+        'pembatalan'
     ];
 
     public function handleUpload(Request $r, $doctype = null, $docid = null) {
@@ -58,6 +60,10 @@ class UploadController extends ApiController
 
                     case 'dokkap':
                         $master = Dokkap::find($master_id);
+                        break;
+
+                    case 'pembatalan':
+                        $master = Pembatalan::find($master_id);
                         break;
                 }
 
@@ -179,6 +185,10 @@ class UploadController extends ApiController
 
                 case 'dokkap':
                     $masterDoc = Dokkap::find($docid);
+                    break;
+
+                case 'pembatalan':
+                    $masterDoc = Pembatalan::find($docid);
                     break;
                 
                 default:
