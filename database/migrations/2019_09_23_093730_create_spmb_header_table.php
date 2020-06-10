@@ -30,10 +30,14 @@ class CreateSpmbHeaderTable extends Migration {
 			$table->string('pemilik_barang')->nullable();
 			$table->string('no_tiket')->nullable();
 			$table->string('maksud_pembawaan')->nullable();
-			$table->integer('pejabat_id')->unsigned();
+			// $table->integer('pejabat_id')->unsigned();
 			$table->decimal('nilai_valuta', 18, 4)->nullable();
 			$table->decimal('total_brutto', 18, 4);
 			$table->decimal('total_netto', 18, 4);
+
+			$table->string('nama_pejabat');
+			$table->string('nip_pejabat');
+
 			$table->timestamps();
 			$table->softDeletes();
 		});

@@ -8,6 +8,7 @@ class Dokkap extends Model
 {
     // Dokkap bisa punya lampiran
     use TraitAttachable;
+    use TraitLoggable;
 
     protected $table = 'dokkap';
 
