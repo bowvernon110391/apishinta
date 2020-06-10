@@ -410,8 +410,8 @@ class CDController extends ApiController
                 $bpj->save();
 
                 // log it?
-                $bpj->appendLog("BPJ #{$bpj->id} digunakan untuk melunasi CD #{$cd->id}");
-                $cd->appendLog("CD #{$cd->id} dilunasi dengan BPJ #{$bpj->id}");
+                // $bpj->appendLog("BPJ #{$bpj->id} digunakan untuk melunasi CD #{$cd->id}");
+                // $cd->appendLog("CD #{$cd->id} dilunasi dengan BPJ #{$bpj->id}");
 
                 // Append status
                 $bpj->appendStatus("USED", $lokasi->nama);

@@ -1,11 +1,13 @@
 <?php
 
+use App\MigrationTraitDokumen;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateDokkapTable extends Migration
 {
+    use MigrationTraitDokumen;
     /**
      * Run the migrations.
      *
@@ -17,8 +19,7 @@ class CreateDokkapTable extends Migration
             $table->bigIncrements('id');
 
             // data consists of no_dok + tgl_dok
-            $table->string('no_dok')->index();
-            $table->date('tgl_dok')->index();
+            $this->addDokumenColumns($table);
 
             // jenis_dokkap_id references other table
             $table->integer('jenis_dokkap_id')->unsigned();

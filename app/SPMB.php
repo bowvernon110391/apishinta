@@ -5,10 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SPMB extends Model
+class SPMB extends Model implements IDokumen, IInspectable
 {
-    use SoftDeletes;
     use TraitLoggable;
+    use TraitDokumen;
+    use TraitInspectable;
+
+    use SoftDeletes;
     
     protected $table = 'spmb_header';
 

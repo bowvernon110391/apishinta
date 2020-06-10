@@ -11,7 +11,7 @@ trait TraitLoggable
         return $this->morphMany('App\AppLog', 'loggable');
     }
 
-    public function appendLog($message, $type="INFO", $object=null) {
+    /* public function appendLog($message, $type="INFO", $object=null) {
         $l = new AppLog();
 
         $l->message = $message;
@@ -22,5 +22,5 @@ trait TraitLoggable
         $this->logs()->save($l);
 
         return $l;
-    }
+    } */
 }
