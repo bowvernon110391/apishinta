@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
+use App\Http\Controllers\ApiController;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Foundation\Http\Exceptions\MaintenanceModeException;
+use League\Fractal;
 
 class Handler extends ExceptionHandler
 {
@@ -46,6 +49,40 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        // kalo exception timbul karena maintenance mode aktif
+        if ($exception instanceof MaintenanceModeException) {
+            // spawn our REST api controller to handle this
+            $c = new ApiController(new Fractal\Manager(), $request);
+
+            // special headers to handle CORS compatibility
+            $headers = [
+                'Access-Control-Allow-Origin' => "*",
+                'Access-Control-Allow-Methods' => $request->method(),
+                'Access-Control-Allow-Headers' => 'Authorization,Content-Type,Content-Length,X-Content-Filesize,X-Content-Type,X-Content-Filename'
+            ];
+
+            // build message
+            $message = $exception->getMessage();
+            if (strlen($message) < 1) {
+                $message = "Maintenance mode started";
+            } 
+            // decorate it
+            $message = "👋👋👋 👉MAINTENANCE_MESSAGE [{$message}]👈";
+            $message .= ". Started @ " . $exception->wentDownAt;
+            if ($exception->willBeAvailableAt) {
+                $message .= ", Will be up again probably around " . $exception->willBeAvailableAt;
+            }
+            
+
+            // if it's OPTIONS request, let it pass
+            if ($request->method() == "OPTIONS") {
+                return $c->options()->withHeaders($headers);
+            }
+
+            // on the real request, respond accordingly
+            return $c->errorServiceUnavailable($message)
+                ->withHeaders($headers);
+        }
         return parent::render($request, $exception);
     }
 }
