@@ -18,11 +18,12 @@ class AdjustSpmbHeaderTable extends Migration
             $table->integer('cd_header_id')->unsigned()->nullable()->default(null)->change();
 
             // remove columns
-            $table->dropColumn('total_brutto');
-            $table->dropColumn('total_fob');
-            $table->dropColumn('total_netto');
-            $table->dropColumn('nilai_valuta');
-            $table->dropColumn('no_tiket');
+            if (Schema::hasColumn('spmb_header', 'total_brutto')) $table->dropColumn('total_brutto');
+            if (Schema::hasColumn('spmb_header', 'total_fob')) $table->dropColumn('total_fob');
+            if (Schema::hasColumn('spmb_header', 'total_netto')) $table->dropColumn('total_netto');
+            if (Schema::hasColumn('spmb_header', 'nilai_valuta')) $table->dropColumn('nilai_valuta');
+            if (Schema::hasColumn('spmb_header', 'kode_valuta')) $table->dropColumn('kode_valuta');
+            if (Schema::hasColumn('spmb_header', 'no_tiket')) $table->dropColumn('no_tiket');
         });
     }
 

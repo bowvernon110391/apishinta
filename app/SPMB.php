@@ -26,4 +26,20 @@ class SPMB extends Model implements IDokumen, IInspectable
     public function lokasi(){
         return $this->belongsTo('App\Lokasi', 'lokasi_id');
     }
+
+    // custom attributes
+    public function getJenisDokumenAttribute()
+    {
+        return 'spmb';
+    }
+
+    public function getJenisDokumenLengkapAttribute()
+    {
+        return 'Surat Pemberitahuan Membawa Barang (BC 3.4)';
+    }
+
+    public function getSkemaPenomoranAttribute()
+    {
+        return 'KB/' . $this->lokasi->nama . '/SH';
+    }
 }
