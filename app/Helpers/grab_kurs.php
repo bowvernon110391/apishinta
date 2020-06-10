@@ -49,7 +49,7 @@ if (!function_exists('grabsKursData')) {
 		// source data
 		try {
 			//code...
-			$html = file_get_contents('https://fiskal.kemenkeu.go.id/dw-kurs-db.asp', false, stream_context_create($arrContextOptions) );
+			$html = file_get_contents('https://fiskal.kemenkeu.go.id/informasi-publik/kurs-pajak', false, stream_context_create($arrContextOptions) );
 		} catch (\Exception $e) {
 			// return empty data, will be interpreted as service unavailable
 			return null;
@@ -83,7 +83,8 @@ if (!function_exists('grabsKursData')) {
 			return null;
 
 		// grab data asli (KODE KURS + NILAI TUKARNYA)
-		$patKurs = '/\(([A-Z]{3})\).+.+>(.+)\s<img/';
+		// $patKurs = '/\(([A-Z]{3})\).+.+>(.+)\s<img/';
+		$patKurs = '/\((\w{3})\)<\/td>\s+<td.+>\s+<img.+\/>\s+([0-9\,\.]+)<\/td>/';
 
 		$result = preg_match_all($patKurs, $html, $matches);
 
