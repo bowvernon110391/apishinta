@@ -14,7 +14,7 @@ class CDObserver
      */
     public function created(CD $cD)
     {
-        //
+        // 
     }
 
     /**
