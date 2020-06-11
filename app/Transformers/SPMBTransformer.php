@@ -45,6 +45,8 @@ class SPMBTransformer extends TransformerAbstract {
             'last_status'   => $s->short_last_status,
             'links'         => $s->links
         ];
+
+        return $result;
     }
 
     // include penumpang

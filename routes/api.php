@@ -357,3 +357,11 @@ Route::delete('/pembatalan/detail/{id}', 'PembatalanController@delDokumen')
 // PUT /pembatalan/:id/lock     -> kunci dokumen pembatalan
 Route::put('/pembatalan/{id}/lock', 'PembatalanController@lockPembatalan')
         ->middleware($corsGroup['singleItem'], 'role:KASI,CONSOLE');
+
+//====================================================================================================
+// ENDPOINTS SPMB
+// kasih guard di endpointnya
+//====================================================================================================
+// GET /spmb?q=&from=&to=       -> list data spmb
+Route::get('/spmb', 'SPMBController@index')
+        ->middleware($corsGroup['resourceGroup']);
