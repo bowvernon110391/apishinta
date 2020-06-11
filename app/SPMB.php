@@ -13,8 +13,28 @@ class SPMB extends Model implements IDokumen, IInspectable
 
     use SoftDeletes;
     
+    // table setting
     protected $table = 'spmb_header';
 
+    // default values
+    protected $attributes = [
+        'keterangan'    => ''
+    ];
+
+    // guarded attributes
+    protected $guarded = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
+    // default relations
+    protected $with = [
+        'lokasi',
+        'penumpang'
+    ];
+
+    // RELATIONSHIPS
     public function details(){
         return $this->hasMany('App\DetailSPMB', 'spmb_header_id');
     }
@@ -27,7 +47,17 @@ class SPMB extends Model implements IDokumen, IInspectable
         return $this->belongsTo('App\Lokasi', 'lokasi_id');
     }
 
-    // custom attributes
+    public function penumpang(){
+        return $this->belongsTo('App\Penumpang', 'penumpang_id');
+    }
+
+    public function negaraTujuan() {
+        return $this->belongsTo('App\Negara', 'kd_negara_tujuan', 'kode_alpha3');
+    }
+
+    // ========================================
+    // CUSTOM ATTRIBUTES!!
+    // ========================================
     public function getJenisDokumenAttribute()
     {
         return 'spmb';
@@ -41,5 +71,21 @@ class SPMB extends Model implements IDokumen, IInspectable
     public function getSkemaPenomoranAttribute()
     {
         return 'KB/' . $this->lokasi->nama . '/SH';
+    }
+
+    public function getLinksAttribute() {
+        $links = [
+            'rel'   => 'self',
+            'uri'   => $this->uri
+        ];
+
+        if ($this->cd) {
+            $links[] = [
+                'rel'   => 'cd',
+                'uri'   => $this->cd->uri
+            ];
+        }
+
+        return $links;
     }
 }
