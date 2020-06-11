@@ -52,7 +52,11 @@ class SPMB extends Model implements IDokumen, IInspectable
     }
 
     public function negaraTujuan() {
-        return $this->belongsTo('App\Negara', 'kd_negara_tujuan', 'kode_alpha3');
+        return $this->belongsTo('App\Negara', 'kd_negara_tujuan', 'kode');
+    }
+
+    public function airline() {
+        return $this->belongsTo('App\Airline', 'kd_flight_berangkat', 'kode');
     }
 
     // ========================================
