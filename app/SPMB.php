@@ -92,4 +92,71 @@ class SPMB extends Model implements IDokumen, IInspectable
 
         return $links;
     }
+
+    //=================================================================================================
+    // SCOPES!!
+    //=================================================================================================
+    // scope by lokasi
+    public function scopeByLokasi($query, $lokasi) {
+        return $query->whereHas('lokasi', function ($q) use($lokasi) {
+            return $q->where('nama', 'like', "%{$lokasi}%");
+        });
+    }
+
+    // scope by cd
+    public function scopeByCD($query, $q, $from, $to) {
+        return $query->whereHas('cd', function ($qq) use ($q, $from, $to) {
+            return CD::queryScope($qq, $q, $from, $to);
+        });
+    }
+
+    // based on pejabat?
+    public function scopeByPejabat($query, $q) {
+        return $query->where('nama_pejabat', 'like', "%{$q}%")
+                    ->orWhere('nip_pejabat', 'like', "%{$q}%");
+    }
+
+    // tanggal dok query
+    public function scopeFrom($query, $d) {
+        return $query->where('tgl_dok', '>=', $d);
+    }
+
+    public function scopeTo($query, $d) {
+        return $query->where('tgl_dok', '<=', $d);
+    }
+
+    // by penumpang
+    public function scopeByPenumpang($query, $penumpang) {
+        return $query->whereHas('penumpang', function ($query) use ($penumpang) {
+            return $query->where('nama', 'like', "%{$penumpang}%");
+        });
+    }
+
+    // wildcard query
+    public function scopeByQuery($query, $q, $from=null, $to=null) {
+        return $query->byLokasi($q)
+                    ->orWhere(function ($query) use ($q) {
+                        $query->where('no_dok', $q);
+                    })
+                    ->orWhere(function ($query) use ($q) {
+                        $query->byPejabat($q);
+                    })
+                    ->orWhere(function ($query) use ($q) {
+                        $query->byPenumpang($q);
+                    })
+                    ->orWhere(function ($query) use ($q, $from, $to) {
+                        $query->byCD($q, $from, $to);
+                    })
+                    ->orWhere(function ($query) use ($q) {
+                        $query->byNomorLengkap($q);
+                    })
+                    ->when($from, function ($query) use ($from) {
+                        $query->from($from);
+                    })
+                    ->when($to, function ($query) use ($to) {
+                        $query->to($to);
+                    })
+                    ->latest()
+                    ->orderBy('tgl_dok', 'desc');
+    }
 }
