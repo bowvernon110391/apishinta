@@ -82,6 +82,10 @@ trait TraitDokumen
         if ($this->no_dok == 0) {
             return null;
         }
+
+        if (strlen($this->nomor_lengkap_dok) > 0) {
+            return $this->nomor_lengkap_dok;
+        }
         
         $nomorLengkap = str_pad($this->no_dok, 6,"0", STR_PAD_LEFT)
                         .'/'
