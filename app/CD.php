@@ -9,7 +9,8 @@ class CD extends Model implements IDokumen, IBillable, IInspectable
 {
     use TraitLoggable;
     use TraitDokumen;
-    use TraitInspectable;
+    // use TraitInspectable;
+    use TraitInstructable;
     // enable soft Deletion
     use SoftDeletes;
 

@@ -22,6 +22,20 @@ class InstruksiPemeriksaan extends Model implements IDokumen, IInspectable
         'deleted_at'
     ];
 
+
+    // ==========================================
+    // RELATIONS
+    // ==========================================
+    public function instructable()
+    {
+        return $this->morphTo();
+    }
+
+    public function lhp()
+    {
+        return $this->morphOne('App\LHP', 'inspectable');
+    }
+
     // ==========================================
     // ATTRIBUTES
     // ==========================================
