@@ -15,11 +15,16 @@ class StatusDetail extends Model
         'updated_at'
     ];
 
+    // auto touch parent?
+    protected $touches = [
+        'status'
+    ];
+
     // ================================================
     // RELATIONS
     // ================================================
     public function status() {
-        return $this->belongsTo('App\Status', 'status_id', 'id');
+        return $this->belongsTo('App\Status', 'status_id', 'id')->withTimestamps();
     }
 
     public function linkable() {

@@ -22,6 +22,10 @@ class Status extends Model
         return $this->morphTo();
     }
 
+    public function detail(){
+        return $this->hasOne('App\StatusDetail', 'status_id', 'id');
+    }
+
     public function scopeByDoctype($query, $doctype) {
         return $query->where('statusable_type', $doctype);
     }
