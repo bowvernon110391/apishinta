@@ -85,7 +85,7 @@ class STController extends ApiController
             AppLog::logInfo("ST #{$st->id} diinput oleh {$r->userInfo['username']}", $st);
 
             // add initial status for spp
-            $st->appendStatus('CREATED', $nama_lokasi);
+            $st->appendStatus('CREATED', $nama_lokasi, 'CREATED FROM CD', $cd);
 
             // directly lock
             $st->lock();
