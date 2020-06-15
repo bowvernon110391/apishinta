@@ -24,7 +24,7 @@ class StatusDetail extends Model
     // RELATIONS
     // ================================================
     public function status() {
-        return $this->belongsTo('App\Status', 'status_id', 'id')->withTimestamps();
+        return $this->belongsTo('App\Status', 'status_id', 'id');
     }
 
     public function linkable() {
