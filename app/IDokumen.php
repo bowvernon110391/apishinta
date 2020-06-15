@@ -16,5 +16,5 @@ interface IDokumen
     public function getIsLockedAttribute();
     public function setNomorDokumen($force = false);
     public function getTahunDokAttribute();
-    public function appendStatus($name);
+    public function appendStatus($name, $lokasi = null, $keterangan = null, $linkable = null, $other_data = null);
 }
