@@ -17,13 +17,15 @@ class StatusTransformer extends TransformerAbstract {
     public function transform(Status $status) {
        
         return [
+            'id'    => (int) $status->id,
             'status' => $status->status,
             'created_at' => (string) $status->created_at
         ];
     }
 
     public function includeDetail(Status $s) {
-        return $this->item($s->detail, new StatusDetailTransformer);
+        if ($s->detail)
+            return $this->item($s->detail, new StatusDetailTransformer);
     }
 }
 
