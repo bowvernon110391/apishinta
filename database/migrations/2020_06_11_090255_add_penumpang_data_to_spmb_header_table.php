@@ -30,6 +30,7 @@ class AddPenumpangDataToSpmbHeaderTable extends Migration
         Schema::table('spmb_header', function (Blueprint $table) {
             Schema::disableForeignKeyConstraints();
 
+            $table->dropForeign('spmb_header_penumpang_id_foreign');
             $table->dropColumn('penumpang_id');
 
             Schema::enableForeignKeyConstraints();

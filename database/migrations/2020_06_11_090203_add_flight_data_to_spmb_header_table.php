@@ -35,9 +35,9 @@ class AddFlightDataToSpmbHeaderTable extends Migration
             Schema::disableForeignKeyConstraints();
 
             // remove said columns?
-            if (Schema::hasColumn('no_flight_berangkat')) $table->dropColumn('no_flight_berangkat');
-            if (Schema::hasColumn('kd_flight_berangkat')) $table->dropColumn('kd_flight_berangkat');
-            if (Schema::hasColumn('tgl_berangkat')) $table->dropColumn('tgl_berangkat');
+            if (Schema::hasColumn('spmb_header', 'no_flight_berangkat')) $table->dropColumn('no_flight_berangkat');
+            if (Schema::hasColumn('spmb_header', 'kd_flight_berangkat')) $table->dropColumn('kd_flight_berangkat');
+            if (Schema::hasColumn('spmb_header', 'tgl_berangkat')) $table->dropColumn('tgl_berangkat');
 
             Schema::enableForeignKeyConstraints();
         });
