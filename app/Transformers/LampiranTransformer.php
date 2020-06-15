@@ -26,7 +26,17 @@ class LampiranTransformer extends TransformerAbstract {
 
     public function includeAttachable(Lampiran $l) {
         $data = $l->attachable;
-        switch ($l->owner_type) {
+
+        if ($data) {
+            // if there's data, do something
+            $classname = class_basename($data);
+            $transformerName = 'App\\Transformers\\' . $classname . 'Transformer';
+
+            if (class_exists($transformerName)) {
+                return $this->item($data, new $transformerName);
+            }
+        }
+        /* switch ($l->owner_type) {
             case 'cd':
             case 'CD':
                 return $this->item($data, new CDTransformer);
@@ -35,6 +45,6 @@ class LampiranTransformer extends TransformerAbstract {
             default:
                 return null;
                 break;
-        }
+        } */
     }
 }
