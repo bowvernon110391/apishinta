@@ -27,16 +27,15 @@ class StatusDetailTransformer extends TransformerAbstract {
     public function includeLinkable(StatusDetail $s) {
         $l = $s->linkable;
 
-        if (!$l) {
-            return null;
-        } else {
+        if ($l) {
+            
             // what is our linkable type?
             $classname = class_basename($l);
-            $transformerName = $classname . 'Transformer';
+            $transformerName = 'App\\Transformers\\'. $classname . 'Transformer';
 
             // does it exist?
             if (!class_exists($transformerName)) {
-                return null;
+                throw new \Exception("Transformer  '{$transformerName}' does not exist!");
             }
 
             // it exists!! so just spawn it
