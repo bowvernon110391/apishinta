@@ -16,11 +16,11 @@ use PDOException;
 class UploadController extends ApiController
 {
     protected static $acceptedType = [
-        'cd',
-        'is',
-        'spmb',
-        'dokkap',
-        'pembatalan'
+        'cd'    => CD::class,
+        'is'    => IS::class,
+        'spmb'  => SPMB::class,
+        'dokkap'    => Dokkap::class,
+        'pembatalan'    => Pembatalan::class
     ];
 
     public function handleUpload(Request $r, $doctype = null, $docid = null) {
@@ -40,46 +40,27 @@ class UploadController extends ApiController
                 $master_id      = $matches[2];
 
                 // only valid type is 'cd', 'is', 'spmb', 'dokkap'
-                if (!in_array($master_type, UploadController::$acceptedType)) {
+                if (! key_exists($master_type, UploadController::$acceptedType)/* !in_array($master_type, UploadController::$acceptedType) */) {
                     throw new \Exception("Unacceptable master doctype: {$master_type}");
                 }
 
                 // now try to get it
-                switch ($master_type) {
-                    case 'cd':
-                        $master = CD::find($master_id);
-                        break;    
-                    
-                    case 'is':
-                        $master = IS::find($master_id);
-                        break;
-                    
-                    case 'spmb':
-                        # code...
-                        break;
-
-                    case 'dokkap':
-                        $master = Dokkap::find($master_id);
-                        break;
-
-                    case 'pembatalan':
-                        $master = Pembatalan::find($master_id);
-                        break;
-                }
+                $master = UploadController::$acceptedType[$master_type]::find($master_id);
 
                 // do we get it?
                 if (!$master) {
                     throw new \Exception("Master doctype {$master_type} #{$master_id} not found, possibly user is drunk");
                 } else {
                     // by default, we can upload
-                    $canUpload  = true;
+                    $canUpload  = canEdit( $master->is_locked, $r->userInfo);
+                    // $canUpload  = true;
 
                     // but, gotta check the document's lock state too!
-                    if ($master_type != 'dokkap') {
-                        $canUpload  = canEdit( $master->is_locked, $r->userInfo);
-                    } else {
-                        $canUpload  = canEdit( $master->master->is_locked, $r->userInfo);
-                    }
+                    // if ($master_type != 'dokkap') {
+                        // $canUpload  = canEdit( $master->is_locked, $r->userInfo);
+                    // } else {
+                        // $canUpload  = canEdit( $master->master->is_locked, $r->userInfo);
+                    // }
 
                     // if we cannot uplod, tell em
                     if (!$canUpload) {
