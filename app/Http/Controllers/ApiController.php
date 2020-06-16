@@ -130,6 +130,12 @@ class ApiController extends Controller
                 ->respondWithError($message);
     }
 
+    // 405 method not allowed
+    public function errorMethodNotAllowed($message = "Method not allowed, d00d") {
+        return $this->setStatusCode(405)
+                ->respondWithError($message);
+    }
+
     // 500 internal server error
     public function errorInternalServer($message = "Server's having a problem. Report to administrator if you wish") {
         return $this->setStatusCode(500)

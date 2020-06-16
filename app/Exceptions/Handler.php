@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Foundation\Http\Exceptions\MaintenanceModeException;
 use League\Fractal;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -49,10 +50,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        $c = new ApiController(new Fractal\Manager(), $request);
+
         // kalo exception timbul karena maintenance mode aktif
         if ($exception instanceof MaintenanceModeException) {
             // spawn our REST api controller to handle this
-            $c = new ApiController(new Fractal\Manager(), $request);
 
             // special headers to handle CORS compatibility
             $headers = [
@@ -83,6 +85,11 @@ class Handler extends ExceptionHandler
             return $c->errorServiceUnavailable($message)
                 ->withHeaders($headers);
         }
+
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return $c->errorMethodNotAllowed("Invalid method invokation. You're not hacking me ain't ye?");
+        }
+
         return parent::render($request, $exception);
     }
 }

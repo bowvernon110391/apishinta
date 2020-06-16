@@ -365,3 +365,17 @@ Route::put('/pembatalan/{id}/lock', 'PembatalanController@lockPembatalan')
 // GET /spmb?q=&from=&to=       -> list data spmb
 Route::get('/spmb', 'SPMBController@index')
         ->middleware($corsGroup['resourceGroup']);
+
+
+//====================================================================================================
+// ENDPOINTS LHP
+// kasih guard di endpointnya
+//====================================================================================================
+Route::get('/spmb/{id}/lhp/berangkat', 'LHP_IP_Controller@showResolvedLHP')
+        ->middleware($corsGroup['singleItem']);
+
+Route::get('/{doctype}/{id}/lhp', 'LHP_IP_Controller@showResolvedLHP')
+        ->middleware($corsGroup['singleItem']);
+
+Route::get('/lhp/{id}', 'LHP_IP_Controller@showResolvedLHP')
+        ->middleware($corsGroup['singleItem']);

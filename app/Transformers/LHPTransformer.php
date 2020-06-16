@@ -48,7 +48,7 @@ class LHPTransformer extends TransformerAbstract {
             $transformerName = 'App\\Transformers\\' . $classname . 'Transformer';
 
             if (class_exists($transformerName)) {
-                return $this->item($l->inspectable, $transformerName);
+                return $this->item($l->inspectable, new $transformerName);
             }
         }
     }

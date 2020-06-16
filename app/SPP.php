@@ -5,13 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SPP extends Model implements IDokumen
+class SPP extends Model implements IDokumen, IInspectable
 {
     use TraitLoggable;
     use TraitDokumen {
         lock as public traitLock;
         unlock as public traitUnlock;
     }
+    use TraitInspectable;
     // enable soft deletion
     use SoftDeletes;
 
