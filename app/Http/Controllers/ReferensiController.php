@@ -21,6 +21,7 @@ use App\Transformers\KemasanTransformer;
 use App\Transformers\PelabuhanTransformer;
 use App\Transformers\ReferensiJenisDetailSekunderTransformer;
 use App\Transformers\SatuanTransformer;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ReferensiController extends ApiController
 {
@@ -100,6 +101,19 @@ class ReferensiController extends ApiController
                             ->appends($r->except('page'));
         
         return $this->respondWithPagination($paginator, new HsCodeTransformer);
+    }
+
+    // GET /hs/{id}
+    public function getHSById(Request $r, $id) {
+        try {
+            $hs = HsCode::findOrFail($id);
+
+            return $this->respondWithItem($hs, new HsCodeTransformer);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorNotFound("HS #{$id} was not found");
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 
     // GET /kategori

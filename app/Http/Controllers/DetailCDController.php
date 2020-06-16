@@ -54,7 +54,8 @@ class DetailCDController extends ApiController
             $jumlah_kemasan = expectSomething($data['kemasan']['jumlah'], 'Jumlah Kemasan');
             $jenis_kemasan = expectSomething($data['kemasan']['jenis'], 'Jenis Kemasan');
             
-            $hs_code = expectSomething($data['hscode'], 'Kode HS');
+            // $hs_code = expectSomething($data['hscode'], 'Kode HS');
+            $hs_id = expectSomething($data['hsid'], 'Kode HS');
             $fob = expectSomething($data['fob'], 'FOB');
             $brutto = expectSomething($data['brutto'], 'Brutto');
             $netto = $data['netto']; //expectSomething($data['netto'], 'Netto');
@@ -79,7 +80,8 @@ class DetailCDController extends ApiController
             $det->jumlah_kemasan = $jumlah_kemasan;
             $det->jenis_satuan = $jenis_satuan;
             $det->jenis_kemasan = $jenis_kemasan;
-            $det->hs_code = $hs_code;
+            // $det->hs_code = $hs_code;
+            $det->hs_id = $hs_id;
             $det->fob = $fob;
             $det->brutto = $brutto;
             $det->netto = $netto;
@@ -155,7 +157,8 @@ class DetailCDController extends ApiController
             $jenis_satuan = $data['satuan']['jenis'] ?? 'PCE'; //expectSomething($data['satuan']['jenis'], 'Jenis Satuan');
             $jumlah_kemasan = expectSomething($data['kemasan']['jumlah'], 'Jumlah Kemasan');
             $jenis_kemasan = expectSomething($data['kemasan']['jenis'], 'Jenis Kemasan');
-            $hs_code = expectSomething($data['hscode'], 'Kode HS');
+            // $hs_code = expectSomething($data['hscode'], 'Kode HS');
+            $hs_id = expectSomething($data['hsid'], 'Kode HS');
             $fob = expectSomething($data['fob'], 'FOB');
             $brutto = expectSomething($data['brutto'], 'Brutto');
             $netto = $data['netto']; //expectSomething($data['netto'], 'Netto');
@@ -181,7 +184,8 @@ class DetailCDController extends ApiController
                 'jumlah_kemasan' => $jumlah_kemasan,
                 'jenis_satuan' => $jenis_satuan,
                 'jenis_kemasan' => $jenis_kemasan,
-                'hs_code' => $hs_code,
+                // 'hs_code' => $hs_code,
+                'hs_id' => $hs_id,
                 'fob' => $fob,
                 'brutto' => $brutto,
                 'netto' => $netto,

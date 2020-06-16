@@ -227,6 +227,10 @@ Route::post('/negara', 'ReferensiController@storeNegara')
 Route::get('/hs', 'ReferensiController@getHS')
         ->middleware($corsGroup['resourceGroup']);
 
+// GET /hs/{id}
+Route::get('/hs/{id}', 'ReferensiController@getHSById')
+        ->middleware($corsGroup['singleItem']);
+
 // GET /kategori
 Route::get('/kategori', 'ReferensiController@getKategori')
         ->middleware($corsGroup['resourceGroup']);
