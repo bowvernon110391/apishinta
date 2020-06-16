@@ -316,4 +316,29 @@ if (!function_exists('formatTanggalDMY')) {
   }
 }
 
+// splitDatetime
+if (!function_exists('splitDatetime')) {
+  function splitTime($datetime) {
+    $matches = [];
+    if (preg_match('/^(\d{4}-\d{2}-\d{2})\s(\d{2}:\d{2}:\d{2})$/', $datetime, $matches) ) {
+        return [
+            'date'  => $matches[1],
+            'time'  => $matches[2]
+        ];
+    }
+    return null;
+  }
+
+  // add another helper
+  function timePart($datetime) {
+    $split = splitTime($datetime);
+    return $split ? $split['time'] : null;
+  }
+
+  function datePart($datetime) {
+    $split = splitTime($datetime);
+    return $split ? $split['date'] : null;
+  }
+}
+
 ?>
