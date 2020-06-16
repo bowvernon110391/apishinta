@@ -19,7 +19,11 @@ class HsCodeTransformer extends TransformerAbstract {
             'ppnbm_tarif' => (float) $hs->ppnbm_tarif,
             'ppn_text' => $hs->ppn_text,
             'ppnbm_text' => $hs->ppnbm_text,
-            'satuan_spesifik' => $hs->satuan_spesifik
+            'satuan_spesifik' => $hs->satuan_spesifik,
+
+            'created_at' => (string) $hs->created_at,
+            'updated_at' => (string) $hs->updated_at,
+            'deleted_at' => (string) $hs->deleted_at
         ];
     }
 }
