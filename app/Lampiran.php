@@ -18,6 +18,10 @@ class Lampiran extends Model
         'deleted_at'
     ];
 
+    protected $hidden = [
+        'blob'
+    ];
+
     // METHODS
     public function existsOnDisk() {
         return Storage::disk('public')->exists($this->diskfilename);
