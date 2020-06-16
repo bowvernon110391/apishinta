@@ -3,11 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HsCode extends Model
 {
+    use SoftDeletes;
     //
-    public $timestamps = false;
+    // public $timestamps = false;
     protected $table = 'hs_code';
 
     // Helper
