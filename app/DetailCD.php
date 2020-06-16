@@ -38,7 +38,8 @@ class DetailCD extends Model
     }
 
     public function hs() {
-        return $this->belongsTo('App\HsCode', 'hs_code', 'kode');
+        // return $this->belongsTo('App\HsCode', 'hs_code', 'kode');
+        return $this->belongsTo('App\HsCode', 'hs_id', 'id');
     }
 
     public function kemasan() {
