@@ -389,4 +389,13 @@ Route::get('/lhp/{id}', 'LHP_IP_Controller@showResolvedLHP')
 // kasih guard di endpointnya
 //====================================================================================================
 Route::get('/pemeriksa', 'ReferensiController@getPemeriksa')
-        ->middleware($corsGroup['resourceGroup'], 'role');
+->middleware($corsGroup['resourceGroup'], 'role');
+
+
+//====================================================================================================
+// ENDPOINTS EXCEL
+// kasih guard di endpointnya
+//====================================================================================================
+Route::get('/excel/kurs', 'ExcelController@exportKurs');
+Route::get('/excel/kurs/bkf', 'ExcelController@exportKursBkf');
+Route::get('/excel/kurs/{tanggal}', 'ExcelController@exportKurs');
