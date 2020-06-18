@@ -12,6 +12,11 @@ class Kurs extends Model
     // model ini merepresentasikan data kurs
     protected $table = 'kurs';
 
+    protected $guarded = [
+        'created_at',
+        'updated_at'
+    ];
+
     // cari kurs valid di tanggal tersebut. Date in Y-m-d
     public static function findValidKursOnDateOrFail($date) {
         // if date is not in valid format, reject

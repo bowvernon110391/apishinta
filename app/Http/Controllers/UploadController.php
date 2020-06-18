@@ -11,6 +11,7 @@ use App\SPMB;
 use App\Transformers\LampiranTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use PDOException;
 
 class UploadController extends ApiController
@@ -94,7 +95,7 @@ class UploadController extends ApiController
             $base64_data    = explode(',', $body);
 
             // for now, just store it somewhere
-            $uniqueFilename = uniqid() . str_random() . $filename;
+            $uniqueFilename = uniqid() . Str::random() . $filename;
             Storage::disk('public')->put($uniqueFilename, base64_decode($base64_data[1]) );
 
             // generate lampiran object

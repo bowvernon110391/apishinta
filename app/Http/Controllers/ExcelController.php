@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Exports\KursBkfExport;
 use App\Exports\KursExport;
+use App\Imports\KursImportToJson;
 
-class ExcelController extends Controller
+class ExcelController extends ApiController
 {
     // export kurs data
     public function exportKurs($tanggal = null) {
@@ -21,5 +22,10 @@ class ExcelController extends Controller
     // export kurs direct from bkf
     public function exportKursBkf() {
         return (new KursBkfExport)->download('KursBKF Per Tanggal ' . date('d-m-Y') . '.xlsx');
+    }
+
+    // import kurs excel?
+    public function importKurs() {
+        
     }
 }
