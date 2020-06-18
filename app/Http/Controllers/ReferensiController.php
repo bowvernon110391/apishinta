@@ -23,11 +23,13 @@ use App\Transformers\PelabuhanTransformer;
 use App\Transformers\ReferensiJenisDetailSekunderTransformer;
 use App\Transformers\SatuanTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use League\Fractal\Manager;
 
 class ReferensiController extends ApiController
 {
-    public function __construct(SSO $sso)
+    public function __construct(Manager $mgr, Request $r, SSO $sso)
     {
+        parent::__construct($mgr, $r);
         $this->sso = $sso;
     }
     // GET /negara
