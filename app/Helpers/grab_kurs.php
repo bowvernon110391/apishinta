@@ -84,7 +84,7 @@ if (!function_exists('grabsKursData')) {
 
 		// grab data asli (KODE KURS + NILAI TUKARNYA)
 		// $patKurs = '/\(([A-Z]{3})\).+.+>(.+)\s<img/';
-		$patKurs = '/\((\w{3})\)<\/td>\s+<td.+>\s+<img.+\/>\s+([0-9\,\.]+)<\/td>/';
+		$patKurs = '/\((\w{3})\)<\/td>\s.+\s.+\s.+>([0-9]{1,3}\.[0-9]{3}\,[0-9]{2,})<\/div>/';
 
 		$result = preg_match_all($patKurs, $html, $matches);
 
