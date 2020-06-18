@@ -29,7 +29,7 @@ if (!function_exists('getUserInfo')) {
             //              request ke SSO
             // trigger_error("Belum diintegrasikan dengan SSO!", E_USER_ERROR);
 
-            $broker = new Broker(
+            /* $broker = new Broker(
                 'http://sso.soetta.xyz/',
                 '5',
                 '5h1n74aPPs'
@@ -45,7 +45,10 @@ if (!function_exists('getUserInfo')) {
             } catch (\Exception $e) {
                 // echo "getUserInfo error: {$e->getMessage()}";
                 return null;
-            }
+            } */
+            $sso = new \App\Services\SSO();
+
+            return $sso->getUserInfo($access_token);
         } 
 
         // mockup token dengan mockup data usernya

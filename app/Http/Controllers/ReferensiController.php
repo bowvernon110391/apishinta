@@ -13,6 +13,7 @@ use App\Kemasan;
 use App\Pelabuhan;
 use App\Satuan;
 use App\ReferensiJenisDetailSekunder;
+use App\Services\SSO;
 use App\Transformers\AirlineTransformer;
 use App\Transformers\HsCodeTransformer;
 use App\Transformers\NegaraTransformer;
@@ -25,6 +26,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ReferensiController extends ApiController
 {
+    public function __construct(SSO $sso)
+    {
+        $this->sso = $sso;
+    }
     // GET /negara
     public function getAllNegara(Request $r) {
         $negara = Negara::all();
@@ -278,5 +283,36 @@ class ReferensiController extends ApiController
         }
 
         return $this->respondWithItem($data, new AirlineTransformer);
+    }
+
+    // GET /pemeriksa
+    public function getPemeriksa(Request $r) {
+        // first, grab a list of pemeriksa
+        // then, depending on whether we only return the active one or not, 
+        // return it
+
+        try {
+            // grab all user who has role pemeriksa
+            $data = $this->sso->getUserByRole(['sibape.pemeriksa'], false);
+
+            // modify it a bit
+            $q = $r->get('q');
+
+            if ($q && strlen(trim($q)) > 0) {
+                // refine by name?
+                $data['data'] = array_values(array_filter($data['data'], function ($e) use ($q) {
+                    $pattern = "/$q/i";
+
+                    return preg_match($pattern, $e['name']);
+                }));
+
+                // remove key?
+                
+            }
+
+            return $this->respondWithArray($data);
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage() . ' Code: ' . $e->getCode());
+        }
     }
 }

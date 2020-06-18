@@ -376,10 +376,17 @@ Route::get('/spmb', 'SPMBController@index')
 // kasih guard di endpointnya
 //====================================================================================================
 Route::get('/spmb/{id}/lhp/berangkat', 'LHP_IP_Controller@showResolvedLHP')
-        ->middleware($corsGroup['singleItem']);
+->middleware($corsGroup['singleItem']);
 
 Route::get('/{doctype}/{id}/lhp', 'LHP_IP_Controller@showResolvedLHP')
-        ->middleware($corsGroup['singleItem']);
+->middleware($corsGroup['singleItem']);
 
 Route::get('/lhp/{id}', 'LHP_IP_Controller@showResolvedLHP')
-        ->middleware($corsGroup['singleItem']);
+->middleware($corsGroup['singleItem']);
+
+//====================================================================================================
+// ENDPOINTS PEMERIKSA
+// kasih guard di endpointnya
+//====================================================================================================
+Route::get('/pemeriksa', 'ReferensiController@getPemeriksa')
+        ->middleware($corsGroup['resourceGroup'], 'role');
