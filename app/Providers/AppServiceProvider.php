@@ -19,7 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // register SSO as singleton
+        $this->app->singleton('App\Services\SSO', function ($app) {
+            return new \App\Services\SSO($app->make('request'));
+        });
     }
 
     /**
