@@ -35,7 +35,25 @@ class LHP extends Model implements IDokumen
 
     public function getSkemaPenomoranAttribute()
     {
-        return 'LHP/SH/';
+        return 'LHP';
+    }
+
+    public function getNomorLengkapAttribute()
+    {
+        // generate nomor lengkap...
+        if (!$this->no_dok) {
+            return null;
+        }
+
+        if (strlen($this->nomor_lengkap_dok) > 0) {
+            return $this->nomor_lengkap_dok;
+        }
+
+        return $this->skema_penomoran . 
+                '-'.
+                str_pad($this->no_dok, 6, '0', STR_PAD_LEFT).
+                '/SH/'.
+                $this->tahun_dok;
     }
 
     public function getWaktuMulaiAttribute() {

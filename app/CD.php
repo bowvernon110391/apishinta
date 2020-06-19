@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CD extends Model implements IDokumen, IBillable, IInspectable
+class CD extends Model implements IDokumen, IBillable, IInstructable
 {
     use TraitLoggable;
     use TraitDokumen;
