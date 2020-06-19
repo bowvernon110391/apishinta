@@ -46,7 +46,7 @@ if (!function_exists('getUserInfo')) {
                 // echo "getUserInfo error: {$e->getMessage()}";
                 return null;
             } */
-            $sso = app('App\Services\SSO');
+            $sso = new \App\Services\SSO(app('request'));
 
             return $sso->getUserInfo($access_token);
         } 
