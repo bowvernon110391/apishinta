@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Exports\KursBkfExport;
 use App\Exports\KursExport;
 use App\Imports\KursImportToJson;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Excel as ExcelExcel;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExcelController extends ApiController
 {
@@ -25,7 +28,16 @@ class ExcelController extends ApiController
     }
 
     // import kurs excel?
-    public function importKurs() {
-        
+    public function importKurs(Request $r) {
+        try {
+            $data = Excel::toArray(new KursImportToJson, $r->file('file') );
+
+            // grab only the first worksheet
+            return $this->respondWithArray([
+                'data' => $data[0]
+            ]);
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 }

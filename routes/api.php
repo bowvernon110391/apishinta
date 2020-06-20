@@ -399,3 +399,5 @@ Route::get('/pemeriksa', 'ReferensiController@getPemeriksa')
 Route::get('/excel/kurs', 'ExcelController@exportKurs');
 Route::get('/excel/kurs/bkf', 'ExcelController@exportKursBkf');
 Route::get('/excel/kurs/{tanggal}', 'ExcelController@exportKurs');
+Route::post('/excel/kurs', 'ExcelController@importKurs')
+->middleware($corsGroup['singleItem']);
