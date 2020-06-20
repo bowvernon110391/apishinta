@@ -396,7 +396,8 @@ Route::get('/pemeriksa', 'ReferensiController@getPemeriksa')
 // ENDPOINTS EXCEL
 // kasih guard di endpointnya
 //====================================================================================================
-Route::get('/excel/kurs', 'ExcelController@exportKurs');
+Route::get('/excel/kurs', 'ExcelController@exportKurs')
+->middleware($corsGroup['resourceGroup'], 'role');
 Route::get('/excel/kurs/bkf', 'ExcelController@exportKursBkf');
 Route::get('/excel/kurs/{tanggal}', 'ExcelController@exportKurs');
 Route::post('/excel/kurs', 'ExcelController@importKurs')

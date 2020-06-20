@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Symfony\Component\HttpFoundation\Response;
 
 class Cors
 {
@@ -17,9 +18,20 @@ class Cors
 
     public function handle($request, Closure $next, ...$allowedMethods)
     {
-        return $next($request)
-                ->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', implode(",", $allowedMethods) )
-                ->header('Access-Control-Allow-Headers', 'Authorization,Content-Type,Content-Length,X-Content-Filesize,X-Content-Type,X-Content-Filename');
+        $response = $next($request);
+
+        $headers = [
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => implode(",", $allowedMethods),
+            'Access-Control-Allow-Headers' => 'Authorization,Content-Type,Content-Length,X-Content-Filesize,X-Content-Type,X-Content-Filename',
+            'Access-Control-Expose-Headers' => 'Content-Disposition,Content-Type,Content-Length,X-Content-Filesize,X-Content-Type,X-Suggested-Filename'
+        ];
+
+        if ($response instanceof Response) {
+            $response->headers->add($headers);
+            // return $response;
+        } 
+
+        return $response;
     }
 }
