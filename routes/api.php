@@ -402,3 +402,13 @@ Route::get('/excel/kurs/bkf', 'ExcelController@exportKursBkf');
 Route::get('/excel/kurs/{tanggal}', 'ExcelController@exportKurs');
 Route::post('/excel/kurs', 'ExcelController@importKurs')
 ->middleware($corsGroup['singleItem']);
+
+
+//====================================================================================================
+// ENDPOINTS SSOUserCache
+// kasih guard di endpointnya
+//====================================================================================================
+Route::get('/sso/user', 'SSOUserCacheController@index')
+->middleware($corsGroup['resourceGroup']);
+Route::get('/sso/user/{id}', 'SSOUserCacheController@show')
+->middleware($corsGroup['singleItem']);
