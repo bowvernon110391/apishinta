@@ -28,7 +28,7 @@ class CheckRole
             return $api->errorUnauthorized();
 
         // okay, there's token. but is it valid?
-        $userInfo = getUserInfo($token);
+        $userInfo = getUserInfo();
 
         if (!$userInfo)
             return $api->errorUnauthorized("Token invalid. Token used: " . $token);
