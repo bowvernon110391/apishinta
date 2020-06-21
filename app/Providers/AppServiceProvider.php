@@ -6,8 +6,9 @@ use App\CD;
 use App\Lampiran;
 use App\Observers\CDObserver;
 use App\Observers\LampiranObserver;
+use App\Services\SSO;
+use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,7 +20,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // try to register it?
+        $this->app->bind(SSO::class, function () {
+            // resolve for request object
+            $request = app(Request::class);
+
+            info("SSO Spawned with request object: ", $request);
+
+            return new SSO($request);
+        });
     }
 
     /**

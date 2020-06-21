@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\SSO;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Jasny\SSO\Broker;
@@ -46,7 +47,7 @@ if (!function_exists('getUserInfo')) {
                 // echo "getUserInfo error: {$e->getMessage()}";
                 return null;
             } */
-            $sso = new \App\Services\SSO(app('request'));
+            $sso = app(SSO::class);
 
             return $sso->getUserInfo($access_token);
         } 
