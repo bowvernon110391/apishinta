@@ -21,7 +21,7 @@ if (!function_exists('getSequence')) {
 // return: data user dalam array
 if (!function_exists('getUserInfo')) {
     // declare
-    function getUserInfo($access_token) {
+    function getUserInfo() {
         // cek environment, untuk development gunakan mockup
         if (App::environment('production')) {
             // belum didefinisikan, jadi trigger error aja heheh 
@@ -49,7 +49,7 @@ if (!function_exists('getUserInfo')) {
             } */
             $sso = app(SSO::class);
 
-            return $sso->getUserInfo($access_token);
+            return $sso->getUserInfo();
         } 
 
         // mockup token dengan mockup data usernya

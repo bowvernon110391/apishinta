@@ -25,8 +25,6 @@ class AppServiceProvider extends ServiceProvider
             // resolve for request object
             $request = app(Request::class);
 
-            info("SSO Spawned with request object: ", $request);
-
             return new SSO($request);
         });
     }

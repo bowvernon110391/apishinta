@@ -4,6 +4,8 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Jasny\SSO\Broker;
 
+use function Psy\debug;
+
 class SSO {
     public $sso = null;
 
@@ -16,10 +18,13 @@ class SSO {
         ); 
 
         // auto set token
-        $this->sso->token = $r->bearerToken();
+        $token = $r->bearerToken();
+        $this->sso->token = $token;
+
+        info("SSO spawned with token : $token");
     }
 
-    public function getUserInfo($accessToken) {
+    public function getUserInfo() {
         // $this->sso->token = $accessToken;
 
         // call get user
