@@ -118,6 +118,8 @@ if (!function_exists('getUserInfo')) {
               ]
         ];
 
+        $access_token = app('request')->bearerToken();
+
         // ambil data, atau return null klo gk ketemu
         if (!array_key_exists($access_token, $mockupUsers)) {
             return null;
