@@ -36,6 +36,10 @@ class InstruksiPemeriksaan extends Model implements IDokumen, IInspectable
         return $this->morphOne('App\LHP', 'inspectable');
     }
 
+    public function pemeriksa_rel() {
+        return $this->hasOne(SSOUserCache::class, 'user_id', 'pemeriksa_id');
+    }
+
     // ==========================================
     // ATTRIBUTES
     // ==========================================
@@ -76,6 +80,11 @@ class InstruksiPemeriksaan extends Model implements IDokumen, IInspectable
         return SSOUserCache::byId($this->pemeriksa_id);
     }
 
+    // custom is_locked
+    public function getIsLockedAttribute() {
+        return isset($this->last_status) ? in_array($this->last_status->status, ['CLOSED', 'MODIFIED']) : false;
+    }
+
     // ==========================================
     // SCOPES
     // ==========================================
@@ -86,5 +95,12 @@ class InstruksiPemeriksaan extends Model implements IDokumen, IInspectable
     public function scopeByIssuer($query, $nameOrNip) {
         return $query->where('nama_issuer', 'like', "%$nameOrNip%")
                     ->orWhere('nip_issuer', 'like', "%$nameOrNip%");
+    }
+
+    public function scopeByPemeriksa($query, $nameOrNip) {
+        return $query->whereHas('pemeriksa_rel', function ($query) use ($nameOrNip) {
+            return $query->where('name', 'like', "%$nameOrNip%")
+                        ->orWhere('nip', 'like', "%$nameOrNip");
+        });
     }
 }
