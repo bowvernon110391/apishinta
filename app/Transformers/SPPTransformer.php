@@ -5,11 +5,14 @@ use App\SPP;
 use League\Fractal\TransformerAbstract;
 
 class SPPTransformer extends TransformerAbstract {
+    use TraitInstructableTransformer;
     // defaultly loaded relations
     protected $defaultIncludes = [
         'kurs',
         'negara_asal',
-        'status'
+        'status',
+
+        'instruksi_pemeriksaan'
     ];
 
     // available relations, default relations not needed to apply
@@ -17,7 +20,9 @@ class SPPTransformer extends TransformerAbstract {
         'kurs',
         'cd',
         'negara_asal',
-        'status'
+        'status',
+
+        'instruksi_pemeriksaan'
     ];
 
     // basic transformation, without any sweetener

@@ -13,7 +13,7 @@ class CDTransformer extends TransformerAbstract {
         'status',
         'lampiran',
 
-        'instruksiPemeriksaan'
+        'instruksi_pemeriksaan'
     ];
 
     // available relations, default relations not needed to apply
@@ -27,7 +27,7 @@ class CDTransformer extends TransformerAbstract {
         'lampiran',
         'airline',
 
-        'instruksiPemeriksaan'
+        'instruksi_pemeriksaan'
     ];
 
     // basic transformation, without any sweetener
