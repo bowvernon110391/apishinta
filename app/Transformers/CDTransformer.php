@@ -5,12 +5,15 @@ use App\CD;
 use League\Fractal\TransformerAbstract;
 
 class CDTransformer extends TransformerAbstract {
+    use TraitInstructableTransformer;
     // defaultly loaded relations
     protected $defaultIncludes = [
         'penumpang',
         'ndpbm',
         'status',
-        'lampiran'
+        'lampiran',
+
+        'instruksiPemeriksaan'
     ];
 
     // available relations, default relations not needed to apply
@@ -22,7 +25,9 @@ class CDTransformer extends TransformerAbstract {
         'pelabuhan_tujuan',
         'ndpbm',
         'lampiran',
-        'airline'
+        'airline',
+
+        'instruksiPemeriksaan'
     ];
 
     // basic transformation, without any sweetener
