@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
-class LHP_IP_Controller extends ApiController
+class LHPController extends ApiController
 {
     // inject lhp manager
     public function __construct(Manager $m, Request $r, LHPManager $lhpManager)

@@ -375,13 +375,13 @@ Route::get('/spmb', 'SPMBController@index')
 // ENDPOINTS LHP
 // kasih guard di endpointnya
 //====================================================================================================
-Route::get('/spmb/{id}/lhp/berangkat', 'LHP_IP_Controller@showResolvedLHP')
+Route::get('/spmb/{id}/lhp/berangkat', 'LHPController@showResolvedLHP')
 ->middleware($corsGroup['singleItem']);
 
-Route::get('/{doctype}/{id}/lhp', 'LHP_IP_Controller@showResolvedLHP')
+Route::get('/{doctype}/{id}/lhp', 'LHPController@showResolvedLHP')
 ->middleware($corsGroup['singleItem']);
 
-Route::get('/lhp/{id}', 'LHP_IP_Controller@showResolvedLHP')
+Route::get('/lhp/{id}', 'LHPController@showResolvedLHP')
 ->middleware($corsGroup['singleItem']);
 
 //====================================================================================================
