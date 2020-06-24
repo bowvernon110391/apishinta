@@ -372,6 +372,19 @@ Route::get('/spmb', 'SPMBController@index')
 
 
 //====================================================================================================
+// ENDPOINTS IP
+// kasih guard di endpointnya
+//====================================================================================================
+Route::get('/ip', 'IPController@index')
+->middleware($corsGroup['resourceGroup'], 'role:PDTT,PABEAN,KASI,PEMERIKSA,CONSOLE');
+
+Route::get('/ip/{id}', 'IPController@show')
+->middleware($corsGroup['singleItem'], 'role:PEMERIKSA,PDTT,KASI,PABEAN,CONSOLE');
+
+Route::put('/{doctype}/{id}/ip', 'IPController@store')
+->middleware($corsGroup['singleItem'], 'role:PDTT,PABEAN,KASI,CONSOLE');
+
+//====================================================================================================
 // ENDPOINTS LHP
 // kasih guard di endpointnya
 //====================================================================================================

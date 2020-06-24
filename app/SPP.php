@@ -12,7 +12,7 @@ class SPP extends Model implements IDokumen, IInstructable
         lock as public traitLock;
         unlock as public traitUnlock;
     }
-    use TraitInspectable;
+    use TraitInstructable;
     // enable soft deletion
     use SoftDeletes;
 

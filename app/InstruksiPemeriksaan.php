@@ -71,4 +71,20 @@ class InstruksiPemeriksaan extends Model implements IDokumen, IInspectable
                 '/SH/'.
                 $this->tahun_dok;
     }
+
+    public function getPemeriksaAttribute() {
+        return SSOUserCache::byId($this->pemeriksa_id);
+    }
+
+    // ==========================================
+    // SCOPES
+    // ==========================================
+    public function scopeByPemeriksaId($query, $id) {
+        return $query->where('pemeriksa_id', $id);
+    }
+
+    public function scopeByIssuer($query, $nameOrNip) {
+        return $query->where('nama_issuer', 'like', "%$nameOrNip%")
+                    ->orWhere('nip_issuer', 'like', "%$nameOrNip%");
+    }
 }
