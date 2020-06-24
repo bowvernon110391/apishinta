@@ -7,7 +7,12 @@ use League\Fractal\TransformerAbstract;
 class InstruksiPemeriksaanTransformer extends TransformerAbstract {
 
     protected $availableIncludes = [
-        'instructable'
+        'instructable',
+        'lhp'
+    ];
+
+    protected $defaultIncludes = [
+        'lhp'
     ];
 
     public function transform(InstruksiPemeriksaan $ip) {
@@ -25,7 +30,10 @@ class InstruksiPemeriksaanTransformer extends TransformerAbstract {
             'ajukan_foto' => $ip->ajukan_foto,
             'pemeriksa_id' => $ip->pemeriksa_id,
 
-            'instructable_uri'  => $ip->instructable ? $ip->instructable->uri : null
+            'instructable_uri'  => $ip->instructable ? $ip->instructable->uri : null,
+
+            'last_status' => $ip->short_last_status,
+            'is_locked' => $ip->is_locked
         ];
     }
 
@@ -41,5 +49,12 @@ class InstruksiPemeriksaanTransformer extends TransformerAbstract {
             throw new \Exception("Error shieeet " . $transformerName);
         }
 
+    }
+
+    public function includeLhp(InstruksiPemeriksaan $ip) {
+        $lhp = $ip->lhp;
+        if ($lhp) {
+            return $this->item($lhp, new LHPTransformer);
+        }
     }
 }

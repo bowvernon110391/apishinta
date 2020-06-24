@@ -20,15 +20,35 @@ class IPController extends ApiController
         $this->instancer = $instancer;
     }
     // browse
-    public function index(Request $r) {
-        // is it for self?
-        if ($r->get('self')) {
-            // modify query here
-        }
+    public function index(Request $r)
+    {
+        $q = $r->get('q');
+
+        $query = InstruksiPemeriksaan::query()
+            ->when($q, function ($query) use ($q) {
+                $query->byIssuer($q);
+            })
+            ->when($r->get('self'), function ($query) use ($r) {
+                if (is_numeric($r->get('self'))) {
+                    $query->byPemeriksaId((int) $r->get('self'));
+                } else {
+                    $query->byPemeriksaId($r->userInfo['user_id']);
+                }
+            })
+            ->latest()
+            ->orderBy('id', 'desc');
+
+        $paginator = $query
+            ->paginate($r->get('number'))
+            ->appends($r->except('page'));
+
+        // build output
+        return $this->respondWithPagination($paginator, new InstruksiPemeriksaanTransformer);
     }
 
     // store ip to a document
-    public function store(Request $r, $doctype, $docid) {
+    public function store(Request $r, $doctype, $docid)
+    {
         try {
             $doc = $this->instancer->findOrFail($doctype, $docid);
 
@@ -49,11 +69,11 @@ class IPController extends ApiController
             // save, let's attach...or save?
             if (($ip = $doc->instruksiPemeriksaan) != null) {
                 // update here...check if lhp already closed
-                if ( ($lhp = $ip->lhp) != null ) {
+                if (($lhp = $ip->lhp) != null) {
                     // sudah diambil pemeriksa
                     throw new \Exception("LHP sedang dalam proses perekaman, IP tidak dapat diterbitkan");
                 }
-                
+
                 // save, let's update the data
                 $ip->{'nama_issuer'}   = $r->userInfo['name'];
                 $ip->{'nip_issuer'}    = $r->userInfo['nip'];
@@ -65,7 +85,7 @@ class IPController extends ApiController
                 $ip->tgl_dok    = date('Y-m-d');
 
                 $ip->save();
-                
+
                 $ip->appendStatus('MODIFIED', null, "Diterbitkan ulang oleh {$r->userInfo['username']}");
                 AppLog::logInfo("IP #{$ip->id} diterbitkan ulang oleh {$r->userInfo['username']}", $ip);
             } else {
@@ -80,10 +100,10 @@ class IPController extends ApiController
 
                     'tgl_dok'   => date('Y-m-d')
                 ]);
-    
+
                 $doc->instruksiPemeriksaan()->save($ip);
                 $ip->refresh();
-                
+
                 // gotta append log?
                 $doc->appendStatus('INSTRUKSI_PEMERIKSAAN', null, null, $ip, 'instruksi_pemeriksaan');
                 $ip->appendStatus('CREATED', null, null, $doc, 'instructable');
@@ -104,7 +124,8 @@ class IPController extends ApiController
     }
 
     // show specific ip
-    public function show(Request $r, $id) {
+    public function show(Request $r, $id)
+    {
         try {
             $ip = InstruksiPemeriksaan::findOrFail($id);
 
