@@ -397,6 +397,9 @@ Route::get('/{doctype}/{id}/lhp', 'LHPController@showResolvedLHP')
 Route::get('/lhp/{id}', 'LHPController@showResolvedLHP')
 ->middleware($corsGroup['singleItem']);
 
+Route::put('/{doctype}/{id}/lhp', 'LHPController@updateLHP')
+->middleware($corsGroup['singleItem'], 'role:PEMERIKSA,CONSOLE');
+
 //====================================================================================================
 // ENDPOINTS PEMERIKSA
 // kasih guard di endpointnya

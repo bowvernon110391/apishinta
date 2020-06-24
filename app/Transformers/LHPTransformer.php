@@ -34,7 +34,10 @@ class LHPTransformer extends TransformerAbstract {
             'waktu_selesai' => $l->waktu_mulai,
 
             'nama_pejabat' => $l->nama_pejabat,
-            'nip_pejabat' => $l->nip_pejabat
+            'nip_pejabat' => $l->nip_pejabat,
+
+            'last_status' => $l->short_last_status,
+            'is_locked' => $l->is_locked
         ];
     }
 
