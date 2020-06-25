@@ -39,6 +39,13 @@ class LHPController extends ApiController
         try {
             $lhp = $this->lhpManager->findOrFail($r->path());
 
+            // if locked_only flag is set, throw some error if this document is not locked
+            if ($r->get('locked_only', false) == true) {
+                if (!$lhp->is_locked) {
+                    throw new \Exception("LHP #{$lhp->id} belum selesai direkam!");
+                }
+            }
+
             return $this->respondWithItem($lhp, new LHPTransformer);
         } catch (ModelNotFoundException $e) {
             return $this->errorNotFound("LHP atas uri ini tidak ditemukan");
