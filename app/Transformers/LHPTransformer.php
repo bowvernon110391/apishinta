@@ -22,6 +22,11 @@ class LHPTransformer extends TransformerAbstract {
         // just return the most interesting data?
         $instructable_uri = $l->instructable ? $l->instructable->uri : ($l->inspectable ? $l->inspectable->uri : null);
 
+        $pemeriksa = $l->pemeriksa ? [
+            'nama' => $l->pemeriksa->name,
+            'nip' => $l->pemeriksa->nip
+        ] : null;
+
         return [
             'id' => (int) $l->id,
             'no_dok' => (int) $l->no_dok,
@@ -31,6 +36,8 @@ class LHPTransformer extends TransformerAbstract {
             'isi' => $l->isi,
 
             'pemeriksa_id' => (int) $l->pemeriksa_id,
+
+            'pemeriksa' => $pemeriksa,
 
             'lokasi' => $l->lokasi ? $l->lokasi->nama : null,
 
