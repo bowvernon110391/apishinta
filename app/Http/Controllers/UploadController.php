@@ -7,11 +7,13 @@ use App\Dokkap;
 use App\IS;
 use App\Lampiran;
 use App\Pembatalan;
+use App\Services\Instancer;
 use App\SPMB;
 use App\Transformers\LampiranTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use League\Fractal\Manager;
 use PDOException;
 
 class UploadController extends ApiController
@@ -23,6 +25,14 @@ class UploadController extends ApiController
         'dokkap'    => Dokkap::class,
         'pembatalan'    => Pembatalan::class
     ];
+
+    public function __construct(Instancer $instancer, Manager $fractal, Request $r)
+    {
+        parent::__construct($fractal, $r);
+
+        // use instancer
+        $this->instancer = $instancer;
+    }
 
     public function handleUpload(Request $r, $doctype = null, $docid = null) {
         // use try catch?
@@ -41,17 +51,22 @@ class UploadController extends ApiController
                 $master_id      = $matches[2];
 
                 // only valid type is 'cd', 'is', 'spmb', 'dokkap'
-                if (! key_exists($master_type, UploadController::$acceptedType)/* !in_array($master_type, UploadController::$acceptedType) */) {
-                    throw new \Exception("Unacceptable master doctype: {$master_type}");
-                }
+                // if (! key_exists($master_type, UploadController::$acceptedType)/* !in_array($master_type, UploadController::$acceptedType) */) {
+                //     throw new \Exception("Unacceptable master doctype: {$master_type}");
+                // }
 
                 // now try to get it
-                $master = UploadController::$acceptedType[$master_type]::find($master_id);
+                // $master = UploadController::$acceptedType[$master_type]::find($master_id);
+                $master = $this->instancer->findOrFail($master_type, $master_id);
 
                 // do we get it?
                 if (!$master) {
                     throw new \Exception("Master doctype {$master_type} #{$master_id} not found, possibly user is drunk");
                 } else {
+                    // can it accept lampiran?
+                    if (!method_exists($master, 'lampiran')) {
+                        throw new \Exception("Object Type '" . get_class($master) . "' is not attachable!");
+                    }
                     // by default, we can upload
                     $canUpload  = canEdit( $master->is_locked, $r->userInfo);
                     // $canUpload  = true;
@@ -149,10 +164,11 @@ class UploadController extends ApiController
     // Grab all  data lampiran
     public function getAttachments(Request $r, $doctype, $docid) {
         try {
-            // grab the doc instance first
-            $masterDoc = null;
 
-            switch ($doctype) {
+            // grab the doc instance first
+            $masterDoc = $this->instancer->findOrFail($doctype, $docid);
+
+            /* switch ($doctype) {
                 case 'cd':
                     $masterDoc = CD::find($docid);
                     break;
@@ -176,7 +192,7 @@ class UploadController extends ApiController
                 default:
                     # code...
                     break;
-            }
+            } */
 
             if (!$masterDoc) {
                 throw new \Exception("Master doc {$doctype} #{$docid} was not found!");
