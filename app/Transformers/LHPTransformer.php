@@ -9,7 +9,8 @@ class LHPTransformer extends TransformerAbstract {
     // what's available
     protected $availableIncludes = [
         'lampiran',
-        'inspectable'
+        'inspectable',
+        'status'
     ];
 
     protected $defaultIncludes = [
@@ -19,6 +20,7 @@ class LHPTransformer extends TransformerAbstract {
     // default transform
     public function transform(LHP $l) {
         // just return the most interesting data?
+        $instructable_uri = $l->instructable ? $l->instructable->uri : ($l->inspectable ? $l->inspectable->uri : null);
 
         return [
             'id' => (int) $l->id,
@@ -28,21 +30,27 @@ class LHPTransformer extends TransformerAbstract {
 
             'isi' => $l->isi,
 
-            'tanggal_mulai' => $l->tanggal_mulai,
-            'waktu_mulai' => $l->waktu_mulai,
-            'tanggal_selesai' => $l->tanggal_mulai,
-            'waktu_selesai' => $l->waktu_mulai,
+            'pemeriksa_id' => (int) $l->pemeriksa_id,
 
-            'nama_pejabat' => $l->nama_pejabat,
-            'nip_pejabat' => $l->nip_pejabat,
+            'instructable_uri' => $instructable_uri,
 
             'last_status' => $l->short_last_status,
-            'is_locked' => $l->is_locked
+            'is_locked' => $l->is_locked,
+
+            'created_at' => (string) $l->created_at,
+            'updated_at' => (string) $l->updated_at
         ];
     }
 
     public function includeLampiran(LHP $l) {
         return $this->collection($l->lampiran, new LampiranTransformer);
+    }
+
+    public function includeStatus(LHP $l) {
+        $ret = $l->statusOrdered();
+        if (count($ret)) {
+            return $this->collection($ret, new StatusTransformer);
+        }
     }
 
     public function includeInspectable(LHP $l) {
@@ -52,6 +60,17 @@ class LHPTransformer extends TransformerAbstract {
 
             if (class_exists($transformerName)) {
                 return $this->item($l->inspectable, new $transformerName);
+            }
+        }
+    }
+
+    public function includeInstructable(LHP $l) {
+        if ($l->instructable) {
+            $classname = class_basename($l->instructable);
+            $transformerName = 'App\\Transformers\\' . $classname . 'Transformer';
+
+            if (class_exists($transformerName)) {
+                return $this->item($l->instructable, new $transformerName);
             }
         }
     }

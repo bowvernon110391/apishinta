@@ -18,9 +18,23 @@ class LHP extends Model implements IDokumen
         'updated_at'
     ];
 
+    // default attrib
+    protected $attributes = [
+        'isi' => '',
+        'lokasi_id' => 3
+    ];
+
     // RELATIONS
     public function inspectable() {
         return $this->morphTo();
+    }
+
+    public function pemeriksa() {
+        return $this->belongsTo(SSOUserCache::class, 'pemeriksa_id');
+    }
+
+    public function lokasi() {
+        return $this->belongsTo(Lokasi::class, 'lokasi_id');
     }
 
     // attribute generator
@@ -70,5 +84,14 @@ class LHP extends Model implements IDokumen
 
     public function getTanggalSelesaiAttribute() {
         return datePart($this->waktu_selesai_periksa);
+    }
+
+    public function getInstructableAttribute() {
+        $ip = $this->inspectable;
+        if (get_class($ip) == InstruksiPemeriksaan::class) {
+            // yep, return the real one
+            return $ip->instructable;
+        }
+        return null;
     }
 }

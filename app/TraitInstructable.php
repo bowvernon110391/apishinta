@@ -14,6 +14,7 @@ trait TraitInstructable
 
     public function lhp()
     {
-        return $this->hasOneThrough('App\LHP', 'App\InstruksiPemeriksaan', 'instructable_id', 'inspectable_id');
+        return $this->hasOneThrough('App\LHP', 'App\InstruksiPemeriksaan', 'instructable_id', 'inspectable_id')
+            ->where('instructable_type', get_class($this));
     }
 }

@@ -26,6 +26,7 @@ class ApiController extends Controller
         $this->fractal = $fractal;
         // $this->request = $request;
         $this->fractal->parseIncludes($request->get('include',''));
+        $this->fractal->parseExcludes($request->get('exclude',''));
     }
 
     // get status code

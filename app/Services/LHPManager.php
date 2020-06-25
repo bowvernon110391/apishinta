@@ -60,6 +60,32 @@ class LHPManager {
         return null;
     }
 
-    // find?
+    // find only?
+    public function find($path) {
+        // depending on route, solve the instances
+        // 1st case, simple parent based
+        $parent = $this->resolveParent($path);
 
+        if (!$parent && $this->isParentBasedRequest($path)) {
+            // throw new ModelNotFoundException("Parent of LHP was not found [$path]");
+            return null;
+        }
+
+        if ($parent) {
+            if (!method_exists($parent, 'lhp')) {
+                // throw new \Exception("'" . class_basename($parent). "' cannot have LHP!");
+                return null;
+            }
+            return $parent->lhp()->firstOrFail();
+        }
+
+        // hmm, perhaps the standard /lhp/id?
+        if ( ($lhpId = $this->isDefaultRequest($path)) !== false) {
+            return LHP::find($lhpId);
+        }
+
+        // UNHANDLED Path resolve
+        // throw new \Exception("no specifier for path [{$path}]...");
+        return null;
+    }
 }

@@ -389,15 +389,15 @@ Route::put('/{doctype}/{id}/ip', 'IPController@store')
 // kasih guard di endpointnya
 //====================================================================================================
 Route::get('/spmb/{id}/lhp/berangkat', 'LHPController@showResolvedLHP')
-->middleware($corsGroup['singleItem']);
+->middleware($corsGroup['singleItem'], 'role');
 
 Route::get('/{doctype}/{id}/lhp', 'LHPController@showResolvedLHP')
-->middleware($corsGroup['singleItem']);
+->middleware($corsGroup['singleItem'], 'role');
 
-Route::get('/lhp/{id}', 'LHPController@showResolvedLHP')
-->middleware($corsGroup['singleItem']);
+Route::get('/lhp/{id}', 'LHPController@showLHP')
+->middleware($corsGroup['singleItem'], 'role');
 
-Route::put('/{doctype}/{id}/lhp', 'LHPController@updateLHP')
+Route::put('/{doctype}/{id}/lhp', 'LHPController@updateResolvedLHP')
 ->middleware($corsGroup['singleItem'], 'role:PEMERIKSA,CONSOLE');
 
 //====================================================================================================
