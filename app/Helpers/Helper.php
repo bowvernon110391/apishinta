@@ -115,7 +115,37 @@ if (!function_exists('getUserInfo')) {
                     ],
                   ],
                 ],
-              ]
+              ],
+
+              'token_pemeriksa' => array (
+                'user_id' => '296',
+                'username' => 'hendro.laksono',
+                'name' => 'Hendro Laksono',
+                'nip' => '198807172009121002',
+                'pangkat' => 'Penata Muda - III/a',
+                'kode' => 'kpu.03',
+                'posisi' => 'Kepala Kantor',
+                'tempat' => 'Kepala Kantor',
+                'status' => true,
+                'apps_data' => 
+                array (
+                  5 => 
+                  array (
+                    'app_name' => 'Patops',
+                    'app_style' => 'fa fa-trash',
+                    'app_desc' => 'Passenger Monitoring and Payment System',
+                    'app_url' => 'patops.soetta.xyz',
+                    'roles' => 
+                    array (
+                      0 => 'PEMERIKSA',
+                    ),
+                    'rolex' => 
+                    array (
+                      0 => 'sibape.pemeriksa',
+                    ),
+                  ),
+                ),
+              )
         ];
 
         $access_token = app('request')->bearerToken();
@@ -346,5 +376,3 @@ if (!function_exists('splitDatetime')) {
     return $split ? $split['date'] : null;
   }
 }
-
-?>
