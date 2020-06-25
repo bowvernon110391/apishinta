@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AppLog;
+use App\InstruksiPemeriksaan;
 use App\LHP;
 use App\Lokasi;
 use App\Services\LHPManager;
@@ -81,6 +82,16 @@ class LHPController extends ApiController
             if ($r->get('lock') == true) {
                 // lock it
                 $l->lock();
+
+                // lock parent too?
+                if ($l->inspectable) {
+                    if (get_class($l->inspectable) == InstruksiPemeriksaan::class) {
+                        // lock it!
+                        $l->inspectable->lock();
+                        // append log too?
+                        AppLog::logInfo("IP #{$l->inspectable->id} was closed by LHP #{$l->id}", $l->inspectable, false);
+                    }
+                }
 
                 // append log?
                 AppLog::logInfo("LHP #{$l->id} was finished by {$r->userInfo['username']}", $l, false);
