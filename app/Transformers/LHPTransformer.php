@@ -32,6 +32,8 @@ class LHPTransformer extends TransformerAbstract {
 
             'pemeriksa_id' => (int) $l->pemeriksa_id,
 
+            'lokasi' => $l->lokasi->nama,
+
             'instructable_uri' => $instructable_uri,
 
             'last_status' => $l->short_last_status,
