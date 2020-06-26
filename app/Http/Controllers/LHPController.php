@@ -85,9 +85,14 @@ class LHPController extends ApiController
 
                 // lock parent too?
                 if ($l->inspectable) {
+                    // Append status first to parent
+                    $l->inspectable->appendStatus('LHP', null, "LHP telah direkam", $l, null);
                     if (get_class($l->inspectable) == InstruksiPemeriksaan::class) {
                         // lock it!
                         $l->inspectable->lock();
+                        // also append to parent, the "REAL" document
+                        $l->inspectable->instructable->appendStatus('LHP', null, "LHP telah direkam", $l, null);
+                        
                         // append log too?
                         AppLog::logInfo("IP #{$l->inspectable->id} was closed by LHP #{$l->id}", $l->inspectable, false);
                     }

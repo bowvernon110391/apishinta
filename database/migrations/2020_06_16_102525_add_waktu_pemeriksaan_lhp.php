@@ -29,8 +29,13 @@ class AddWaktuPemeriksaanLhp extends Migration
     {
         Schema::table('lhp', function (Blueprint $table) {
             // remove said columns
-            $table->dropColumn('waktu_selesai_periksa');
-            $table->dropColumn('waktu_mulai_periksa');
+            if (Schema::hasColumns('lhp', [
+                'waktu_selesai_periksa',
+                'waktu_mulai_periksa'
+            ])) {
+                $table->dropColumn('waktu_selesai_periksa');
+                $table->dropColumn('waktu_mulai_periksa');
+            }
         });
     }
 }
