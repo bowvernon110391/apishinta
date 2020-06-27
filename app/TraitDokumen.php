@@ -156,6 +156,47 @@ trait TraitDokumen
         return $this->morphMany('App\Dokkap', 'master');
     }
 
+    public function syncDokkap($arr_dokkap) {
+        if (!is_array($arr_dokkap)) {
+            throw new \Exception("Data dokkap harus berupa array, walaupun kosong!");
+        }
+
+        // so it's an array, let's sync it
+        // 1st, update all valid ones (with non-null ids)
+        $toUpdate = array_filter($arr_dokkap, function ($e) { return $e['id'] != null; });
+
+        // update em
+        foreach ($toUpdate as $d) {
+            $dokkap = Dokkap::findOrFail($d['id']);
+
+            $dokkap->nomor_lengkap_dok = $d['nomor_lengkap'];
+            $dokkap->tgl_dok = $d['tgl_dok'];
+            $dokkap->jenis_dokkap_id = $d['jenis_dokkap_id'];
+
+            $dokkap->save();
+        }
+
+        // 2nd, delete everything that is not included
+        $newIds = array_map(function ($e) { return $e['id']; }, $toUpdate);
+        $this->dokkap()->whereNotIn('id', $newIds)->delete();
+
+        // 3rd, add new dokkap
+        $toInsert = array_filter($arr_dokkap, function ($e) { return $e['id'] == null; });
+
+        foreach ($toInsert as $d) {
+            $dokkap = new Dokkap([
+                'no_dok' => 0,
+                'nomor_lengkap_dok' => $d['nomor_lengkap'],
+                'tgl_dok' => $d['tgl_dok'],
+                'jenis_dokkap_id' => $d['jenis_dokkap_id']
+            ]);
+
+            $dokkap->master()->associate($this);
+
+            $dokkap->save();
+        }
+    }
+
     /**
      * SCOPES (injected to every relevant class)
      */

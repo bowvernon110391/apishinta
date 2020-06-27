@@ -3,12 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Dokkap extends Model
 {
     // Dokkap bisa punya lampiran
     use TraitAttachable;
     use TraitLoggable;
+
+    use SoftDeletes;
 
     protected $table = 'dokkap';
 

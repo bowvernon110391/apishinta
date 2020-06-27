@@ -13,7 +13,8 @@ class CDTransformer extends TransformerAbstract {
         'status',
         'lampiran',
 
-        'instruksi_pemeriksaan'
+        'instruksi_pemeriksaan',
+        'dokkap'
     ];
 
     // available relations, default relations not needed to apply
@@ -27,7 +28,8 @@ class CDTransformer extends TransformerAbstract {
         'lampiran',
         'airline',
 
-        'instruksi_pemeriksaan'
+        'instruksi_pemeriksaan',
+        'dokkap'
     ];
 
     // basic transformation, without any sweetener
@@ -124,6 +126,10 @@ class CDTransformer extends TransformerAbstract {
 
     public function includeLampiran(CD $cd) {
         return $this->collection($cd->lampiran, new LampiranTransformer);
+    }
+
+    public function includeDokkap(CD $cd) {
+        return $this->collection($cd->dokkap, new DokkapTransformer);
     }
 }
 

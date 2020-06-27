@@ -256,7 +256,8 @@ class CDController extends ApiController
             // try to save
             $cd->save();
             
-            
+            // sync data dokkap
+            $cd->syncDokkap($r->get('dokkap')['data']);
 
             // log it
             AppLog::logInfo("CD #{$cd->id} diupdate oleh {$r->userInfo['username']}", $cd);
