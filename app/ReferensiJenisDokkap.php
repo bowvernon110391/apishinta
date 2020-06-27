@@ -12,7 +12,7 @@ class ReferensiJenisDokkap extends Model
     protected $guarded = [
         'created_at',
         'updated_at',
-        'deleted_at'
+        // 'deleted_at'
     ];
 
     // gotta grab by some name or id
@@ -22,5 +22,9 @@ class ReferensiJenisDokkap extends Model
 
     public function scopeByName($query, $name) {
         return $query->where('nama', 'like', "%{$name}%");
+    }
+
+    public function scopeUsable($query) {
+        return $query->where('usable', 1);
     }
 }

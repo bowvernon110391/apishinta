@@ -13,6 +13,7 @@ use App\Kemasan;
 use App\Pelabuhan;
 use App\Satuan;
 use App\ReferensiJenisDetailSekunder;
+use App\ReferensiJenisDokkap;
 use App\Services\SSO;
 use App\Transformers\AirlineTransformer;
 use App\Transformers\HsCodeTransformer;
@@ -21,6 +22,7 @@ use App\Transformers\KategoriTransformer;
 use App\Transformers\KemasanTransformer;
 use App\Transformers\PelabuhanTransformer;
 use App\Transformers\ReferensiJenisDetailSekunderTransformer;
+use App\Transformers\ReferensiJenisDokkapTransformer;
 use App\Transformers\SatuanTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use League\Fractal\Manager;
@@ -316,5 +318,12 @@ class ReferensiController extends ApiController
         } catch (\Exception $e) {
             return $this->errorBadRequest($e->getMessage() . ' Code: ' . $e->getCode());
         }
+    }
+
+    // GET /dokkap
+    public function getJenisDokkap() {
+        $jenisDokkap = ReferensiJenisDokkap::usable()->get();
+
+        return $this->respondWithCollection($jenisDokkap, new ReferensiJenisDokkapTransformer);
     }
 }
