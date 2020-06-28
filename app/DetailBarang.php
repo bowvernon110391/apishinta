@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DetailBarang extends Model
+class DetailBarang extends Model implements ISpecifiable
 {
     // settings
     protected $table = 'detail_barang';
@@ -43,5 +43,30 @@ class DetailBarang extends Model
 
     public function jenisSatuan() {
         return $this->belongsTo(Satuan::class, 'jenis_satuan', 'kode');
+    }
+
+    // penetapan is in the same table, refer to ourselves
+    public function penetapan()
+    {
+        return $this->hasOne(Penetapan::class, 'detail_barang_id');
+    }
+
+    // detail barang refer to self (if we're penetapan)
+    public function detailBarang() {
+        return $this->hasOneThrough(DetailBarang::class, Penetapan::class, 'penetapan_id', 'id', 'id', 'detail_barang_id');
+    }
+
+    public function detailPenetapan() {
+        return $this->hasOneThrough(DetailBarang::class, Penetapan::class, 'detail_barang_id', 'id', 'id', 'penetapan_id');
+    }
+
+    public function tarif()
+    {
+        return $this->hasMany(Tarif::class, 'tariffable_id');
+    }
+
+    // ATTRIBUTES!!!
+    public function getIsPenetapanAttribute() {
+        return $this->detailBarang != null;
     }
 }
