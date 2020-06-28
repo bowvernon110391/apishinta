@@ -31,6 +31,8 @@ class CreateTarifTable extends Migration
             $table->decimal('tunda', 8, 4); // umumnya 0
             $table->decimal('tanggung_pemerintah', 8, 4); // umumnya 0
 
+            $table->boolean('overridable')->default(true);
+
             $table->timestamps();
 
             // now index shits

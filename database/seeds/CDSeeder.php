@@ -68,6 +68,8 @@ class CDSeeder extends Seeder
             $p->jml_bagasi_tdk_dibawa = $faker->numberBetween(0, 5);
             $p->pembebasan  = $faker->randomElement([0, 500, 1000]);
 
+            $p->koli = random_int(1, 4);
+
             $p->setNomorDokumen();
             $p->save();
             // $p->appendStatus('CREATED');

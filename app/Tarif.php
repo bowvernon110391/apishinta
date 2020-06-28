@@ -18,7 +18,8 @@ class Tarif extends Model
         'bayar' => 100.0,
         'bebas' => 0.0,
         'tunda' => 0.0,
-        'tanggung_pemerintah' => 0.0
+        'tanggung_pemerintah' => 0.0,
+        'overridable' => true
     ];
 
     // Relations

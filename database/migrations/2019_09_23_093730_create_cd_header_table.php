@@ -41,6 +41,8 @@ class CreateCdHeaderTable extends Migration {
 			// tarif pph
 			$table->decimal('pph_tarif', 18, 4)->default(7.5);
 
+			$table->unsignedInteger('koli');
+
 			$table->timestamps();
 			$table->softDeletes();
 		});

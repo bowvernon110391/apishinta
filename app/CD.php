@@ -26,7 +26,8 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
         'npwp'      => '-',
         'nib'       => '-',
         'alamat'    => '',
-        'no_flight' => ''
+        'no_flight' => '',
+        'koli'      => 1
     ];
 
     // fillables
