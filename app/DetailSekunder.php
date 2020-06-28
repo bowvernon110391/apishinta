@@ -9,8 +9,6 @@ class DetailSekunder extends Model
     //
     protected $table = 'detail_sekunder';
 
-    public $timestamps = false;
-
     // default relations to load
     protected $with = [
         'referensiJenisDetailSekunder'

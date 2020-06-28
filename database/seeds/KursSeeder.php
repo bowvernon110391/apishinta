@@ -12,6 +12,24 @@ class KursSeeder extends Seeder
      */
     public function run()
     {
+        // attempt to call POST /kurs/bkf first
+        echo "Attempting to seed with real kurs bkf data...\n";
+
+        try {
+            // build request object
+            $r = app('request');
+            $r->headers->set('Authorization', 'Bearer token_admin');
+            // spawn controllers
+            $c = app('App\Http\Controllers\KursController');
+            $result = $c->pullFromBkf($r);
+
+            $totalRow = Kurs::count()-1;
+
+            echo "Seeded {$totalRow} kurs from bkf site!\n";
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage() . "\n";
+        }
+
         // only run if we havent manually seeded it
         if (Kurs::count() > 2) {
             echo "Kurs already seeded somewhere else...exiting...\n";

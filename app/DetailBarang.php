@@ -46,7 +46,11 @@ class DetailBarang extends Model implements ISpecifiable
     }
 
     public function kategori() {
-        return $this->belongsToMany(Kategori::class, 'detail_barang_kategori', 'detail_barang_id', 'kategori_id');
+        return $this->belongsToMany(Kategori::class, 'detail_barang_kategori', 'detail_barang_id', 'kategori_id')->withTimestamps();
+    }
+
+    public function detailSekunder() {
+        return $this->hasMany(DetailSekunder::class, 'detail_barang_id');
     }
 
     // penetapan is in the same table, refer to ourselves

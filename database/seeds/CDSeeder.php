@@ -96,8 +96,62 @@ class CDSeeder extends Seeder
 
             $j = 0;
 
+            // for nilai barang
             $kursRef = App\Kurs::inRandomOrder()->first();
-            while($j++ < $detailCount) {
+            $pejabat = App\SSOUserCache::inRandomOrder()->first();
+
+            while ($j++ < $detailCount) {
+                // spawn a new Detail Barang
+                $d = new App\DetailBarang([
+                    'uraian' => $faker->sentence(random_int(1, 6)),
+                    'jumlah_kemasan' => $faker->numberBetween(1, 20),
+                    'jenis_kemasan' => $faker->randomElement(['BX','PX','RO','PK','BG']),
+                    'fob'         => $faker->randomFloat(4, 500, 980),
+                    'freight'     => $faker->randomFloat(4, 0, 200),
+                    'insurance'   => $faker->randomFloat(4, 0, 100),
+                    'brutto'      => $faker->randomFloat(4, 0.5, 25)
+                ]);
+
+                $d->kurs()->associate($kursRef);
+                $d->hs()->associate(App\HsCode::usable()->inRandomOrder()->first());
+
+                $p->detailBarang()->save($d);
+
+                // isi data kategori
+                $g = 0;
+                $kategoriCount = random_int(0,2);
+                $kategoriDefs = App\Kategori::inRandomOrder()->get();
+
+                while($g++ < $kategoriCount){
+                    $d->kategori()->attach($kategoriDefs[$g]);
+                }
+
+                // isi data sekunder
+                $k = 0;
+                $dataSekunderCount = random_int(0, 3);
+
+                while ($k++ < $dataSekunderCount) {
+                    // create data sekunder
+                    $ds = new App\DetailSekunder;
+                    // $ds->jenis_detail_sekunder_id = $faker->numberBetween(1,4);
+                    $ds->referensiJenisDetailSekunder()->associate(App\ReferensiJenisDetailSekunder::inRandomOrder()->first());
+                    $ds->data = $faker->sentence(random_int(2,12));
+
+                    $d->detailSekunder()->save($ds);
+                }
+
+                // if there was pejabat, store it as penetapan too
+                if ($pejabat && !$d->is_penetapan) {
+                    
+                    $penetapan = new App\Penetapan();
+                    $penetapan->data()->associate($d);
+                    $penetapan->pejabat()->associate($pejabat);
+
+                    $penetapan->save();
+                }
+            }
+
+            while(false /* $j++ < $detailCount */) {
                 $d = new App\DetailCD();
                 // fill detail data
                 $d->uraian      = $faker->sentence(random_int(1, 6));
