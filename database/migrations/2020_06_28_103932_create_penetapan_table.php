@@ -17,7 +17,7 @@ class CreatePenetapanTable extends Migration
             $table->bigIncrements('id');
 
             // what is being specified?
-            $table->unsignedBigInteger('detail_barang_id'); // refer to detail_barang
+            $table->unsignedBigInteger('detail_barang_id')->nullable(); // refer to detail_barang (NULLABLE, in case of official assessment)
             $table->unsignedBigInteger('penetapan_id'); // refer to same table
 
             $table->unsignedInteger('pejabat_id')->nullable();  // refer to sso cache table

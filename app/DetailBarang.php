@@ -55,6 +55,10 @@ class DetailBarang extends Model implements ISpecifiable
         return $this->hasOne(Penetapan::class, 'detail_barang_id');
     }
 
+    public function penetapanHeader() {
+        return $this->hasOne(Penetapan::class, 'penetapan_id');
+    }
+
     // detail barang refer to self (if we're penetapan)
     public function detailBarang() {
         return $this->hasOneThrough(DetailBarang::class, Penetapan::class, 'penetapan_id', 'id', 'id', 'detail_barang_id');
@@ -71,6 +75,6 @@ class DetailBarang extends Model implements ISpecifiable
 
     // ATTRIBUTES!!!
     public function getIsPenetapanAttribute() {
-        return $this->detailBarang != null;
+        return $this->penetapanHeader != null;
     }
 }
