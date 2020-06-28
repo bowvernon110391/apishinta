@@ -81,4 +81,8 @@ class DetailBarang extends Model implements ISpecifiable
     public function getIsPenetapanAttribute() {
         return $this->penetapanHeader != null;
     }
+
+    public function getKategoriTagsAttribute() {
+        return $this->kategori->map(function ($e) { return $e->nama; })->toArray();
+    }
 }
