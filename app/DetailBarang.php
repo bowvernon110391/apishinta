@@ -45,6 +45,10 @@ class DetailBarang extends Model implements ISpecifiable
         return $this->belongsTo(Satuan::class, 'jenis_satuan', 'kode');
     }
 
+    public function kategori() {
+        return $this->belongsToMany(Kategori::class, 'detail_barang_kategori', 'detail_barang_id', 'kategori_id');
+    }
+
     // penetapan is in the same table, refer to ourselves
     public function penetapan()
     {
