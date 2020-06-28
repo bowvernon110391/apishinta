@@ -1,5 +1,6 @@
 <?php
 
+use App\Kurs;
 use Illuminate\Database\Seeder;
 
 class KursSeeder extends Seeder
@@ -11,6 +12,12 @@ class KursSeeder extends Seeder
      */
     public function run()
     {
+        // only run if we havent manually seeded it
+        if (Kurs::count() > 2) {
+            echo "Kurs already seeded somewhere else...exiting...\n";
+
+            return;
+        }
         $knownValuta = [
             'USD',
             'INR',
