@@ -118,9 +118,9 @@ Route::delete('/cd/{id}', 'CDController@destroy')
 Route::get('/cd/{id}/simulasi', 'CDController@simulasiHitung')
         ->middleware($corsGroup['singleItem'], 'role');
 
-// POST /cd/penetapan
+/* // POST /cd/penetapan
 Route::post('/cd/{id}/penetapan', 'CDController@storePenetapan')
-        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE'); */
 
 //==== DETAIL CD ====================================================
 // GET /cd/2/details    => ambil data detail cd
@@ -449,7 +449,7 @@ Route::get('/{doctype}/{id}/penetapan', 'DetailBarangController@indexPenetapan')
 Route::get('/{doctype}/{id}/detailbarang', 'DetailBarangController@indexDetailBarang')
 ->middleware($corsGroup['resourceGroup'], 'role');
 
-Route::post('/{doctype}/{id}/penetapan2', 'DetailBarangController@storePenetapan')
+Route::post('/{doctype}/{id}/penetapan', 'DetailBarangController@storePenetapan')
 ->middleware($corsGroup['resourceGroup'], 'role:PDTT,KASI,CONSOLE');
 
 Route::put('/penetapan/{id}', 'DetailBarangController@updatePenetapan')
