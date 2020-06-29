@@ -29,11 +29,11 @@ class DetailBarangController extends ApiController
             // instance here
             $d = $this->instancer->findOrFail($doctype, $docid);
 
-            if (!($d instanceof ISpecifiable)) {
+            if (!($d instanceof IHasGoods)) {
                 throw new \Exception("Objek ". get_class($d) ." tidak bisa memiliki penetapan!");
             }
 
-            $paginator = $d->penetapan()
+            $paginator = $d->detailBarang()->isPenetapan()
                         ->paginate($r->get('number', 10))
                         ->appends($r->except('page'));
 
@@ -56,7 +56,7 @@ class DetailBarangController extends ApiController
                 throw new \Exception("Objek ". get_class($d) ." tidak bisa memiliki detail barang!");
             }
 
-            $paginator = $d->detailBarang()
+            $paginator = $d->detailBarang()->isPengajuan()
                         ->paginate($r->get('number', 10))
                         ->appends($r->except('page'));
 

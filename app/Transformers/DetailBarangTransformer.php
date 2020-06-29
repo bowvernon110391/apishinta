@@ -83,7 +83,7 @@ class DetailBarangTransformer extends TransformerAbstract {
         }
     }
 
-    public function includeDetailBarang(DetailBarang $d) {
+    public function includePengajuan(DetailBarang $d) {
         $p = $d->detailBarang;
         if ($p) {
             return $this->item($p, new DetailBarangTransformer);
@@ -92,7 +92,7 @@ class DetailBarangTransformer extends TransformerAbstract {
 
     public function includePejabat(DetailBarang $d) {
         if ($d->is_penetapan) {
-            $p = $d->penetapanHeader->pejabat;
+            $p = $d->pivotPenetapan->pejabat;
             if ($p) {
                 return $this->item($p, new SSOUserCacheTransformer);
             }
