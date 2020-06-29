@@ -98,7 +98,10 @@ class DetailBarangController extends ApiController
             // grab parents?
             $header = $this->instancer->findOrFail($doctype, $docid);
 
-
+            // is it locked?
+            if ($header->is_locked) {
+                throw new \Exception("Dokumen /{$doctype}/{$docid} sudah terkunci!");
+            }
         } catch (ModelNotFoundException $e) {
             return $this->errorNotFound("endpoint '{$doctype}/{$docid}' was not valid");
         } catch (\Exception $e) {
