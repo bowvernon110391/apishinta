@@ -36,7 +36,7 @@ class CreateTarifTable extends Migration
             $table->timestamps();
 
             // now index shits
-            $table->foreign('tariffable_id', 'fk1_penetapan')->references('id')->on('detail_barang');
+            $table->foreign('tariffable_id', 'fk1_penetapan')->references('id')->on('detail_barang')->onDelete('cascade');
             $table->foreign('jenis_pungutan_id', 'fk2_jenis_pungutan')->references('id')->on('referensi_jenis_pungutan');
         });
     }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\DetailBarang;
 use App\IHasGoods;
 use App\ISpecifiable;
+use App\Penetapan;
 use App\Services\Instancer;
+use App\SSOUserCache;
 use App\Transformers\DetailBarangTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -102,8 +104,65 @@ class DetailBarangController extends ApiController
             if ($header->is_locked) {
                 throw new \Exception("Dokumen /{$doctype}/{$docid} sudah terkunci!");
             }
+
+            // it must be of instance ISpecifiable
+            if (!($header instanceof ISpecifiable)) {
+                throw new \Exception("header tidak bisa menyimpan data penetapan (ISpecifiable)");
+            }
+
+            // it's not locked, so let's store it
+            $d = new DetailBarang();
+            // sync primary data
+            $d->syncPrimaryData($r);
+            // save it before we can move further
+            $header->penetapan()->save($d);
+            // sync secondary data
+            $d->syncSecondaryData($r);
+
+            // gotta spawn penetapan entry too
+            $p = new Penetapan();
+            $p->data()->associate($d);
+            $p->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            $p->save();
+            
+            return $this->respondWithArray([
+                'id' => $d->id,
+                'uri' => '/penetapan/' . $d->id
+            ]);
         } catch (ModelNotFoundException $e) {
-            return $this->errorNotFound("endpoint '{$doctype}/{$docid}' was not valid");
+            return $this->errorNotFound($e->getMessage());
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    // update penetapan
+    public function updatePenetapan(Request $r, $id) {
+        try {
+            $d = DetailBarang::findOrFail($id);
+
+            if (!$d->is_penetapan) {
+                throw new \Exception("Data ini bukan data penetapan!");
+            }
+
+            if (!$d->penetapanHeader) {
+                throw new \Exception("Data ini belum ditetapkan!");
+            }
+
+            // sync primary and secondary data
+            $d->syncPrimaryData($r);
+            $d->save();
+            $d->syncSecondaryData($r);
+
+            // gotta update penetapan too!
+            $p = $d->penetapanHeader;
+            $p->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            $p->save();
+
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (ModelNotFoundException $e) {
+            return $this->errorNotFound($e->getMessage());
         } catch (\Exception $e) {
             return $this->errorBadRequest($e->getMessage());
         }

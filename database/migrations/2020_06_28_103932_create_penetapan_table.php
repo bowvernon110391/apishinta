@@ -25,8 +25,8 @@ class CreatePenetapanTable extends Migration
             $table->timestamps();
 
             // force index?
-            $table->foreign('detail_barang_id', 'fk_pen_detail')->references('id')->on('detail_barang');
-            $table->foreign('penetapan_id', 'fk_pen_penetapan')->references('id')->on('detail_barang');
+            $table->foreign('detail_barang_id', 'fk_pen_detail')->references('id')->on('detail_barang')->onDelete('cascade');
+            $table->foreign('penetapan_id', 'fk_pen_penetapan')->references('id')->on('detail_barang')->onDelete('cascade');
             $table->foreign('pejabat_id', 'fk_pen_pejabat')->references('user_id')->on('sso_user_cache');
         });
     }
