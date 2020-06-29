@@ -143,68 +143,15 @@ class CDSeeder extends Seeder
                 }
 
                 // if there was pejabat, store it as penetapan too
-                if ($pejabat && !$d->is_penetapan) {
+                /* if ($pejabat && !$d->is_penetapan) {
                     
                     $penetapan = new App\Penetapan();
                     $penetapan->data()->associate($d);
                     $penetapan->pejabat()->associate($pejabat);
 
                     $penetapan->save();
-                }
+                } */
             }
-
-            while(false /* $j++ < $detailCount */) {
-                $d = new App\DetailCD();
-                // fill detail data
-                $d->uraian      = $faker->sentence(random_int(1, 6));
-                $d->jumlah_satuan   = $faker->numberBetween(1, 100);
-                $d->jumlah_kemasan  = $faker->numberBetween(1, 20);
-                $d->jenis_satuan    = $faker->randomElement(['PCE','KGM','EA']);
-                $d->jenis_kemasan   = $faker->randomElement(['BX','PX','RO','PK']);
-
-                // $d->hs_code         = $faker->numerify("########");
-                $d->hs()->associate(HsCode::usable()->inRandomOrder()->first());
-
-                $d->fob         = $faker->randomFloat(4, 500, 980);
-                $d->freight     = $faker->randomFloat(4, 0, 200);
-                $d->insurance   = $faker->randomFloat(4, 0, 100);
-                $d->brutto      = $faker->randomFloat(4, 0.5, 25);
-                $d->netto       = $faker->randomFloat(4, 0, $d->brutto-0.25);
-
-                // kurs requires special attention
-                $kurs = App\Kurs::inRandomOrder()->first();
-
-                // $d->kode_valuta = $kurs->kode_valas; //$faker->randomElement(['USD','AUD','SGD','INR','MYR']);
-                // $d->nilai_valuta    = $kurs->kurs_idr; //$faker->randomFloat(4, 100.0, 40000.0);
-                $d->kurs()->associate($kursRef);
-
-
-                $p->details()->save($d);
-
-                // isi data kategori
-                $g = 0;
-                $kategoriCount = random_int(0,2);
-                $kategoriDefs = App\Kategori::inRandomOrder()->get();
-
-                while($g++ < $kategoriCount){
-                    $d->kategoris()->attach($kategoriDefs[$g]);
-                }
-
-                // isi data sekunder
-                $k = 0;
-                $dataSekunderCount = random_int(0, 3);
-
-                while ($k++ < $dataSekunderCount) {
-                    // create data sekunder
-                    $ds = new App\DetailSekunder;
-                    // $ds->jenis_detail_sekunder_id = $faker->numberBetween(1,4);
-                    $ds->referensiJenisDetailSekunder()->associate(App\ReferensiJenisDetailSekunder::inRandomOrder()->first());
-                    $ds->data = $faker->sentence(random_int(2,12));
-
-                    $d->detailSekunders()->save($ds);
-                }
-            }
-
             
         }
 

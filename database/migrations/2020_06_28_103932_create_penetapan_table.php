@@ -17,16 +17,18 @@ class CreatePenetapanTable extends Migration
             $table->bigIncrements('id');
 
             // what is being specified?
-            $table->unsignedBigInteger('detail_barang_id')->nullable(); // refer to detail_barang (NULLABLE, in case of official assessment)
-            $table->unsignedBigInteger('penetapan_id'); // refer to same table
+            // $table->unsignedBigInteger('detail_barang_id')->nullable(); // refer to detail_barang (NULLABLE, in case of official assessment)
+            // $table->unsignedBigInteger('penetapan_id'); // refer to same table
+            $table->nullableMorphs('pengajuan'); // nullable cause can be empty
+            $table->morphs('penetapan'); // must be filled
 
             $table->unsignedInteger('pejabat_id')->nullable();  // refer to sso cache table
 
             $table->timestamps();
 
             // force index?
-            $table->foreign('detail_barang_id', 'fk_pen_detail')->references('id')->on('detail_barang')->onDelete('cascade');
-            $table->foreign('penetapan_id', 'fk_pen_penetapan')->references('id')->on('detail_barang')->onDelete('cascade');
+            // $table->foreign('detail_barang_id', 'fk_pen_detail')->references('id')->on('detail_barang')->onDelete('cascade');
+            // $table->foreign('penetapan_id', 'fk_pen_penetapan')->references('id')->on('detail_barang')->onDelete('cascade');
             $table->foreign('pejabat_id', 'fk_pen_pejabat')->references('user_id')->on('sso_user_cache');
         });
     }

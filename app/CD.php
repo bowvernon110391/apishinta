@@ -12,7 +12,9 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
     // use TraitInspectable;
     use TraitInstructable;
 
-    use TraitHasGoodsAndSpecifiable;
+    use TraitSpecifiable;
+
+    use TraitHasGoods;
     // enable soft Deletion
     use SoftDeletes;
 

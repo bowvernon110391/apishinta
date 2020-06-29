@@ -15,12 +15,13 @@ class Penetapan extends Model
     ];
 
     // relations
-    public function barang() {
-        return $this->belongsTo(DetailBarang::class, 'detail_barang_id');
+    public function pengajuan() {
+        // return $this->belongsTo(DetailBarang::class, 'detail_barang_id');
+        return $this->morphTo();
     }
 
-    public function data() {
-        return $this->belongsTo(DetailBarang::class, 'penetapan_id');
+    public function penetapan() {
+        return $this->morphTo();
     }
 
     public function pejabat() {

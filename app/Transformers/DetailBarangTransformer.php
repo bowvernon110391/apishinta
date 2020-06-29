@@ -16,7 +16,7 @@ class DetailBarangTransformer extends TransformerAbstract {
         'tarif',
 
         'penetapan', // kalau ini detil pengajuan, dan sudah ditetapkan
-        'detailBarang', // kalau ini detil penetapan, dan sblmnya ada pengajuan
+        'pengajuan', // kalau ini detil penetapan, dan sblmnya ada pengajuan
         'pejabat' // pejabat penetapan (kalau penetapan)
     ];
 

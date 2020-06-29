@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class DetailBarang extends Model implements ISpecifiable
 {
+    use TraitSpecifiable;
+    
     // settings
     protected $table = 'detail_barang';
 
@@ -54,24 +56,7 @@ class DetailBarang extends Model implements ISpecifiable
         return $this->hasMany(DetailSekunder::class, 'detail_barang_id');
     }
 
-    // penetapan is in the same table, refer to ourselves
-    public function penetapan()
-    {
-        return $this->hasOne(Penetapan::class, 'detail_barang_id');
-    }
-
-    public function penetapanHeader() {
-        return $this->hasOne(Penetapan::class, 'penetapan_id');
-    }
-
     // detail barang refer to self (if we're penetapan)
-    public function detailBarang() {
-        return $this->hasOneThrough(DetailBarang::class, Penetapan::class, 'penetapan_id', 'id', 'id', 'detail_barang_id');
-    }
-
-    public function detailPenetapan() {
-        return $this->hasOneThrough(DetailBarang::class, Penetapan::class, 'detail_barang_id', 'id', 'id', 'penetapan_id');
-    }
 
     public function tarif()
     {
@@ -79,21 +64,9 @@ class DetailBarang extends Model implements ISpecifiable
     }
 
     // ATTRIBUTES!!!
-    public function getIsPenetapanAttribute() {
-        return $this->penetapanHeader != null;
-    }
 
     public function getKategoriTagsAttribute() {
         return $this->kategori->map(function ($e) { return $e->nama; })->toArray();
-    }
-
-    // SCOPES
-    public function scopeIsPenetapan($query) {
-        return $query->whereHas('penetapanHeader');
-    }
-
-    public function scopeIsDetailBarang($query) {
-        return $query->whereDoesntHave('penetapanHeader');
     }
 
     // HELPER 

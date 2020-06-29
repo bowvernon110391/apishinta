@@ -13,4 +13,13 @@ interface ISpecifiable {
     // nilai = 1 row
 
     public function penetapan();
+    public function pengajuan();
+
+    public function pivotPengajuan();
+    public function pivotPenetapan();
+
+    public function getIsPenetapanAttribute();
+
+    public function scopeIsPengajuan($query);
+    public function scopeIsPenetapan($query);
 }
