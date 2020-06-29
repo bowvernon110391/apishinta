@@ -60,6 +60,9 @@ class CDController extends ApiController
             $alamat = expectSomething($r->get('alamat'), 'Alamat Tinggal');
             $declare_flags  = $r->get('declare_flags');
 
+            // koli
+            $koli = expectSomething($r->get('koli'), 'Koli Barang');
+
             // keluarga, pembebasan
             $jml_bagasi_dibawa = expectSomething($r->get('jml_bagasi_dibawa'), 'Jumlah Bagasi Dibawa');
             $jml_bagasi_tdk_dibawa = expectSomething($r->get('jml_bagasi_tdk_dibawa'), 'Jumlah Bagasi Tidak Dibawa');
@@ -93,7 +96,8 @@ class CDController extends ApiController
                 'jml_bagasi_tdk_dibawa' => $jml_bagasi_tdk_dibawa,
                 'pembebasan'    => $pembebasan,
                 'jml_anggota_keluarga'  => $jml_anggota_keluarga,
-                'pph_tarif'     => $pph_tarif
+                'pph_tarif'     => $pph_tarif,
+                'koli'      => $koli
             ]);
 
             // set npwp/nib
@@ -208,6 +212,9 @@ class CDController extends ApiController
             $cd->kd_pelabuhan_asal = expectSomething($r->get('kd_pelabuhan_asal'), 'Kode Pelabuhan Asal');
             $cd->kd_pelabuhan_tujuan = expectSomething($r->get('kd_pelabuhan_tujuan'), 'Kode Pelabuhan Tujuan');
             $cd->alamat = expectSomething($r->get('alamat'), 'Alamat/Domisili');
+
+            // koli
+            $cd->koli = expectSomething($r->get('koli'), 'Koli Barang');
 
             // keluarga, pembebasan
             $cd->jml_bagasi_dibawa = expectSomething($r->get('jml_bagasi_dibawa'), 'Jumlah Bagasi Dibawa');

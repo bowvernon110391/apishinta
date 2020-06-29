@@ -42,6 +42,9 @@ class CDTransformer extends TransformerAbstract {
             'lokasi'    => $cd->lokasi->nama,
             'declare_flags' => $cd->flat_declare_flags,
 
+            // barang
+            'koli'  => (int) $cd->koli,
+
             // keluarga n pembebasan
             'jml_anggota_keluarga'  => (int) $cd->jml_anggota_keluarga,
             'jml_bagasi_dibawa'     => (int) $cd->jml_bagasi_dibawa,
@@ -63,7 +66,8 @@ class CDTransformer extends TransformerAbstract {
             'kd_pelabuhan_asal' => (string) $cd->kd_pelabuhan_asal,
             'kd_pelabuhan_tujuan' => (string) $cd->kd_pelabuhan_tujuan,
 
-            'jumlah_detail' => $cd->details()->count(),
+            'jumlah_detail_pengajuan' => $cd->detailbarang()->isPengajuan()->count(),
+            'jumlah_detail_penetapan' => $cd->detailbarang()->isPenetapan()->count(),
 
             'created_at'    => (string) $cd->created_at,
             'updated_at'    => (string) $cd->updated_at,
