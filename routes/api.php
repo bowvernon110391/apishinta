@@ -432,3 +432,22 @@ Route::get('/sso/user', 'SSOUserCacheController@index')
 ->middleware($corsGroup['resourceGroup']);
 Route::get('/sso/user/{id}', 'SSOUserCacheController@show')
 ->middleware($corsGroup['singleItem']);
+
+//====================================================================================================
+// ENDPOINTS DetailBarang (GENERALIZED)
+// kasih guard di endpointnya
+//====================================================================================================
+Route::get('/detailbarang/{id}', 'DetailBarangController@showDetailBarang')
+->middleware($corsGroup['singleItem'], 'role');
+
+Route::get('/penetapan/{id}', 'DetailBarangController@showPenetapan')
+->middleware($corsGroup['singleItem'], 'role');
+
+Route::get('/{doctype}/{id}/penetapan', 'DetailBarangController@indexPenetapan')
+->middleware($corsGroup['resourceGroup'], 'role');
+
+Route::get('/{doctype}/{id}/detailbarang', 'DetailBarangController@indexDetailBarang')
+->middleware($corsGroup['resourceGroup'], 'role');
+
+Route::post('/{doctype}/{id}/penetapan', 'DetailBarangController@storePenetapan')
+->middleware($corsGroup['resourceGroup'], 'role:PDTT,KASI,CONSOLE');

@@ -22,6 +22,10 @@ class Tarif extends Model
         'overridable' => true
     ];
 
+    protected $with = [
+        'jenisPungutan'
+    ];
+
     // Relations
     public function tariffable() {
         return $this->belongsTo(DetailBarang::class, 'tariffable_id');
@@ -33,6 +37,6 @@ class Tarif extends Model
 
     // Attributes
     public function getIsPenetapanAttribute() {
-        return $this->tarrifable ? $this->tarrifable->is_penetapan : false;
+        return $this->tariffable && $this->tariffable->is_penetapan;
     }
 }

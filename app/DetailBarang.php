@@ -85,4 +85,13 @@ class DetailBarang extends Model implements ISpecifiable
     public function getKategoriTagsAttribute() {
         return $this->kategori->map(function ($e) { return $e->nama; })->toArray();
     }
+
+    // SCOPES
+    public function scopeIsPenetapan($query) {
+        return $query->whereHas('penetapanHeader');
+    }
+
+    public function scopeIsDetailBarang($query) {
+        return $query->whereDoesntHave('penetapanHeader');
+    }
 }

@@ -62,12 +62,13 @@ class SSOUserCache extends Model
     }
 
     // FROM CACHE, AUTO FETCH WHEN NOT EXIST
-    static public function byId($id) {
+    static public function byId($id, $forceFetch = false) {
         // 1st, grab from cache
         $user = SSOUserCache::getUserFromCache($id);
 
         // 2nd, if it does not exist, grab from server
-        if (!$user) {
+        // NB: ALSO DO IT IF WE'RE FORCE FETCHING
+        if (!$user || $forceFetch) {
             $user = SSOUserCache::getUserFromServer($id);
 
             // 3rd, if we got one, cache it
