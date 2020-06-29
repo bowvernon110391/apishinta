@@ -84,7 +84,7 @@ class DetailBarangTransformer extends TransformerAbstract {
     }
 
     public function includePengajuan(DetailBarang $d) {
-        $p = $d->detailBarang;
+        $p = $d->pengajuan;
         if ($p) {
             return $this->item($p, new DetailBarangTransformer);
         }

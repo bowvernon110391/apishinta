@@ -84,7 +84,7 @@ class DetailBarangController extends ApiController
     // show one instance of detailBarang
     public function showDetailBarang(Request $r, $id) {
         try {
-            $d = DetailBarang::isDetailBarang()->findOrFail($id);
+            $d = DetailBarang::isPengajuan()->findOrFail($id);
 
             return $this->respondWithItem($d, new DetailBarangTransformer);
         } catch (ModelNotFoundException $e) {
@@ -106,8 +106,8 @@ class DetailBarangController extends ApiController
             }
 
             // it must be of instance ISpecifiable
-            if (!($header instanceof ISpecifiable)) {
-                throw new \Exception("header tidak bisa menyimpan data penetapan (ISpecifiable)");
+            if (!($header instanceof IHasGoods)) {
+                throw new \Exception("header tidak bisa menyimpan data penetapan barang (IHasGoods)");
             }
 
             // it's not locked, so let's store it
@@ -115,13 +115,13 @@ class DetailBarangController extends ApiController
             // sync primary data
             $d->syncPrimaryData($r);
             // save it before we can move further
-            $header->penetapan()->save($d);
+            $header->detailBarang()->save($d);
             // sync secondary data
             $d->syncSecondaryData($r);
 
             // gotta spawn penetapan entry too
             $p = new Penetapan();
-            $p->data()->associate($d);
+            $p->penetapan()->associate($d);
             $p->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
             $p->save();
             
@@ -145,7 +145,7 @@ class DetailBarangController extends ApiController
                 throw new \Exception("Data ini bukan data penetapan!");
             }
 
-            if (!$d->penetapanHeader) {
+            if (!$d->pivotPenetapan) {
                 throw new \Exception("Data ini belum ditetapkan!");
             }
 
@@ -155,7 +155,7 @@ class DetailBarangController extends ApiController
             $d->syncSecondaryData($r);
 
             // gotta update penetapan too!
-            $p = $d->penetapanHeader;
+            $p = $d->pivotPenetapan;
             $p->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
             $p->save();
 
