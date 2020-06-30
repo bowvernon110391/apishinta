@@ -43,4 +43,10 @@ class Pungutan extends Model
     public function scopePengajuan($query) {
         return $query->whereNull('pejabat_id');
     }
+
+    public function scopeByKode($query, $kode) {
+        return $query->whereHas('jenisPungutan', function ($query) use ($kode) {
+            $query->byKode($kode);
+        });
+    }
 }

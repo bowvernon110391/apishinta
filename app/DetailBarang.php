@@ -5,9 +5,10 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class DetailBarang extends Model implements ISpecifiable
+class DetailBarang extends Model implements ISpecifiable, ITariffable
 {
     use TraitSpecifiable;
+    use TraitTariffable;
     
     // settings
     protected $table = 'detail_barang';
@@ -54,13 +55,6 @@ class DetailBarang extends Model implements ISpecifiable
 
     public function detailSekunder() {
         return $this->hasMany(DetailSekunder::class, 'detail_barang_id');
-    }
-
-    // detail barang refer to self (if we're penetapan)
-
-    public function tarif()
-    {
-        return $this->hasMany(Tarif::class, 'tariffable_id');
     }
 
     // ATTRIBUTES!!!

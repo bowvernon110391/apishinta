@@ -16,8 +16,8 @@ class CreateTarifTable extends Migration
         Schema::create('tarif', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            // first, this is a complement to penetapan, so refer to it
-            $table->unsignedBigInteger('tariffable_id');
+            // use polymorphic for tariffable
+            $table->morphs('tariffable');
             // jenis pungutan (id)
             $table->unsignedInteger('jenis_pungutan_id');
             // jenis tarif (UNTUK BM ONLY) so nullable

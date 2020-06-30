@@ -28,7 +28,7 @@ class Tarif extends Model
 
     // Relations
     public function tariffable() {
-        return $this->belongsTo(DetailBarang::class, 'tariffable_id');
+        return $this->morphTo();
     }
 
     public function jenisPungutan() {
@@ -38,5 +38,16 @@ class Tarif extends Model
     // Attributes
     public function getIsPenetapanAttribute() {
         return $this->tariffable && $this->tariffable->is_penetapan;
+    }
+
+    // Scopes
+    public function scopeByKode($query, $kode) {
+        return $query->whereHas('jenisPungutan', function ($query) use ($kode) {
+            $query->byKode($kode);
+        });
+    }
+
+    public function scopeOverridable($query) {
+        return $query->where('overridable', true);
     }
 }

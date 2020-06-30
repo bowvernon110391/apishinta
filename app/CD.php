@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods, ISpecifiable
+class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan
 {
     use TraitLoggable;
     use TraitDokumen;
@@ -15,6 +15,8 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
     use TraitSpecifiable;
 
     use TraitHasGoods;
+    use TraitTariffable;
+    use TraitHasPungutan;
     // enable soft Deletion
     use SoftDeletes;
 
@@ -491,6 +493,22 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
         } catch (\Exception $e) {
             throw $e;
             return null;
+        }
+    }
+
+    // sync tarif
+    public function syncTarif() {
+        // gotta update either our tariffs or our detail's
+        if ($this->komersil) {
+            // update each goods tariffs, removing our own who
+            // let's remove all our tariffs who's overridable
+            $this->tarif()->overridable()->delete();
+            // now update our goods tariffs
+        } else {
+            // remove all our goods tariffs (who's non overridable)
+            $this->detailBarang()->tarif()->overridable()->delete();
+            // set CD's tarif directly
+            
         }
     }
 }
