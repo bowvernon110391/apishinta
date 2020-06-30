@@ -49,7 +49,8 @@ if (!function_exists('grabsKursData')) {
 		// source data
 		try {
 			//code...
-			$html = file_get_contents('https://fiskal.kemenkeu.go.id/informasi-publik/kurs-pajak', false, stream_context_create($arrContextOptions) );
+			$html = file_get_contents('https://fiskal.kemenkeu.go.id/informasi-publik/kurs-pajak');
+			// dump($html);
 		} catch (\Exception $e) {
 			// return empty data, will be interpreted as service unavailable
 			return null;
@@ -59,7 +60,7 @@ if (!function_exists('grabsKursData')) {
 		// echo $html;
 
 		// grab tanggal awal dan akhir
-		$patTanggal = '/Tanggal Berlaku\:\s(\d{1,2})\s+(\w+)\s+(\d{4})\s\-\s(\d{1,2})\s+(\w+)\s+(\d{4})/i';
+		$patTanggal = '/Tanggal Berlaku\:\s+(\d{1,2})\s+(\w+)\s+(\d{4})\s+\-\s+(\d{1,2})\s+(\w+)\s+(\d{4})/i';
 
 
 		$result = preg_match($patTanggal, $html, $matches);
@@ -79,6 +80,8 @@ if (!function_exists('grabsKursData')) {
 				'dateEnd'	=> $matches[6].'-'.$monthLookup[$matches[5]].'-'.$matches[4],
 				'data' => array()
 				);
+
+			// dump($retData);
 		} else
 			return null;
 
