@@ -13,6 +13,10 @@ class DetailBarangTransformer extends TransformerAbstract {
         'hs',
         'detailSekunder',
 
+        'kemasan',
+        'satuan',
+        'tags',
+
         'tarif',
 
         'penetapan', // kalau ini detil pengajuan, dan sudah ditetapkan
@@ -24,6 +28,8 @@ class DetailBarangTransformer extends TransformerAbstract {
         'kurs',
         'hs',
         'detailSekunder',
+        'kemasan',
+        'satuan',
         'tarif'
     ];
 
@@ -68,6 +74,23 @@ class DetailBarangTransformer extends TransformerAbstract {
     public function includeDetailSekunder(DetailBarang $d) {
         $ds = $d->detailSekunder;
         return $this->collection($ds, new DetailSekunderTransformer);
+    }
+
+    public function includeKemasan(DetailBarang $d) {
+        $k = $d->jenisKemasan;
+        return $this->item($k, new KemasanTransformer);
+    }
+
+    public function includeSatuan(DetailBarang $d) {
+        $s = $d->jenisSatuan;
+        if ($s) {
+            return $this->item($s, new SatuanTransformer);
+        }
+    }
+
+    public function includeTags(DetailBarang $d) {
+        $k = $d->kategori;
+        return $this->collection($k, new KategoriTransformer);
     }
 
     public function includeTarif(DetailBarang $d) {
