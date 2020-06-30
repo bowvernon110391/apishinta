@@ -85,13 +85,13 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
         $this->netto = $r->get('netto');
 
         // associate the right kurs
-        $kurs = $r->get('kurs');
-        $kurs_id = $kurs['data']['id'] ?? null;
+        // $kurs = $r->get('kurs_id');
+        $kurs_id = expectSomething($r->get('kurs_id'), "Kurs");
         $this->kurs()->associate(Kurs::findOrFail($kurs_id));
 
         // associate the right hs
-        $hs = $r->get('hs');
-        $hs_id = $hs['data']['id'] ?? null;
+        // $hs = $r->get('hs');
+        $hs_id = expectSomething($r->get('hs_id'), "HS Code");
         $this->hs()->associate(HsCode::findOrFail($hs_id));
     }
 
