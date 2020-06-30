@@ -12,6 +12,7 @@ use App\Lokasi;
 use App\Penumpang;
 use App\SSPCP;
 use App\Transformers\CDTransformer;
+use App\Transformers\DetailBarangTransformer;
 use App\Transformers\DetailCDTransformer;
 use Illuminate\Support\Facades\DB;
 
@@ -175,11 +176,11 @@ class CDController extends ApiController
         }
 
         // mungkin kah gk ada CD detailsnya?
-        $paginator = $cd->details()
+        $paginator = $cd->detailbarang()
                     ->paginate($request->get('number', 10))
                     ->appends($request->except('page'));
 
-        return $this->respondWithPagination($paginator, new DetailCDTransformer);
+        return $this->respondWithPagination($paginator, new DetailBarangTransformer);
     }
 
     /**
