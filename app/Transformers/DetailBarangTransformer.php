@@ -47,6 +47,9 @@ class DetailBarangTransformer extends TransformerAbstract {
             'insurance' => (float) $d->insurance,
             'freight' => (float) $d->freight,
 
+            'hs_id' => (int) $d->hs_id,
+            'kurs_id' => (int) $d->kurs_id,
+
             'brutto' => (float) $d->brutto,
             'netto' => is_numeric($d->netto) ? (float) $d->netto : null,
 

@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
 class DetailBarang extends Model implements ISpecifiable, ITariffable
 {
+    use SoftDeletes;
     use TraitSpecifiable;
     use TraitTariffable;
     

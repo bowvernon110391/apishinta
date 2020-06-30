@@ -46,6 +46,7 @@ class CreateDetailBarangTable extends Migration
             $table->unsignedInteger('kurs_id');
 
             $table->timestamps();
+            $table->softDeletes();
 
             // ====================FOREIGN KEYS===========================================
             $table->foreign('jenis_kemasan', 'fk1_jenis_kemasan')->references('kode')->on('referensi_kemasan');
