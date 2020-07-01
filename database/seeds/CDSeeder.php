@@ -143,14 +143,14 @@ class CDSeeder extends Seeder
                 }
 
                 // if there was pejabat, store it as penetapan too
-                /* if ($pejabat && !$d->is_penetapan) {
+                if ($pejabat && !$d->is_penetapan) {
                     
                     $penetapan = new App\Penetapan();
-                    $penetapan->data()->associate($d);
+                    $penetapan->penetapan()->associate($d);
                     $penetapan->pejabat()->associate($pejabat);
 
                     $penetapan->save();
-                } */
+                }
             }
             
         }

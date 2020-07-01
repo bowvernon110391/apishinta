@@ -450,7 +450,10 @@ Route::get('/{doctype}/{id}/detailbarang', 'DetailBarangController@indexDetailBa
 ->middleware($corsGroup['resourceGroup'], 'role');
 
 Route::post('/{doctype}/{id}/penetapan', 'DetailBarangController@storePenetapan')
-->middleware($corsGroup['resourceGroup'], 'role:PDTT,KASI,CONSOLE');
+->middleware($corsGroup['resourceGroup'], 'role:PDTT,CONSOLE');
 
 Route::put('/penetapan/{id}', 'DetailBarangController@updatePenetapan')
-->middleware($corsGroup['singleItem'], 'role:PDTT,KASI,CONSOLE');
+->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
+
+Route::delete('/penetapan/{id}', 'DetailBarangController@deletePenetapan')
+->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');

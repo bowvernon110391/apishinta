@@ -11,6 +11,7 @@ use App\SSOUserCache;
 use App\Transformers\DetailBarangTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use League\Fractal\Manager;
 
 class DetailBarangController extends ApiController
@@ -96,6 +97,7 @@ class DetailBarangController extends ApiController
 
     // store penetapan
     public function storePenetapan(Request $r, $doctype, $docid) {
+        DB::beginTransaction();
         try {
             // grab parents?
             $header = $this->instancer->findOrFail($doctype, $docid);
@@ -124,20 +126,29 @@ class DetailBarangController extends ApiController
             $p->penetapan()->associate($d);
             $p->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
             $p->save();
+
+            // trigger handler
+            $header->onCreateItem($d);
+
+            DB::commit();
             
             return $this->respondWithArray([
                 'id' => $d->id,
                 'uri' => '/penetapan/' . $d->id
             ]);
         } catch (ModelNotFoundException $e) {
+            DB::rollBack();
             return $this->errorNotFound($e->getMessage());
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
     }
 
     // update penetapan
     public function updatePenetapan(Request $r, $id) {
+        DB::beginTransaction();
+
         try {
             $d = DetailBarang::findOrFail($id);
 
@@ -159,12 +170,78 @@ class DetailBarangController extends ApiController
             $p->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
             $p->save();
 
+            // trigger listener
+            $header = $d->header;
+            if ($header) {
+                // is header instance of IHasGoods?
+                if (!($header instanceof IHasGoods)) {
+                    throw new \Exception("Header dari penetapan #{$d->id} bukan container untuk data barang!");
+                }
+
+                // save, trigger it
+                $header->onUpdateItem($d);
+            }
+
+            DB::commit();
+
             return $this->setStatusCode(204)
                         ->respondWithEmptyBody();
         } catch (ModelNotFoundException $e) {
+            DB::rollBack();
             return $this->errorNotFound($e->getMessage());
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
     }
+    
+    // delete penetapan
+    public function deletePenetapan(Request $r, $id) {
+        DB::beginTransaction();
+
+        try {
+            $d = DetailBarang::findOrFail($id);
+
+            if (!$d->is_penetapan) {
+                throw new \Exception("Data ini bukan data penetapan!");
+            }
+
+            if (!$d->pivotPenetapan) {
+                throw new \Exception("Data ini belum ditetapkan!");
+            }
+
+            // trigger listener
+            $header = $d->header;
+            if ($header) {
+                // is header instance of IHasGoods?
+                if (!($header instanceof IHasGoods)) {
+                    throw new \Exception("Header dari penetapan #{$d->id} bukan container untuk data barang!");
+                }
+
+                // if it's locked, gotta tell em
+                if (!canEdit($header->is_locked, $r->userInfo)) {
+                    throw new \Exception("Header is locked already! cannot delete!");
+                }
+
+                // save, trigger it
+                $header->onDeleteItem($d);
+            }
+
+            // finally delete it
+            $d->pivotPenetapan()->delete();
+            $d->delete();
+
+            DB::commit();
+
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound($e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
 }

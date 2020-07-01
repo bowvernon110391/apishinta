@@ -176,7 +176,7 @@ class CDController extends ApiController
         }
 
         // mungkin kah gk ada CD detailsnya?
-        $paginator = $cd->detailbarang()
+        $paginator = $cd->detailbarang()->isPenetapan()
                     ->paginate($request->get('number', 10))
                     ->appends($request->except('page'));
 
@@ -271,7 +271,7 @@ class CDController extends ApiController
             AppLog::logInfo("CD #{$cd->id} diupdate oleh {$r->userInfo['username']}", $cd);
 
             // return no body
-            return $this->setStatusCode(200)->respondWithEmptyBody();
+            return $this->setStatusCode(204)->respondWithEmptyBody();
         } catch (\Exception $e) {
             //throw $th;
             return $this->errorBadRequest($e->getMessage());

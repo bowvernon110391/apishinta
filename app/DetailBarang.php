@@ -11,6 +11,7 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
     use SoftDeletes;
     use TraitSpecifiable;
     use TraitTariffable;
+    use TraitLoggable;
     
     // settings
     protected $table = 'detail_barang';

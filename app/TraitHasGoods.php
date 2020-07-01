@@ -11,4 +11,8 @@ trait TraitHasGoods {
     public function getJumlahDetailBarangAttribute() {
         return $this->detailBarang()->count();
     }
+
+    public function onCreateItem(DetailBarang $d) {}
+    public function onDeleteItem(DetailBarang $d) {}
+    public function onUpdateItem(DetailBarang $d) {}
 }

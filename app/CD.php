@@ -511,4 +511,20 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
             
         }
     }
+
+    // ===========================DETAIL BARANG LISTEENR============================
+    public function onUpdateItem(DetailBarang $d)
+    {
+        AppLog::logInfo("CD #{$this->id} must do something on DetailBarang #{$d->id}", $d);
+    }
+
+    public function onCreateItem(DetailBarang $d)
+    {
+        AppLog::logInfo("CD #{$this->id} must setup initial data on Detail Barang #{$d->id}", $d);
+    }
+
+    public function onDeleteItem(DetailBarang $d)
+    {
+        AppLog::logInfo("CD #{$this->id} onDelete {$d->id}", $d);
+    }
 }
