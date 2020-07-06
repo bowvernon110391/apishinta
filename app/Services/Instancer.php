@@ -5,7 +5,6 @@ namespace App\Services;
 use App\BPJ;
 use App\CD;
 use App\InstruksiPemeriksaan;
-use App\IS;
 use App\Lampiran;
 use App\LHP;
 use App\SPMB;
@@ -19,7 +18,6 @@ class Instancer
         'cd'    => CD::class,
         'spp'   => SPP::class,
         'st'    => ST::class,
-        'is'    => IS::class,
         'spmb'  => SPMB::class,
         'bpj'   => BPJ::class,
         'lampiran'  => Lampiran::class,

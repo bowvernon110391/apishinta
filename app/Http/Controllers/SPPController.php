@@ -84,7 +84,7 @@ class SPPController extends ApiController
             $spp->appendStatus('CREATED', $nama_lokasi, "CREATED FROM CD", $cd);
 
             // directly lock
-            $spp->lock();
+            $spp->lockAndSetNumber();
 
             // commit transaction
             DB::commit();

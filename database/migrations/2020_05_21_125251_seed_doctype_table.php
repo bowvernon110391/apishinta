@@ -2,7 +2,6 @@
 
 use App\BPJ;
 use App\CD;
-use App\IS;
 use App\SPP;
 use App\ST;
 use Illuminate\Support\Facades\Schema;
@@ -41,13 +40,6 @@ class SeedDoctypeTable extends Migration
                 'kode_dok'      => 'ST',
                 'nama'          => 'Tanda Bukti Penahanan/Penitipan',
                 'deskripsi'     => 'Dokumen bukti penahanan/penitipan barang penumpang dan awak sarana pengangkut'
-            ],
-            // IS
-            [
-                'class_name'    => IS::class,
-                'kode_dok'      => 'BC21',
-                'nama'          => 'Pemberitahuan Impor Sementara',
-                'deskripsi'     => 'Dokumen pemberitahuan impor sementara untuk barang penumpang dan awak sarana pengangkut'
             ],
             // BPJ
             [

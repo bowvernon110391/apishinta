@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\CD;
-use App\Dokkap;
-use App\IS;
 use App\Lampiran;
-use App\Pembatalan;
 use App\Services\Instancer;
-use App\SPMB;
 use App\Transformers\LampiranTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -18,13 +13,6 @@ use PDOException;
 
 class UploadController extends ApiController
 {
-    protected static $acceptedType = [
-        'cd'    => CD::class,
-        'is'    => IS::class,
-        'spmb'  => SPMB::class,
-        'dokkap'    => Dokkap::class,
-        'pembatalan'    => Pembatalan::class
-    ];
 
     public function __construct(Instancer $instancer, Manager $fractal, Request $r)
     {

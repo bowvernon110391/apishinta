@@ -359,106 +359,7 @@ class CDController extends ApiController
     /**
      * Penetapan cd
      */
-    public function storePenetapan(Request $r, $id) {
-        // ambil informasi user dlu
-        $nama_pejabat = $r->userInfo['name'];
-        $nip_pejabat = $r->userInfo['nip'];
-
-        // USE TRANSACTION
-        //===========================================================================
-        DB::beginTransaction();
-
-        try {
-            if (!$r->isJson()) {
-                throw new \Exception("Only accepts JSON format!!");
-            }
-
-            // invalid user?
-            if (!$nama_pejabat || !$nip_pejabat || strlen($nama_pejabat) < 6 || strlen($nip_pejabat) < 6) {
-                throw new \Exception("Nama / NIP pejabat yang menetapkan tidak valid!");
-            }
-            // try to find cd first?
-            $cd = CD::findOrFail($id);
-
-            // cd found, now keterangan
-            $keterangan = $r->get('catatan');
-
-            // lokasi
-            $lokasi = Lokasi::byName( expectSomething($r->get('lokasi'), 'Lokasi') )->first();
-
-            if (!$lokasi) {
-                throw new \Exception("Lokasi {$r->get('lokasi')} tidak ditemukan!");
-            }
-
-            // ambil jenis pembayaran
-            $jenis_bayar = 'TUNAI'; //expectSomething($r->get('jenis_pembayaran'), "Jenis Pembayaran");
-
-            if ($jenis_bayar == 'TUNAI') {
-                // aman, gk perlu ngapa2in
-                AppLog::logInfo("CD #{$cd->id} dibayar TUNAI", $cd);
-
-                // append status?
-                $cd->appendStatus('LUNAS_TUNAI', $lokasi->nama);
-            } else if ($jenis_bayar == 'JAMINAN') {
-                // ambil jaminan_id, check ketersediaannya
-                $bpj = BPJ::findOrFail(expectSomething($r->get('jaminan_id'), "ID Jaminan"));
-
-                // cek apabila BPJ pernah digunakan
-                if ($bpj->is_used) {
-                    throw new \Exception("BPJ #{$bpj->id} sudah pernah digunakan!");
-                }
-
-                // ambil catatan bpj
-                $catatan_bpj = $r->get('catatan_jaminan');
-
-                // move on, use it
-                $bpj->guaranteeable()->associate($cd);
-
-                // set catatan
-                $bpj->catatan = $catatan_bpj;
-                $bpj->save();
-
-                // log it?
-                // $bpj->appendLog("BPJ #{$bpj->id} digunakan untuk melunasi CD #{$cd->id}");
-                // $cd->appendLog("CD #{$cd->id} dilunasi dengan BPJ #{$bpj->id}");
-
-                // Append status
-                $bpj->appendStatus("USED", $lokasi->nama);
-                $cd->appendStatus("LUNAS_JAMINAN", $lokasi->nama);
-
-                // lock BPJ
-                $bpj->lock();
-            } else {
-                throw new \Exception("Jenis Pembayaran tidak valid -> {$jenis_bayar}");
-            }
-
-            // ambil cd
-            // $sspcp = SSPCP::createFromCD($cd, $keterangan, $lokasi->id, $nama_pejabat, $nip_pejabat);
-            $sspcp = SSPCP::createFromBillable($cd, $keterangan, $nama_pejabat, $nip_pejabat);
-
-            // append status and log for the CD, before lock?
-            $cd->appendStatus('SSPCP', $lokasi->nama, "JENIS_BAYAR: {$jenis_bayar}", $sspcp, "printable");
-
-            // log for CD?
-            AppLog::logInfo("CD #{$cd->id} ditetapkan dengan Id#{$sspcp->id} oleh {$nama_pejabat}", $sspcp, false);
-
-            // lock that shieeeet!!
-            $sspcp->lock();
-            $cd->lock();
-
-            // commit here
-            DB::commit();
-
-            // return something here
-            return $this->respondWithArray([
-                'id'    => $sspcp->id,
-                'uri'   => '/sspcp/' . $sspcp->id
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return $this->errorBadRequest($e->getMessage());
-        }
-    }
+    
 
     /**
      * Batalkan penetapan CD
@@ -468,7 +369,4 @@ class CDController extends ApiController
     /**
      * Penetapan ST?
      */
-    public function createST(Request $r, $id) {
-
-    }
 }

@@ -39,9 +39,9 @@ class CDObserver
         // gotta delete all related docs
         $c->spp()->delete();
         $c->st()->delete();
-        $c->imporSementara()->delete();
+        
         $c->sspcp()->delete();
-        $c->details()->delete();
+        $c->detailBarang()->delete();
     }
 
     /**
@@ -53,12 +53,12 @@ class CDObserver
     public function restored(CD $c)
     {
         // when restoring, only restore the details
-        $c->details()->withTrashed()->restore();
+        $c->detailBarang()->withTrashed()->restore();
 
         // better restore all related docs
         $c->spp()->withTrashed()->restore();
         $c->st()->withTrashed()->restore();
-        $c->imporSementara()->withTrashed()->restore();
+        
         $c->sspcp()->withTrashed()->restore();
         $c->details()->withTrashed()->restore();
     }

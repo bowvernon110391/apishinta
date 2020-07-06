@@ -8,13 +8,9 @@ interface IDokumen
     public function getJenisDokumenAttribute();
     public function getJenisDokumenLengkapAttribute();
     public function getSkemaPenomoranAttribute();
-    public function getLastStatusAttribute();
-    public function getShortLastStatusAttribute();
-    public function status();
-    public function lock();
-    public function unlock();
-    public function getIsLockedAttribute();
+
+    public function lockAndSetNumber(); // lock status, and set number
+
     public function setNomorDokumen($force = false);
     public function getTahunDokAttribute();
-    public function appendStatus($name, $lokasi = null, $keterangan = null, $linkable = null, $other_data = null);
 }

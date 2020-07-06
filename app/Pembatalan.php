@@ -5,10 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Pembatalan extends Model
+class Pembatalan extends AbstractDokumen
 {
-    use TraitLoggable;
-    use TraitDokumen;
     // automatically synchronized with 'pembatalans'
 
     // guarded
@@ -51,19 +49,7 @@ class Pembatalan extends Model
         return Pembatalan::$supported[$classname];
     }
 
-    // kunci pembatalan
-    public function lock() {
-        // if we're locked, do nothing
-        if ($this->is_locked)
-            return $this->is_locked;
-
-        // bagusnya dikasih transaction guard biar 
-        // databasenya selalu ACID
-        
-        $this->appendStatus('CLOSED');
-        // $this->setNomorDokumen();
-        return $this->is_locked;
-    }
+    
 
     // all cancellable
     public function cancellable() {
@@ -85,9 +71,6 @@ class Pembatalan extends Model
     }
     public function sspcp() {
         return $this->morphedByMany(SSPCP::class, 'cancellable', 'cancellable');
-    }
-    public function imporSementara() {
-        return $this->morphedByMany(IS::class, 'cancellable', 'cancellable');
     }
     public function bpj() {
         return $this->morphedByMany(BPJ::class, 'cancellable', 'cancellable');

@@ -4,12 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class LHP extends Model implements IDokumen
+class LHP extends AbstractDokumen
 {
-    // implements common trait
-    use TraitLoggable;
-    use TraitDokumen;
-
     // model settings
     protected $table = 'lhp';
 

@@ -109,7 +109,7 @@ class IPController extends ApiController
                 $ip->appendStatus('CREATED', null, null, $doc, 'instructable');
                 AppLog::logInfo("IP #{$ip->id} diterbitkan oleh {$r->userInfo['username']}", $ip);
 
-                $ip->lock();    // lock it so it gets numbered?
+                $ip->lockAndSetNumber();    // lock it so it gets numbered?
             }
 
 

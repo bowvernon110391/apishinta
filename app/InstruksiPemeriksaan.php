@@ -5,11 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class InstruksiPemeriksaan extends Model implements IDokumen, IInspectable
+class InstruksiPemeriksaan extends AbstractDokumen implements IInspectable
 {
     // just use traits
-    use TraitLoggable;
-    use TraitDokumen;
     use TraitInspectable;
 
     // enable soft deletion? 
@@ -36,7 +34,7 @@ class InstruksiPemeriksaan extends Model implements IDokumen, IInspectable
         return $this->morphOne('App\LHP', 'inspectable');
     }
 
-    public function pemeriksa_rel() {
+    public function pemeriksa() {
         return $this->hasOne(SSOUserCache::class, 'user_id', 'pemeriksa_id');
     }
 
@@ -98,7 +96,7 @@ class InstruksiPemeriksaan extends Model implements IDokumen, IInspectable
     }
 
     public function scopeByPemeriksa($query, $nameOrNip) {
-        return $query->whereHas('pemeriksa_rel', function ($query) use ($nameOrNip) {
+        return $query->whereHas('pemeriksa', function ($query) use ($nameOrNip) {
             return $query->where('name', 'like', "%$nameOrNip%")
                         ->orWhere('nip', 'like', "%$nameOrNip");
         });

@@ -88,7 +88,7 @@ class STController extends ApiController
             $st->appendStatus('CREATED', $nama_lokasi, 'CREATED FROM CD', $cd);
 
             // directly lock
-            $st->lock();
+            $st->lockAndSetNumber();
 
             // commit transaction
             DB::commit();

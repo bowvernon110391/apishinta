@@ -5,14 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SSPCP extends Model implements IDokumen, ILinkable
+class SSPCP extends AbstractDokumen implements ILinkable
 {
-    //
-    use TraitDokumen {
-        lock as public traitLock;
-        unlock as public traitUnlock;
-    }
-    use TraitLoggable;
     use SoftDeletes;
 
     protected $table = 'sspcp_header';
@@ -90,32 +84,6 @@ class SSPCP extends Model implements IDokumen, ILinkable
         $nomorLengkap = $this->formatBppmSequence($this->no_dok, $this->tgl_dok, $this->kode_kantor);
 
         return $nomorLengkap;
-    }
-
-    public function lock(){
-        // $cd = $this->cd;
-        $b = $this->billable;
-
-        if($this->is_locked)
-            return $this->is_locked;
-
-        /* if($cd->is_locked)
-            return false; */
-        
-        return $b->lock() && $this->traitLock();        
-    }
-
-     public function unlock(){
-        // $cd = $this->cd;
-
-        // if(!$cd->is_locked)
-        //     return false;
-        
-        // if(!$this->is_locked)
-        //     return !$this->is_locked;
-        
-        // return $cd->unlock() && $this->traitUnlock();        
-        return $this->traitUnlock();
     }
 
     

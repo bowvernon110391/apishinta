@@ -81,15 +81,15 @@ class LHPController extends ApiController
             // if locking is requested, lock it
             if ($r->get('lock') == true) {
                 // lock it
-                $l->lock();
+                $l->lockAndSetNumber();
 
                 // lock parent too?
                 if ($l->inspectable) {
                     // Append status first to parent
                     $l->inspectable->appendStatus('LHP', null, "LHP telah direkam", $l, null);
                     if (get_class($l->inspectable) == InstruksiPemeriksaan::class) {
-                        // lock it!
-                        $l->inspectable->lock();
+                        // lock it! (CAUSE IP IS LOCKED BY LHP)
+                        $l->inspectable->lockAndSetNumber();
                         // also append to parent, the "REAL" document
                         $l->inspectable->instructable->appendStatus('LHP', null, "LHP telah direkam", $l, null);
                         

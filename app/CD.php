@@ -5,10 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan
+class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan
 {
-    use TraitLoggable;
-    use TraitDokumen;
     // use TraitInspectable;
     use TraitInstructable;
 
@@ -17,6 +15,8 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
     use TraitHasGoods;
     use TraitTariffable;
     use TraitHasPungutan;
+
+    use TraitHasDokkaps;
     // enable soft Deletion
     use SoftDeletes;
 
@@ -57,10 +57,6 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
         return $this->belongsTo('App\Kurs', 'ndpbm_id');
     }
 
-    public function details(){
-        return $this->hasMany('App\DetailCD', 'cd_header_id');
-    }
-
     public function lokasi(){
         return $this->belongsTo('App\Lokasi', 'lokasi_id');
     }
@@ -86,10 +82,6 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
         return $this->morphOne('App\SSPCP', 'billable');
     }
 
-    public function imporSementara(){
-        return $this->hasOne('App\IS','cd_header_id');
-    }
-
     public function spmb(){
         return $this->hasOne('App\SPMB','cd_header_id');
     }
@@ -106,7 +98,6 @@ class CD extends Model implements IDokumen, IBillable, IInstructable, IHasGoods,
     // pure CD onleeeeh (not ST-ed, not SPP-ed, not Impor Sementara-ed)
     public function scopePure($query) {
         return $query->doesntHave('spp')
-                    ->doesntHave('imporSementara')
                     ->doesntHave('st');
     }
 

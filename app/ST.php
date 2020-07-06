@@ -5,13 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ST extends Model implements IDokumen, IInstructable
+class ST extends AbstractDokumen implements IInstructable
 {
-    use TraitLoggable;
-    use TraitDokumen {
-        lock as public traitLock;
-        unlock as public traitUnlock;
-    }
     use TraitInstructable;
     // enable soft deletion
     use SoftDeletes;
@@ -54,26 +49,7 @@ class ST extends Model implements IDokumen, IInstructable
     // =============================================
     // TRAIT OVERRIDES
     // =============================================
-    public function lock() {
-        $cd = $this->cd;
-
-        if (!$cd) {
-            return false;
-        }
-
-        try {
-            $cd->lock();
-            return $this->traitLock();
-        } catch (\Exception $e) {
-            //throw $th;
-            $this->unlock();
-            return false;
-        }
-    }
-
-    public function unlock() {
-        return $this->traitUnlock();
-    }
+    
 
     //=================================================================================================
     // COMPUTED PROPERTIES GO HERE!!

@@ -101,7 +101,7 @@ class SSPCPSeed extends Seeder
             // $sspcp->appendStatus('AKTIF');
 
             // lock sspcp also locks cd document
-            $sspcp->lock();
+            $sspcp->lockAndSetNumber();
 
         }
 

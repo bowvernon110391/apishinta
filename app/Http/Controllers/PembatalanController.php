@@ -3,13 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\AppLog;
-use App\BPJ;
 use App\Cancellable;
-use App\CD;
-use App\IS;
 use App\Pembatalan;
-use App\SPP;
-use App\ST;
 use Illuminate\Http\Request;
 use App\Transformers\PembatalanTransformer;
 use Illuminate\Support\Facades\DB;
@@ -262,7 +257,7 @@ class PembatalanController extends ApiController
             // it's there, let's lock it
             // locking is idempotent. should always return true
             // unless something happened
-            if (!$p->lock()) {
+            if (!$p->lockAndSetNumber()) {
                 throw new \Exception("Something weird really happened. Dunno what though");
             }
 
