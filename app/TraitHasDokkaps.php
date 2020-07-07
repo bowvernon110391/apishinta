@@ -32,7 +32,7 @@ trait TraitHasDokkaps
                 $dokkap = Dokkap::findOrFail($d['id']);
 
                 // does it belong to us?
-                if ($dokkap->master_type != get_class($this) && $dokkap->master_id != $this->id) {
+                if ($dokkap->master_type != get_class($this) || $dokkap->master_id != $this->id) {
                     // it doesnt
                     throw new \Exception("Dokkap #{$dokkap->id} does not belong to me!");
                 } else {

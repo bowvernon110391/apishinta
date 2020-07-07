@@ -318,6 +318,23 @@ class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiab
         return array_reduce($fobs, function ($acc, $e) { return $acc+$e; }, 0);
     }
 
+    public function getPerhitunganAttribute() {
+        $pungutan = CD::computePungutanCD($this->pembebasan, $this->ndpbm->kurs_idr, $this->pph_tarif, $this->detailBarang()->isPenetapan()->get());
+
+    }
+
+    public function getDataPembebasanAttribute() {
+        if ($this->komersil) {
+            return null;
+        }
+
+        return [
+            'kurs_pembebasan' => (float) $this->ndpbm->kurs_idr,
+            'pembebasan' => $this->pembebasan,
+            'nilai_pembebasan_idr' => $this->ndpbm->kurs_idr * $this->pembebasan
+        ];
+    }
+
     // simulasi perhitungan
     public function getSimulasiPungutanAttribute() {
         // pertama, perhitungan BM bisa berubah tergantung
@@ -487,35 +504,187 @@ class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiab
         }
     }
 
-    // sync tarif
-    public function syncTarif() {
-        // gotta update either our tariffs or our detail's
-        if ($this->komersil) {
-            // update each goods tariffs, removing our own who
-            // let's remove all our tariffs who's overridable
-            $this->tarif()->overridable()->delete();
-            // now update our goods tariffs
-        } else {
-            // remove all our goods tariffs (who's non overridable)
-            $this->detailBarang()->tarif()->overridable()->delete();
-            // set CD's tarif directly
-            
-        }
-    }
-
     // ===========================DETAIL BARANG LISTEENR============================
     public function onUpdateItem(DetailBarang $d)
     {
         AppLog::logInfo("CD #{$this->id} must do something on DetailBarang #{$d->id}", $d);
+        $this->validate();
     }
 
     public function onCreateItem(DetailBarang $d)
     {
         AppLog::logInfo("CD #{$this->id} must setup initial data on Detail Barang #{$d->id}", $d);
+        $this->validate();
     }
 
     public function onDeleteItem(DetailBarang $d)
     {
         AppLog::logInfo("CD #{$this->id} onDelete {$d->id}", $d);
+    }
+
+    // ===========================HELPER=============================================
+    public function validate() {
+        // RULE #1: Personal Use CD MUST NOT HAVE OVERRIDDEN TARIFS
+        if (!$this->komersil) {
+            if ($this->detailBarang()->isPenetapan()->whereHas('tarif')->count()) {
+                throw new \Exception("CD personal-use must not have overridden tariffs!");
+            }
+        }
+    }
+
+    public function computePungutanCdKomersil () {
+        // grab all data barang
+        if (!count($this->detailBarang)) {
+            throw new \Exception("Tidak ada detail barang. Perhitungan tidak dapat dilakukan");
+            return null;
+        }
+
+        // just collect each detail barang and pour into one
+        /**
+         * barang : [
+         *  - tarif
+         *  - desc
+         *  - pungutan
+         * ]
+         * pungutan: [
+         *  - per type
+         * ]
+         */
+
+        $barang = $this->detailBarang->map(function ($e) {
+            return [
+                'tarif' => $e->valid_tarif,
+                'pungutan' => $e->computePungutanImpor(),
+                
+                'uraian' => $e->nice_format,
+                'jumlah_jenis_kemasan' => $e->jumlah_kemasan . ' ' . $e->jenis_kemasan,
+                'jumlah_jenis_satuan' => $e->jumlah_satuan . ' ' . $e->jenis_satuan,
+                'hs_code' => $e->hs->kode,
+                'hs_raw_code' => $e->hs->raw_code,
+                'fob' => (float) $e->fob,
+                'insurance' => (float) $e->insurance,
+                'freight' => (float) $e->freight,
+                'cif' => (float) $e->cif,
+                'nilai_pabean' => $e->nilai_pabean,
+                'valuta' => $e->kurs->kode_valas,
+                'ndpbm' => (float) $e->kurs->kurs_idr
+            ];
+        });
+
+        $pungutan_bayar = [];
+        $pungutan_bebas = [];
+        $pungutan_tunda = [];
+        $pungutan_tanggung_pemerintah = [];
+
+        // sum them
+        foreach ($barang as $b) {
+            foreach ($b['pungutan'] as $p) {
+                $pungutan_bayar[$p->jenisPungutan->kode] = ($pungutan_bayar[$p->jenisPungutan->kode] ?? 0) + $p->bayar;
+                $pungutan_bebas[$p->jenisPungutan->kode] = ($pungutan_bebas[$p->jenisPungutan->kode] ?? 0) + $p->bebas;
+                $pungutan_tunda[$p->jenisPungutan->kode] = ($pungutan_tunda[$p->jenisPungutan->kode] ?? 0) + $p->tunda;
+                $pungutan_tanggung_pemerintah[$p->jenisPungutan->kode] = ($pungutan_tanggung_pemerintah[$p->jenisPungutan->kode] ?? 0) + $p->tanggung_pemerintah;
+            }
+        }
+
+        // return em?
+        return [
+            'barang' => $barang,
+            'pungutan' => [
+                'bayar' => $pungutan_bayar,
+                'bebas' => $pungutan_bebas,
+                'tunda' => $pungutan_tunda,
+                'tanggung_pemerintah' => $pungutan_tanggung_pemerintah
+            ]
+        ];
+    }
+
+    public function computePungutanCdPersonal () {
+        // grab all data barang
+        if (!count($this->detailBarang)) {
+            throw new \Exception("Tidak ada detail barang. Perhitungan tidak dapat dilakukan");
+            return null;
+        }
+
+        // compute pembebasan dalam IDR
+        $nilaiPembebasanIdr = $this->pembebasan * $this->ndpbm->kurs_idr;
+
+        // extract nilai barang dalam IDR
+        $nilaiBarangIdr =$this->detailBarang->map(function ($e) {
+            return $e->nilai_pabean;
+        });
+
+        // jumlah total nilai barang
+        $totalNilaiBarangIdr = $nilaiBarangIdr->reduce(function($acc, $e) {
+            $acc += $e;
+            return $acc;
+        }, 0.0);
+
+        // check value
+        if ($totalNilaiBarangIdr <= $nilaiPembebasanIdr) {
+            $nb = number_format($totalNilaiBarangIdr, 2);
+            $np = number_format($nilaiPembebasanIdr, 2);
+            throw new \Exception("Total nilai barang di bawah pembebasan (Rp {$nb} <= Rp {$np}). Perhitungan tidak dapat dilanjutkan", 333);
+            return [
+                'BM' => 0,
+                'PPN' => 0,
+                'PPh' => 0,
+                'PPnBM' => 0,
+                'total' => 0
+            ];
+        }
+
+        // safe to continue
+        $nilaiDasarIdr = $totalNilaiBarangIdr - $nilaiPembebasanIdr;
+
+        // compute Bea masuk
+        $bm = ceil($nilaiDasarIdr * 0.1 / 1000.0) * 1000.0;
+
+        // compute nilai impor
+        $nilaiImpor = $bm + $nilaiDasarIdr;
+
+        // compute PPN and PPh Only!!
+        $ppn = ceil($nilaiImpor * 0.1 / 1000.0) * 1000.0;
+        $pph = ceil($nilaiImpor * ($this->pph_tarif/100.0) / 1000.0) * 1000.0;
+
+        // extract data barang
+        $barang_formatted = $this->detailBarang->map(function($e) {
+            return [
+                'uraian' => $e->nice_format,
+                'jumlah_jenis_kemasan' => $e->jumlah_kemasan . ' ' . $e->jenis_kemasan,
+                'jumlah_jenis_satuan' => $e->jumlah_satuan . ' ' . $e->jenis_satuan,
+                'hs_code' => $e->hs->kode,
+                'hs_raw_code' => $e->hs->raw_code,
+                'fob' => (float) $e->fob,
+                'insurance' => (float) $e->insurance,
+                'freight' => (float) $e->freight,
+                'cif' => (float) $e->cif,
+                'nilai_pabean' => $e->nilai_pabean,
+                'valuta' => $e->kurs->kode_valas,
+                'ndpbm' => (float) $e->kurs->kurs_idr
+            ];
+        });
+
+        return [
+            'pembebasan' => (float) $this->pembebasan,
+            'ndpbm' => (float) $this->ndpbm->kurs_idr,
+            'nilai_pembebasan_idr' => $nilaiPembebasanIdr,
+            'nilai_dasar_idr' => $nilaiDasarIdr,
+            'nilai_impor' => $nilaiImpor,
+            'tarif_bm' => 10.0,
+            'tarif_pph' => (float) $this->pph_tarif,
+            'pungutan' => [
+                'bm' => $bm,
+                'ppn' => $ppn,
+                'pph' => $pph,
+            ],
+            'total' => $bm + $ppn + $pph,
+            'barang' => $barang_formatted->toArray()
+        ];
+    }
+
+    public function syncPungutanKomersil() {
+    }
+
+    public function syncPungutanNonKomersil() {
     }
 }

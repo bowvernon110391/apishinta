@@ -47,6 +47,8 @@ class DetailBarangTransformer extends TransformerAbstract {
             'insurance' => (float) $d->insurance,
             'freight' => (float) $d->freight,
 
+            'nilai_pabean' => (float) $d->nilai_pabean,
+
             'hs_id' => (int) $d->hs_id,
             'kurs_id' => (int) $d->kurs_id,
 

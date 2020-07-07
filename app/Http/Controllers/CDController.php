@@ -46,6 +46,7 @@ class CDController extends ApiController
      */
     public function store(Request $r)
     {
+        DB::beginTransaction();
         // validasi dlu
         try {
             // tgl dok
@@ -134,12 +135,19 @@ class CDController extends ApiController
             // Update status
             $cd->appendStatus('CREATED', $lokasi);
 
+            // validasi
+            $cd->validate();
+
+            // commit
+            DB::commit();
+
             // return with array
             return $this->respondWithArray([
                 'id'    => $cd->id,
                 'uri'   => '/cd/' . $cd->id
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
     }
@@ -192,6 +200,7 @@ class CDController extends ApiController
      */
     public function update(Request $r, $id)
     {
+        DB::beginTransaction();
         // update data
         try {
             // first, grab cd
@@ -270,9 +279,16 @@ class CDController extends ApiController
             // log it
             AppLog::logInfo("CD #{$cd->id} diupdate oleh {$r->userInfo['username']}", $cd);
 
+            // validate
+            $cd->validate();
+
+            // commit
+            DB::commit();
+
             // return no body
             return $this->setStatusCode(204)->respondWithEmptyBody();
         } catch (\Exception $e) {
+            DB::rollBack();
             //throw $th;
             return $this->errorBadRequest($e->getMessage());
         }
@@ -325,30 +341,7 @@ class CDController extends ApiController
         }
 
         try {
-            $pungutan = $cd->simulasi_pungutan;
-
-            // append data sspcp (if possible)
-            $sspcp = $cd->sspcp;
-
-            if ($sspcp) {
-                // tambah catatan
-                $pungutan['catatan'] = $sspcp->keterangan;
-
-                // sudah dilunasi, tapi pakai apa?
-                // cek bpj
-                $bpj = $cd->bpj;
-
-                if (!$bpj) {
-                    // tunai
-                    $pungutan['jenis_pembayaran'] = "TUNAI";
-                } else {
-                    // pakai jaminan
-                    $pungutan['jenis_pembayaran'] = "JAMINAN";
-
-                    $pungutan['jaminan_id'] = $bpj->id;
-                    $pungutan['catatan_jaminan'] = $bpj->catatan;
-                }
-            }
+            $pungutan = $cd->komersil ? $cd->computePungutanCdKomersil() : $cd->computePungutanCdPersonal();
 
             return $this->respondWithArray($pungutan);
         } catch (\Exception $e) {

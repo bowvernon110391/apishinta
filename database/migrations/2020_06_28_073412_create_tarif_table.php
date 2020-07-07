@@ -23,7 +23,7 @@ class CreateTarifTable extends Migration
             // jenis tarif (UNTUK BM ONLY) so nullable
             $table->enum('jenis', ['ADVALORUM', 'SPESIFIK'])->nullable()->default(null);
             // besar tarif (dalam 0-100% ADVALORUM, atau spesifik)
-            $table->decimal('tarif', 8, 4);
+            $table->decimal('tarif', 18, 4);    // handle all case
 
             // besaran pembayaran (dibayar, dibebaskan, ditunda) totalnya harus 100%
             $table->decimal('bayar', 8, 4); // umumnya 100
@@ -36,7 +36,7 @@ class CreateTarifTable extends Migration
             $table->timestamps();
 
             // now index shits
-            $table->foreign('tariffable_id', 'fk1_penetapan')->references('id')->on('detail_barang')->onDelete('cascade');
+            // $table->foreign('tariffable_id', 'fk1_penetapan')->references('id')->on('detail_barang')->onDelete('cascade');
             $table->foreign('jenis_pungutan_id', 'fk2_jenis_pungutan')->references('id')->on('referensi_jenis_pungutan');
         });
     }

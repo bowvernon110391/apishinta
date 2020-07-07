@@ -121,6 +121,9 @@ class DetailBarangController extends ApiController
             // sync secondary data
             $d->syncSecondaryData($r);
 
+            // sync tarif
+            $d->syncTarif($r->get('tarif')['data']);
+
             // gotta spawn penetapan entry too
             $p = new Penetapan();
             $p->penetapan()->associate($d);
@@ -164,6 +167,9 @@ class DetailBarangController extends ApiController
             $d->syncPrimaryData($r);
             $d->save();
             $d->syncSecondaryData($r);
+
+            // sync tarif
+            $d->syncTarif($r->get('tarif')['data']);
 
             // gotta update penetapan too!
             $p = $d->pivotPenetapan;

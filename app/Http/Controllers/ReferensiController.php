@@ -14,6 +14,7 @@ use App\Pelabuhan;
 use App\Satuan;
 use App\ReferensiJenisDetailSekunder;
 use App\ReferensiJenisDokkap;
+use App\ReferensiJenisPungutan;
 use App\Services\SSO;
 use App\Transformers\AirlineTransformer;
 use App\Transformers\HsCodeTransformer;
@@ -23,6 +24,7 @@ use App\Transformers\KemasanTransformer;
 use App\Transformers\PelabuhanTransformer;
 use App\Transformers\ReferensiJenisDetailSekunderTransformer;
 use App\Transformers\ReferensiJenisDokkapTransformer;
+use App\Transformers\ReferensiJenisPungutanTransformer;
 use App\Transformers\SatuanTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use League\Fractal\Manager;
@@ -325,5 +327,12 @@ class ReferensiController extends ApiController
         $jenisDokkap = ReferensiJenisDokkap::usable()->get();
 
         return $this->respondWithCollection($jenisDokkap, new ReferensiJenisDokkapTransformer);
+    }
+
+    // GET /jenis-pungutan
+    public function getJenisPungutan() {
+        $jenisPungutan = ReferensiJenisPungutan::all();
+
+        return $this->respondWithCollection($jenisPungutan, new ReferensiJenisPungutanTransformer);
     }
 }

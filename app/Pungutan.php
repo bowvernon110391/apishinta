@@ -4,8 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Pungutan extends Model
+class Pungutan extends Model implements ISpecifiable
 {
+    use TraitSpecifiable;
+    
     // settings
     protected $table = 'pungutan';
 
