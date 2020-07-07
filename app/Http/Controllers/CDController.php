@@ -342,8 +342,12 @@ class CDController extends ApiController
 
         try {
             $pungutan = $cd->komersil ? $cd->computePungutanCdKomersil() : $cd->computePungutanCdPersonal();
+            $keterangan = $cd->keterangan()->first();
 
-            return $this->respondWithArray($pungutan);
+            return $this->respondWithArray([
+                'pungutan' => $pungutan,
+                'keterangan' => $keterangan
+            ]);
         } catch (\Exception $e) {
             return $this->errorBadRequest($e->getMessage());
         }
