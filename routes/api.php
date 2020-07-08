@@ -118,6 +118,9 @@ Route::delete('/cd/{id}', 'CDController@destroy')
 Route::get('/cd/{id}/simulasi', 'CDController@simulasiHitung')
         ->middleware($corsGroup['singleItem'], 'role');
 
+// PUT /cd/{id}/penetapan
+Route::put('/cd/{id}/penetapan', 'CDController@storePenetapan')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 /* // POST /cd/penetapan
 Route::post('/cd/{id}/penetapan', 'CDController@storePenetapan')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE'); */

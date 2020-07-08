@@ -28,19 +28,18 @@ class PdfLembarHitungCD extends Fpdf {
             throw new BadRequestHttpException("CD data not provided");
         }
 
-        if (!$this->cd->sspcp) {
+        if (!$this->cd->is_locked) {
             throw new BadRequestHttpException("CD belum ditetapkan!");
         }
 
         // feed data
-        $data = $this->cd->simulasi_pungutan;
+        $data = $this->cd->computePungutanCdPersonal();
 
-        $sspcp = $this->cd->sspcp;
+        $lock = $this->cd->lock;
+        $petugas = $lock->petugas;
 
-        // var_dump($data);
-        // print_r($data);
-        $nilai_impor = $data['total_bm'] + $data['data_pembebasan']['nilai_dasar_perhitungan'];
-        $nama_pejabat   = $sspcp->nama_pejabat;
+        $nilai_impor = $data['nilai_impor'];
+        $nama_pejabat   = $petugas->name;
         $nama_penumpang = $this->cd->penumpang->nama;
 
         $nomor_lengkap_dok  = $this->cd->nomor_lengkap_dok;
@@ -53,10 +52,10 @@ class PdfLembarHitungCD extends Fpdf {
 
         // Print Title
         $this->font('B');
-        $pdf->Cell(0, 4, 'LEMBAR PERHITUNGAN PUNGUTAN BEA MASUK DAN PAJAK', 0, 1, 'C');
+        $pdf->Cell(0, 4, 'RINCIAN PERHITUNGAN PUNGUTAN BEA MASUK DAN PAJAK', 0, 1, 'C');
 
         $this->font('BI');
-        $pdf->Cell(0, 4, 'TAX AND DUTY CALCULATION SHEET', 0, 1, 'C');
+        $pdf->Cell(0, 4, 'TAX AND DUTY CALCULATION DETAILS', 0, 1, 'C');
 
         $this->font('B');
         $pdf->Cell(0, 4, "Halaman (page) {$pdf->PageNo()} / " . '{nb}', 0, 1, 'R');
@@ -151,7 +150,7 @@ class PdfLembarHitungCD extends Fpdf {
         // render data barang here
         $no = 1;    // number starts from 1
 
-        foreach($data['data_perhitungan'] as $d) {
+        foreach($data['barang'] as $d) {
             $this->font();
 
             // print_r($d[0]);
@@ -164,8 +163,10 @@ class PdfLembarHitungCD extends Fpdf {
             $pdf->Cell(7, 4, $no, 0, 0);
 
             // Uraian Barang
+            $uraian = $d['uraian'] . ", " . $d['jumlah_jenis_kemasan'];
+
             $pdf->SetXY($row_x + 7, $row_y);
-            $pdf->MultiCell(63, 4, $d['long_description'], 0, 'L');
+            $pdf->MultiCell(63, 4, $uraian, 0, 'L');
 
             // record y every time we write data
             $max_y = $pdf->GetY();
@@ -244,7 +245,7 @@ class PdfLembarHitungCD extends Fpdf {
         $pdf->Cell(207, 4, '(7) Total', 1, 0, 'C');
 
         // Total Nilai Pabean
-        $total_nilai_pabean = array_reduce($data['data_perhitungan'], function ($acc, $e) { return $acc + $e['nilai_pabean']; }, 0);
+        $total_nilai_pabean = array_reduce($data['barang'], function ($acc, $e) { return $acc + $e['nilai_pabean']; }, 0);
 
         $pdf->Cell(0, 4, number_format($total_nilai_pabean, 2), 1, 1, 'R');
 
@@ -266,17 +267,17 @@ class PdfLembarHitungCD extends Fpdf {
 
         // value of Pembebasan
         $this->font();
-        $pdf->Cell(22.5, 4, number_format($data['data_pembebasan']['nilai_pembebasan'], 2), 0, 0, 'R');
+        $pdf->Cell(22.5, 4, number_format($data['pembebasan'], 2), 0, 0, 'R');
 
         // valuta of pembebasan
-        $pdf->Cell(22.5, 4, $data['data_pembebasan']['valuta'], 0, 0, 'C');
+        $pdf->Cell(22.5, 4, "USD", 0, 0, 'C');
 
         // x
         $pdf->Cell(47.5, 4, 'x', 0, 0, 'C');
 
         // kurs ndpbm
         $pdf->SetX($row_x + 7 + 63 + 22.5 + 22.5 + 22.5 + 25 + 14.5 );
-        $pdf->Cell(30, 4, number_format($data['data_pembebasan']['ndpbm'], 2), 0, 0, 'R');
+        $pdf->Cell(30, 4, number_format($data['ndpbm'], 2), 0, 0, 'R');
 
         // Nilai Pembebasan Rp
         // record row_x row_y
@@ -284,7 +285,7 @@ class PdfLembarHitungCD extends Fpdf {
         $row_y  = $pdf->GetY();
 
         $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['data_pembebasan']['nilai_pembebasan_rp'], 2), 0, 1, 'R');
+        $pdf->Cell(0, 4, number_format($data['nilai_pembebasan_idr'], 2), 0, 1, 'R');
 
         $pdf->Text(297-8.5, $pdf->GetY() - 1.5, '-');
         // $pdf->Write(4, '-');
@@ -314,7 +315,7 @@ class PdfLembarHitungCD extends Fpdf {
 
         // Bold
         $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['data_pembebasan']['nilai_dasar_perhitungan'], 2), 0, 1, 'R');
+        $pdf->Cell(0, 4, number_format($data['nilai_dasar_idr'], 2), 0, 1, 'R');
 
         $pdf->Line($pdf->GetX(), $pdf->GetY(), 287, $pdf->GetY());
 
@@ -341,7 +342,7 @@ class PdfLembarHitungCD extends Fpdf {
         $pdf->Cell(63, 4, 'Customs Duty', 0, 0);
 
         $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['total_bm'], 2), 0, 1, 'R');
+        $pdf->Cell(0, 4, number_format($data['pungutan']['bm'], 2), 0, 1, 'R');
 
         $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
 
@@ -375,7 +376,7 @@ class PdfLembarHitungCD extends Fpdf {
         $pdf->Cell(63, 4, 'Value Added Tax', 0, 0);
 
         $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['total_ppn'], 2), 0, 1, 'R');
+        $pdf->Cell(0, 4, number_format($data['pungutan']['ppn'], 2), 0, 1, 'R');
 
         $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
 
@@ -386,12 +387,12 @@ class PdfLembarHitungCD extends Fpdf {
         // 13. PPh
         $this->font();
         $pdf->SetX($row_x + 7);
-        $pdf->Cell(63, 4, "(13) PPh: [(11) x ". number_format($data['pph_tarif'], 2) ."%]", 0, 2);
+        $pdf->Cell(63, 4, "(13) PPh: [(11) x ". number_format($data['tarif_pph'], 2) ."%]", 0, 2);
         $this->font('I');
         $pdf->Cell(63, 4, 'Value Added Tax', 0, 0);
 
         $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['total_pph'], 2), 0, 1, 'R');
+        $pdf->Cell(0, 4, number_format($data['pungutan']['pph'], 2), 0, 1, 'R');
 
         $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
 
@@ -406,8 +407,10 @@ class PdfLembarHitungCD extends Fpdf {
         $this->font('BI');
         $pdf->Cell(63, 4, 'Total Duty and Tax', 0, 0);
 
+        $total_pungutan = array_reduce($data['pungutan'], function ($acc, $val) { return $acc+$val; }, 0);
+
         $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['total_bm_pajak'], 2), 0, 1, 'R');
+        $pdf->Cell(0, 4, number_format($total_pungutan, 2), 0, 1, 'R');
         $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
         $pdf->Line($row_x, $pdf->GetY() + 1, 287, $pdf->GetY() + 1);
 

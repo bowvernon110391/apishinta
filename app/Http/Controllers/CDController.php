@@ -7,13 +7,19 @@ use App\BPJ;
 use Illuminate\Http\Request;
 use App\CD;
 use App\DeclareFlag;
+use App\Keterangan;
 use App\Kurs;
+use App\Lock;
 use App\Lokasi;
 use App\Penumpang;
+use App\Pungutan;
+use App\ReferensiJenisPungutan;
+use App\SSOUserCache;
 use App\SSPCP;
 use App\Transformers\CDTransformer;
 use App\Transformers\DetailBarangTransformer;
 use App\Transformers\DetailCDTransformer;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class CDController extends ApiController
@@ -356,7 +362,82 @@ class CDController extends ApiController
     /**
      * Penetapan cd
      */
-    
+    public function storePenetapan(Request $r, $id) {
+        // USE TRANSACTION!!!! CAUSE IT INVOLVES MORE THAN ONE TABLE
+        DB::beginTransaction();
+        try {
+            // grab cd
+            $cd = CD::findOrFail($id);
+
+            // gotta check if cd is locked?
+            if ($cd->is_locked) {
+                throw new \Exception("CD sudah terkunci!");
+            }
+
+            // gotta check if cd is komersil
+            if ($cd->komersil) {
+                throw new \Exception("Penetapan CD non personal use harap gunakan dokumen lain (SPP/ST/PIBK/etc...)");
+            }
+
+            // okay, grab computed data
+            $data = $cd->computePungutanCdPersonal();
+
+            // grab pungutan
+            $pungutan = $data['pungutan'];
+
+            if (!count($pungutan)) {
+                throw new \Exception("Tidak ada pungutan untuk CD ini! cek kembali datanya");
+            }
+
+            // #1st, SPAWN PUNGUTAN
+            foreach ($pungutan as $kode => $jmlPungutan) {
+                $refJenis = ReferensiJenisPungutan::byKode($kode)->first();
+
+                if (!$refJenis) {
+                    throw new \Exception("Jenis Pungutan '{$kode}' tidak terdaftar di sistem!");
+                }
+
+                $p = new Pungutan([
+                    'bayar' => $jmlPungutan,
+                    'bebas' => 0,
+                    'tunda' => 0,
+                    'tanggung_pemerintah' => 0
+                ]);
+
+                $pejabat = SSOUserCache::byId($r->userInfo['user_id']);
+                $p->pejabat()->associate($pejabat);
+                $p->dutiable()->associate($cd);
+                $p->jenisPungutan()->associate($refJenis);
+
+                $p->save();
+            }
+
+            // #2, KETERANGAN
+            $cd->keterangan()->create([
+                'keterangan' => $r->get('keterangan', '') ?? ''
+            ]);
+
+            // #3, LOCK
+            $l = new Lock([
+                'keterangan' => "Penetapan CD Personal"
+            ]);
+            $l->petugas()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            $cd->lock()->save($l);
+
+            // commit
+            DB::commit();
+
+            // if success, just return 204
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("CD #{$id} was not found!");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
 
     /**
      * Batalkan penetapan CD
