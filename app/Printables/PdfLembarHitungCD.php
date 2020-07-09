@@ -41,6 +41,7 @@ class PdfLembarHitungCD extends Fpdf {
         $nilai_impor = $data['nilai_impor'];
         $nama_pejabat   = $petugas->name;
         $nama_penumpang = $this->cd->penumpang->nama;
+        $nomor_paspor = $this->cd->penumpang->no_paspor;
 
         $nomor_lengkap_dok  = $this->cd->nomor_lengkap_dok;
         $tgl_dok        = $this->cd->tgl_dok;
@@ -50,6 +51,13 @@ class PdfLembarHitungCD extends Fpdf {
 
         $pdf->AddPage();
 
+        // surround with rectangle?
+        $pdf->Rect(4, 4, 297-8, 210-8);
+
+        // 3 baris kop?
+        $this->font("B");
+        $pdf->MultiCell(0, 4, "KEMENTERIAN KEUANGAN REPUBLIK INDONESIA\nDIREKTORAT JENDERAL BEA DAN CUKAI\nKANTOR PELAYANAN UTAMA BEA DAN CUKAI SOEKARNO HATTA", 0, 'L');
+
         // Print Title
         $this->font('B');
         $pdf->Cell(0, 4, 'RINCIAN PERHITUNGAN PUNGUTAN BEA MASUK DAN PAJAK', 0, 1, 'C');
@@ -58,9 +66,40 @@ class PdfLembarHitungCD extends Fpdf {
         $pdf->Cell(0, 4, 'TAX AND DUTY CALCULATION DETAILS', 0, 1, 'C');
 
         $this->font('B');
-        $pdf->Cell(0, 4, "Halaman (page) {$pdf->PageNo()} / " . '{nb}', 0, 1, 'R');
 
-        $pdf->Cell(0, 4, "Customs Declaration no. : {$nomor_lengkap_dok}        Date: {$tgl_dok}", 0, 1);
+        $row_x  = $pdf->GetX();
+        $row_y  = $pdf->GetY();
+
+        $pdf->SetXY(287.0/2.0, $row_y);
+        $pdf->Cell(0, 4, "Halaman (page) {$pdf->PageNo()} / " . '{nb}', 0, 0, 'R');
+        $pdf->SetXY(0, $row_y);
+
+        $pdf->font();
+        $pdf->Cell(0, 4, "CUSTOMS DECLARATION No. : {$nomor_lengkap_dok}        DATE: {$tgl_dok}", 0,1,'C');
+
+        // penumpang info
+        $row_x  = $pdf->GetX();
+        $row_y  = $pdf->GetY();
+
+        $pdf->font('B');
+        $pdf->Cell(0, 4, 'PASSENGER', 0, 1);
+
+        // NAMA PENUMPANG
+        $row_x  = $pdf->GetX();
+        $row_y  = $pdf->GetY();
+
+        $pdf->font();
+        $pdf->SetXY($row_x + 7, $row_y);
+        $pdf->Cell(32, 4, 'NAME', 0, 0);
+        $pdf->Cell(8, 4, ':', 0, 0, 'C');
+        $pdf->Cell(0, 4, $nama_penumpang, 0, 1);
+        // NPWP PENUMPANG
+        $row_x  = $pdf->GetX();
+        $row_y  = $pdf->GetY();
+        $pdf->SetXY($row_x + 7, $row_y);
+        $pdf->Cell(32, 4, 'IDENTITY NUMBER', 0, 0);
+        $pdf->Cell(8, 4, ':', 0, 0, 'C');
+        $pdf->Cell(0, 4, $nomor_paspor, 0, 1);
 
         // draw calculation table
         $this->font();
