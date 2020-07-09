@@ -5,9 +5,10 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ST extends AbstractDokumen implements IInstructable
+class ST extends AbstractDokumen implements IInstructable, INotable
 {
     use TraitInstructable;
+    use TraitNotable;
     // enable soft deletion
     use SoftDeletes;
 
@@ -106,7 +107,7 @@ class ST extends AbstractDokumen implements IInstructable
     // based on nama pejabat
     public function scopeByPejabat($query, $q) {
         // name or nip
-        return $query->where('pejabat', function ($qPejabat) use ($q) {
+        return $query->whereHas('pejabat', function ($qPejabat) use ($q) {
             return $qPejabat->where('name', 'like', "%$q%")
                             ->orWhere('nip', 'like', "%$q%");
         });

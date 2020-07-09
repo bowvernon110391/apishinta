@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AppLog;
 use App\CD;
 use App\Lokasi;
+use App\SSOUserCache;
 use App\ST;
 use App\Transformers\STTransformer;
 use Illuminate\Http\Request;
@@ -60,24 +61,22 @@ class STController extends ApiController
             $keterangan = $r->get('keterangan', '');
             $jenis      = expectSomething($r->get('jenis'), 'Jenis ST');
 
-            // grab some user data
-            $nama_pejabat   = $r->userInfo['name'];
-            $nip_pejabat    = $r->userInfo['nip'];
-
             // data lokasi
             $nama_lokasi    = expectSomething($r->get('lokasi'), "Lokasi Perekaman");
             $lokasi     = Lokasi::byName($nama_lokasi)->first();
 
             // spawn a SPP from that cd
-            $st = ST::createFromCD($cd);
+            $st = new ST([
+                'tgl_dok' => date('Y-m-d'),
+                'kd_negara_asal' => substr($cd->kd_pelabuhan_asal,0,2),
+                'jenis' => $jenis
+            ]);
 
             // fill in the blanks
+            $st->cd()->associate($cd);
             $st->lokasi()->associate($lokasi);
-            $st->nama_pejabat  = $nama_pejabat;
-            $st->nip_pejabat   = $nip_pejabat;
-            $st->keterangan    = $keterangan;
-            $st->jenis         = $jenis;
-
+            $st->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            
             // save and then log
             $st->save();
 
@@ -87,8 +86,17 @@ class STController extends ApiController
             // add initial status for spp
             $st->appendStatus('CREATED', $nama_lokasi, 'CREATED FROM CD', $cd);
 
+            // add new status fir cd
+            $cd->appendStatus('ST', $nama_lokasi, "LOCKED BY ST", $st);
+
             // directly lock
             $st->lockAndSetNumber();
+            $cd->lockAndSetNumber();
+
+            // add keterangan to st
+            $st->keterangan()->create([
+                'keterangan' => $keterangan ?? '-'
+            ]);
 
             // commit transaction
             DB::commit();
@@ -189,7 +197,7 @@ class STController extends ApiController
     /**
      * generateMockup
      */
-    public function generateMockup($cdId) {
+    public function generateMockup(Request $r, $cdId) {
         // use try catch
         try {
             // make sure CD exists
@@ -200,7 +208,14 @@ class STController extends ApiController
             }
 
             // generate mockup spp based on that
-            $st = ST::createFromCD($cd);
+            $st = new ST([
+                'tgl_dok' => date('Y-m-d'),
+                'kd_negara_asal' => substr($cd->kd_pelabuhan_asal, 0, 2)
+            ]);
+
+            $st->cd()->associate($cd);
+            $st->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            $st->lokasi()->associate(Lokasi::byName($r->get('lokasi'))->first() ?? $cd->lokasi);
 
             return $this->respondWithItem($st, new STTransformer);
         } catch (NotFoundResourceException $e) {

@@ -6,6 +6,7 @@ use App\AppLog;
 use App\CD;
 use App\Lokasi;
 use App\SPP;
+use App\SSOUserCache;
 use App\Transformers\SPPTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -57,23 +58,21 @@ class SPPController extends ApiController
             // dan lokasi, data pejabat, etc
             $keterangan = $r->get('keterangan', '');
 
-            // grab some user data
-            $nama_pejabat   = $r->userInfo['name'];
-            $nip_pejabat    = $r->userInfo['nip'];
-
             // data lokasi
             $nama_lokasi    = expectSomething($r->get('lokasi'), "Lokasi Perekaman");
             $lokasi     = Lokasi::byName($nama_lokasi)->first();
 
             // spawn a SPP from that cd
-            $spp = SPP::createFromCD($cd);
+            $spp = new SPP([
+                'tgl_dok' => date('Y-m-d'),
+                'kd_negara_asal' => substr($cd->kd_pelabuhan_asal,0,2)
+            ]);
 
             // fill in the blanks
+            $spp->cd()->associate($cd);
             $spp->lokasi()->associate($lokasi);
-            $spp->nama_pejabat  = $nama_pejabat;
-            $spp->nip_pejabat   = $nip_pejabat;
-            $spp->keterangan    = $keterangan;
-
+            $spp->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            
             // save and then log
             $spp->save();
 
@@ -83,8 +82,19 @@ class SPPController extends ApiController
             // add initial status for spp
             $spp->appendStatus('CREATED', $nama_lokasi, "CREATED FROM CD", $cd);
 
-            // directly lock
-            $spp->lockAndSetNumber();
+            // add new status for cd
+            $cd->appendStatus('SPP', $nama_lokasi, "LOCKED BY SPP", $spp);
+
+            // directly lock spp
+            $spp->lockAndSetNumber('CREATED FROM CD');
+
+            // lock cd too
+            $cd->lockAndSetNumber('LOCKED BY SPP');
+
+            // add keterangan to spp
+            $spp->keterangan()->create([
+                'keterangan' => $keterangan ?? "-"
+            ]);
 
             // commit transaction
             DB::commit();
@@ -185,7 +195,7 @@ class SPPController extends ApiController
     /**
      * generateMockup
      */
-    public function generateMockup($cdId) {
+    public function generateMockup(Request $r, $cdId) {
         // use try catch
         try {
             // make sure CD exists
@@ -196,7 +206,14 @@ class SPPController extends ApiController
             }
 
             // generate mockup spp based on that
-            $spp = SPP::createFromCD($cd);
+            $spp = new SPP([
+                'tgl_dok' => date('Y-m-d'),
+                'kd_negara_asal' => substr($cd->kd_pelabuhan_asal,0,2),
+            ]);
+            
+            $spp->cd()->associate($cd);
+            $spp->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            $spp->lokasi()->associate(Lokasi::byName($r->get('lokasi'))->first() ?? $cd->lokasi);
 
             return $this->respondWithItem($spp, new SPPTransformer);
         } catch (NotFoundResourceException $e) {

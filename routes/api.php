@@ -163,8 +163,8 @@ Route::get('/cd/{id}/spp', 'SPPController@showByCD')
         ->middleware($corsGroup['singleItem'], 'role');
 
 // POST /cd/2/spp     => store data cd baru
-Route::post('/cd/{id}/spp', 'SPPController@store')
-        ->middleware($corsGroup['resourceGroup'], 'role:PDTT,CONSOLE');
+Route::put('/cd/{id}/spp', 'SPPController@store')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
 // GET /cd/2/spp_mockup
 Route::get('/cd/{id}/spp_mockup', 'SPPController@generateMockup')
@@ -195,8 +195,8 @@ Route::get('/cd/{id}/st', 'STController@showByCD')
         ->middleware($corsGroup['singleItem'], 'role');
 
 // POST /cd/2/spp     => store data cd baru
-Route::post('/cd/{id}/st', 'STController@store')
-        ->middleware($corsGroup['resourceGroup'], 'role:PDTT,CONSOLE');
+Route::put('/cd/{id}/st', 'STController@store')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
 // GET /cd/2/spp_mockup
 Route::get('/cd/{id}/st_mockup', 'STController@generateMockup')

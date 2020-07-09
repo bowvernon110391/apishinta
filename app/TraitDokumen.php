@@ -6,14 +6,15 @@ namespace App;
  */
 trait TraitDokumen
 {
-    public function lockAndSetNumber($force = false) {
+    public function lockAndSetNumber($keterangan = '', $force = false) {
         // first, we set number
         $this->setNomorDokumen($force);
 
         // add lock
         $r = app('request');    // obtain request object
         $this->lock()->create([
-            'petugas_id' => $r->userInfo['user_id'] ?? null
+            'petugas_id' => $r->userInfo['user_id'] ?? null,
+            'keterangan' => $keterangan
         ]);
     }
 

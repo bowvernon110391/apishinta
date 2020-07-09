@@ -92,7 +92,7 @@ class CDTransformer extends TransformerAbstract {
 
     // include details
     public function includeDetails(CD $cd) {
-        return $this->collection($cd->details, new DetailCDTransformer);
+        return $this->collection($cd->detailBarang, new DetailBarangTransformer);
     }
 
     // include last status

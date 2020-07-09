@@ -35,7 +35,7 @@ class CreateStHeaderTable extends Migration {
 			// $table->decimal('total_ppnbm', 18, 4)->nullable();
 			// $table->decimal('total_pph', 18, 4)->nullable();
 			// $table->decimal('total_denda', 18, 4)->nullable();
-			// $table->enum('jenis', array('KANTOR','TERMINAL'));
+			$table->enum('jenis', array('KANTOR','TERMINAL'));
 			// $table->text('keterangan', 65535)->nullable();
 			// $table->string('kode_valuta', 8)->nullable();
 			// $table->string('pemilik_barang')->nullable();
