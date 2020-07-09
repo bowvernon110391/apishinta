@@ -421,8 +421,20 @@ class CDController extends ApiController
             $l = new Lock([
                 'keterangan' => "Penetapan CD Personal"
             ]);
+            
             $l->petugas()->associate(SSOUserCache::byId($r->userInfo['user_id']));
             $cd->lock()->save($l);
+
+            // #4, APPEND STATUS
+            $cd->appendStatus(
+                'PENETAPAN',
+                null,
+                'PENETAPAN PUNGUTAN CD',
+                $l->petugas
+            );
+
+            // #5, LOG IT
+            AppLog::logInfo("CD #{$id} ditetapkan pungutannya oleh {$r->userInfo['username']}", $cd, false);
 
             // commit
             DB::commit();
