@@ -558,6 +558,7 @@ class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiab
                 'pungutan' => $e->computePungutanImpor(),
                 
                 'uraian' => $e->nice_format,
+                'uraian_print' => $e->print_format,
                 'jumlah_jenis_kemasan' => $e->jumlah_kemasan . ' ' . $e->jenis_kemasan,
                 'jumlah_jenis_satuan' => $e->jumlah_satuan . ' ' . $e->jenis_satuan,
                 'hs_code' => $e->hs->kode,
@@ -651,6 +652,7 @@ class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiab
         $barang_formatted = $this->detailBarang->map(function($e) {
             return [
                 'uraian' => $e->nice_format,
+                'uraian_print' => $e->print_format,
                 'jumlah_jenis_kemasan' => $e->jumlah_kemasan . ' ' . $e->jenis_kemasan,
                 'jumlah_jenis_satuan' => $e->jumlah_satuan . ' ' . $e->jenis_satuan,
                 'hs_code' => $e->hs->kode,

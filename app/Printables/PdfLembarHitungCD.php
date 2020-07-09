@@ -163,7 +163,7 @@ class PdfLembarHitungCD extends Fpdf {
             $pdf->Cell(7, 4, $no, 0, 0);
 
             // Uraian Barang
-            $uraian = $d['uraian'] . ", " . $d['jumlah_jenis_kemasan'];
+            $uraian = $d['uraian_print'];
 
             $pdf->SetXY($row_x + 7, $row_y);
             $pdf->MultiCell(63, 4, $uraian, 0, 'L');

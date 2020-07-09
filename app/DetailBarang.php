@@ -210,6 +210,20 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
         return $desc;
     }
 
+    public function getPrintFormatAttribute() {
+        $desc = $this->uraian;
+        $desc .= "\n" . number_format($this->brutto, 2) ." KG" . ", {$this->jumlah_kemasan} {$this->jenis_kemasan}";
+        // append all additional desc
+        if ($this->detailSekunder()->count()) {
+            $desc.= "\n------------------\n";
+            foreach ($this->detailSekunder as $ds) {
+                $desc .= $ds->referensiJenisDetailSekunder->nama . ' : ' . $ds->data . "\n";
+            }
+        }
+
+        return $desc;
+    }
+
     // HELPER 
     // sync data with request ($d MUST BE EXISTING FOR SECONDARY DATA!!)
 
