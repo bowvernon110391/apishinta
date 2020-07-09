@@ -42,8 +42,8 @@ class ST extends AbstractDokumen implements IInstructable
         return $this->belongsTo('App\Lokasi', 'lokasi_id');
     }
 
-    public function kurs() {
-        return $this->belongsTo('App\Kurs', 'kurs_id');
+    public function pejabat() {
+        return $this->belongsTo(SSOUserCache::class, 'pejabat_id', 'user_id');
     }
 
     // =============================================
@@ -85,72 +85,6 @@ class ST extends AbstractDokumen implements IInstructable
     }
 
     // Helpers
-    static public function createFromCD(CD $cd) {
-        if (!$cd) {
-            return null;
-        }
-
-        // it's valid? must not be locked yet
-        if ($cd->is_locked) {
-            throw new \Exception("CD #{$cd->id} is locked already.");
-        }
-
-        // perhaps there's already st for this thing?
-        if ($cd->st || $cd->spp) {
-            throw new \Exception("CD #{$cd->id} is already on detention!");
-        }
-
-        // grab most recent kurs
-        $first = $cd->getFirstValue();
-
-        $data_hitung    = $cd->simulasi_pungutan;
-
-        // compute something
-        $total_fob = $cd->getTotalValue('fob');
-        $total_insurance = $cd->getTotalValue('insurance');
-        $total_freight = $cd->getTotalValue('freight');
-        $total_cif = $total_fob + $total_insurance + $total_freight;
-
-        $total_nilai_pabean = $cd->getTotalValue('nilai_pabean');
-
-        $kurs = Kurs::kode($first['valuta'])
-                ->perTanggal(date('Y-m-d'))
-                ->first();
-        
-        if (!$kurs) {
-            throw new \Exception("Cannot find recent data for kurs {$first['valuta']}");
-        }
-
-        $pembebasan = $data_hitung['data_pembebasan'] ? $data_hitung['data_pembebasan']['nilai_pembebasan_rp'] : 0;
-
-        // create it
-        $s = new ST([
-            'tgl_dok'   => date('Y-m-d'),
-            'total_fob' => $total_fob,
-            'total_insurance'   => $total_insurance,
-            'total_freight'     => $total_freight,
-            'total_cif' => $total_cif,
-            'kurs_id'   => $kurs->id,
-            'keterangan'        => "",
-            'pemilik_barang'    => $cd->penumpang->nama,
-
-            'total_nilai_pabean'    => $total_nilai_pabean,
-            'pembebasan'    => $pembebasan,
-
-            'total_bm'      => $data_hitung['total_bm'],
-            'total_ppn'     => $data_hitung['total_ppn'],
-            'total_pph'     => $data_hitung['total_pph'],
-            'total_ppnbm'   => $data_hitung['total_ppnbm'],
-            'total_denda'   => 0,   // by default tidak ada denda
-            'kd_negara_asal'    => $cd->pelabuhanAsal->negara->kode
-        ]);
-
-        // link to cd
-        $s->cd()->associate($cd);
-
-        // return it
-        return $s;
-    }
 
     //=================================================================================================
     // SCOPES!!
@@ -172,8 +106,10 @@ class ST extends AbstractDokumen implements IInstructable
     // based on nama pejabat
     public function scopeByPejabat($query, $q) {
         // name or nip
-        return $query->where('nama_pejabat', 'like', "%{$q}%")
-                    ->orWhere('nip_pejabat', 'like', "%{$q}%");
+        return $query->where('pejabat', function ($qPejabat) use ($q) {
+            return $qPejabat->where('name', 'like', "%$q%")
+                            ->orWhere('nip', 'like', "%$q%");
+        });
     }
 
     // tanggal dok query

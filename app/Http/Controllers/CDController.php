@@ -436,6 +436,9 @@ class CDController extends ApiController
             // #5, LOG IT
             AppLog::logInfo("CD #{$id} ditetapkan pungutannya oleh {$r->userInfo['username']}", $cd, false);
 
+            // #6, SET NOMOR DOKUMEN
+            $cd->setNomorDokumen();
+
             // commit
             DB::commit();
 
