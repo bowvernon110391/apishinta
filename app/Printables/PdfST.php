@@ -8,9 +8,12 @@ class PdfST extends Fpdf {
     protected $st = null;
 
     // constructor follow usual style
-    public function __construct(ST $s)
+    public function __construct(ST $s, $kota_ttd = null, $tgl_ttd = null)
     {
         $this->st = $s;
+
+        $this->kota_ttd = $kota_ttd ?? "CENGKARENG";
+        $this->tgl_ttd = $tgl_ttd ?? date('Y-m-d');
 
         parent::__construct('P', 'mm', 'A4');
         $this->SetAutoPageBreak(true, 14);
@@ -29,7 +32,7 @@ class PdfST extends Fpdf {
         $no_lengkap     = $s->nomor_lengkap;    //'200312/st/2F/SH/2020';
         $tgl_surat      = formatTanggal($s->tgl_dok);
 
-        $nama   = $s->pemilik_barang;
+        $nama   = $s->cd->penumpang->nama;
         $alamat = str_replace("\n", " ", $s->cd->alamat);  //"GG. MASJID NO 50 A, RT 02/RW 02, KEL. KENANGA, KEC. CIPONDOH, KOTA TANGERANG, BANTEN";
         $no_paspor  = $s->cd->penumpang->no_paspor; //"290103-2323-22132";
         $phone  = $s->cd->penumpang->phone;
@@ -38,22 +41,25 @@ class PdfST extends Fpdf {
         $no_flight  = "{$s->cd->no_flight} ({$s->cd->airline->uraian})";
         $negara_asal    = $s->negara->uraian;
 
-        $total_brutto   = number_format($s->cd->getTotalValue('brutto'), 2);
+        $total_brutto   = $s->cd->detailBarang->reduce(function($acc, $e) {
+            return $acc + $e->brutto;
+        }, 0.0);
+        $total_brutto = number_format($total_brutto, 2);
 
-        $summary_jumlah = "{$s->cd->package_summary_string} / {$total_brutto} Kg";
+        $summary_jumlah = "{$s->cd->koli} Koli / {$total_brutto} Kg";
 
-        $uraian_summary = $s->cd->uraian_summary; /* [
+        $uraian_summary = $s->cd->detailBarang->map(function ($e) { return $e->uraian; })->toArray(); /* [
             "1. Sepeda Brompton",
             "2. Tas Louis Vutton BR323CI Gold Series"
         ]; */
 
-        $keterangan = $s->keterangan; //"DITUNDA PENGELUARANNYA DIKARENAKAN YBS TIDAK DAPAT MEMENUHI KEWAJIBAN PABEAN ATAS BARANG BAWAANNYA";
+        $keterangan = $s->keterangan[0]->keterangan ?? "-"; //"DITUNDA PENGELUARANNYA DIKARENAKAN YBS TIDAK DAPAT MEMENUHI KEWAJIBAN PABEAN ATAS BARANG BAWAANNYA";
 
-        $kota_ttd   = "CENGKARENG";
-        $tgl_ttd    = formatTanggal(date('Y-m-d')); // "01 MARET 2020";
+        $kota_ttd   = $this->kota_ttd;
+        $tgl_ttd    = formatTanggal($this->tgl_ttd); // "01 MARET 2020";
 
-        $nama_pejabat   = $s->nama_pejabat;
-        $nip_pejabat    = $s->nip_pejabat;
+        $nama_pejabat   = $s->pejabat->name;
+        $nip_pejabat    = $s->pejabat->nip;
         // ========================================================================
 
 

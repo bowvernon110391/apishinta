@@ -79,7 +79,7 @@ class PDFController extends ApiController
                         throw new NotFoundHttpException("SPP #{$id} was not found");
                     }
 
-                    $pdf = new PdfSPP($spp);
+                    $pdf = new PdfSPP($spp, $r->get('kota_ttd'), $r->get('tgl_ttd'));
                     $pdf->generateFirstpage();
 
                     return response($pdf->Output('S'), 200, $headers);
@@ -93,7 +93,7 @@ class PDFController extends ApiController
                         throw new NotFoundHttpException("ST #{$id} was not found");
                     }
 
-                    $pdf = new PdfST($st);
+                    $pdf = new PdfST($st, $r->get('kota_ttd'), $r->get('tgl_ttd'));
                     $pdf->generateFirstpage();
 
                     return response($pdf->Output('S'), 200, $headers);
