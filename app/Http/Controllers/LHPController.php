@@ -69,7 +69,7 @@ class LHPController extends ApiController
             // simply update...
             $l->tgl_dok = $r->get('tgl_dok', date('Y-m-d'));
             $l->pemeriksa_id = $r->get('pemeriksa_id', $r->userInfo['user_id']);
-            $l->lokasi()->associate(Lokasi::byName($r->get('lokasi', 'KANTOR'))->first());
+            $l->lokasi()->associate(Lokasi::byKode($r->get('lokasi', 'KANTOR'))->first());
             $l->isi = $r->get('isi', '');
 
             SSOUserCache::byId($r->userInfo['user_id']);
@@ -154,7 +154,7 @@ class LHPController extends ApiController
                 // add rest of data
                 $l->tgl_dok = $r->get('tgl_dok', date('Y-m-d'));    // automatically set date to current
                 $l->pemeriksa_id = $r->userInfo['user_id']; // automatically associate to current token owner
-                $l->lokasi()->associate(Lokasi::byName($r->get('lokasi', 'KANTOR'))->first());  // failsafe to KANTOR
+                $l->lokasi()->associate(Lokasi::byKode($r->get('lokasi', 'KANTOR'))->first());  // failsafe to KANTOR
 
                 // cache sso user (the pemeriksa)
                 SSOUserCache::byId($r->userInfo['user_id']);

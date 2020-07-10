@@ -63,7 +63,7 @@ class STController extends ApiController
 
             // data lokasi
             $nama_lokasi    = expectSomething($r->get('lokasi'), "Lokasi Perekaman");
-            $lokasi     = Lokasi::byName($nama_lokasi)->first();
+            $lokasi     = Lokasi::byKode($nama_lokasi)->first();
 
             // spawn a SPP from that cd
             $st = new ST([
@@ -215,7 +215,7 @@ class STController extends ApiController
 
             $st->cd()->associate($cd);
             $st->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
-            $st->lokasi()->associate(Lokasi::byName($r->get('lokasi'))->first() ?? $cd->lokasi);
+            $st->lokasi()->associate(Lokasi::byKode($r->get('lokasi'))->first() ?? $cd->lokasi);
 
             return $this->respondWithItem($st, new STTransformer);
         } catch (NotFoundResourceException $e) {

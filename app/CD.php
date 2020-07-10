@@ -193,7 +193,7 @@ IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable, IPa
         return 'Customs Declaration (BC 2.2)';
     }
     public function getSkemaPenomoranAttribute(){
-        return 'CD/'. $this->lokasi->nama . '/SH';
+        return 'CD/'. $this->lokasi->kode . '/SH';
     }
 
 

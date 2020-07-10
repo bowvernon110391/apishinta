@@ -15,6 +15,7 @@ class CreateLokasiTable extends Migration {
 		Schema::create('lokasi', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->string('kode', 8)->index();
 			$table->string('nama', 64);
 		});
 	}

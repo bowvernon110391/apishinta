@@ -63,7 +63,7 @@ class SPP extends AbstractDokumen implements IInstructable, INotable
     }
     public function getSkemaPenomoranAttribute()
     {
-        return 'SPPP/' . $this->lokasi->nama . '/SH';
+        return 'SPPP/' . $this->lokasi->kode . '/SH';
     }
 
     public function getLinksAttribute() {

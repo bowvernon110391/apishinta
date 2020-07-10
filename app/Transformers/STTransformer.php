@@ -35,7 +35,7 @@ class STTransformer extends TransformerAbstract {
 
             'jenis'             => $s->jenis,
             
-            'lokasi'            => $s->lokasi->nama ?? null,
+            'lokasi'            => $s->lokasi->kode ?? null,
 
             'links'             => $s->links,
 

@@ -33,7 +33,7 @@ class SPPTransformer extends TransformerAbstract {
             'tgl_dok'           => $s->tgl_dok,
             'nomor_lengkap'     => $s->nomor_lengkap,
             
-            'lokasi'            => $s->lokasi->nama ?? null,
+            'lokasi'            => $s->lokasi->kode ?? null,
 
             'links'             => $s->links,
             

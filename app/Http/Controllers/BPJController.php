@@ -122,7 +122,7 @@ class BPJController extends ApiController
             $b = new BPJ($data);
 
             // associate lokasi
-            $b->lokasi()->associate(Lokasi::byName($lokasi)->first());
+            $b->lokasi()->associate(Lokasi::byKode($lokasi)->first());
 
             // associate dengan penumpang
             $b->penumpang()->associate(Penumpang::find($penumpang_id));
@@ -242,7 +242,7 @@ class BPJController extends ApiController
             // $b->nama_pembuat    = $nama_pembuat;
 
             // associate lokasi
-            $b->lokasi()->associate(Lokasi::byName($lokasi)->first());
+            $b->lokasi()->associate(Lokasi::byKode($lokasi)->first());
 
             // associate dengan penumpang
             $b->penumpang()->associate(Penumpang::find($penumpang_id));

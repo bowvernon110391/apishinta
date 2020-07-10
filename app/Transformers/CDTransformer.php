@@ -45,7 +45,7 @@ class CDTransformer extends TransformerAbstract {
             'no_dok'    => (int) $cd->no_dok,
             'tgl_dok'   => (string) $cd->tgl_dok,
             'nomor_lengkap' => $cd->nomor_lengkap,
-            'lokasi'    => $cd->lokasi->nama,
+            'lokasi'    => $cd->lokasi->kode,
             'declare_flags' => $cd->flat_declare_flags,
 
             // barang

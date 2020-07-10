@@ -14,9 +14,9 @@ class SeedLokasiTable extends Migration
     public function up()
     {
         DB::table('lokasi')->insert([
-            ['nama'=>'T2F'],
-            ['nama'=>'T3'],
-            ['nama'=>'KANTOR'],
+            ['kode'=>'T2F', 'nama'=>"Terminal Kedatangan Internasional 2F"],
+            ['kode'=>'T3', 'nama'=>"Terminal Kedatangan Internasional 3"],
+            ['kode'=>'BCSH', 'nama'=>"KPU BC Soekarno Hatta"],
             // ['nama'=>'TPP'],
             // ['nama'=>'GUDANG']
         ]);

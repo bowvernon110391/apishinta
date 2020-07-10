@@ -64,7 +64,7 @@ class ST extends AbstractDokumen implements IInstructable, INotable
     }
     public function getSkemaPenomoranAttribute()
     {
-        return 'ST/' . $this->lokasi->nama . '/SH';
+        return 'ST/' . $this->lokasi->kode . '/SH';
     }
 
     public function getLinksAttribute() {

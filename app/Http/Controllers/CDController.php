@@ -115,7 +115,7 @@ class CDController extends ApiController
             }
 
             // associate lokasi first
-            $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
+            $cd->lokasi()->associate(Lokasi::byKode($lokasi)->first());
 
             // ndpbm
             $kursNdpbm = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first(); //Kurs::find($ndpbm['data']['id']);
@@ -274,7 +274,7 @@ class CDController extends ApiController
             }
 
             $cd->ndpbm()->associate($kursNdpbm);
-            $cd->lokasi()->associate(Lokasi::byName($lokasi)->first());
+            $cd->lokasi()->associate(Lokasi::byKode($lokasi)->first());
             $cd->declareFlags()->sync(DeclareFlag::byName($declare_flags)->get());
             
             // try to save

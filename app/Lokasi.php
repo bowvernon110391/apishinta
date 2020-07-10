@@ -12,4 +12,8 @@ class Lokasi extends Model
     public function scopeByName($query, $lokasi) {
         return $query->where('nama', $lokasi);
     }
+
+    public function scopeByKode($query, $kode) {
+        return $query->where('kode', $kode);
+    }
 }
