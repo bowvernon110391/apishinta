@@ -22,7 +22,7 @@ class PdfSPPB extends Fpdf
         $kop_b = "DIREKTORAT JENDERAL BEA DAN CUKAI ";
         $kop_c = "KANTOR PELAYANAN UTAMA BEA DAN CUKAI TIPE C SOEKARNO-HATTA";
         $kop_d = "";
-        $kop1  = " SURAT PERSETUJUAN PENGELUARAN BARANG (MANUAL)";
+        $kop1  = " SURAT PERSETUJUAN PENGELUARAN BARANG";
 
         $data = $this->sppb->gateable->data_sppb;
 
