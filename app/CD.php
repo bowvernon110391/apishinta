@@ -78,11 +78,6 @@ class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiab
         return $this->belongsTo('App\Penumpang', 'penumpang_id');
     }
 
-    public function sspcp(){
-        // return $this->hasOne('App\SSPCP','cd_header_id');
-        return $this->morphOne('App\SSPCP', 'billable');
-    }
-
     public function spmb(){
         return $this->hasOne('App\SPMB','cd_header_id');
     }
@@ -220,13 +215,6 @@ class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiab
             $links[] = [
                 'rel'   => 'is',
                 'uri'   => $this->imporSementara->uri
-            ];
-        }
-
-        if ($this->sspcp) {
-            $links[] = [
-                'rel'   => 'sspcp',
-                'uri'   => $this->sspcp->uri
             ];
         }
 
