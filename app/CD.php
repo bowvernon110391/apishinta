@@ -256,9 +256,15 @@ IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable, IPa
     }
 
     // get NPWP (FOR BPPM)
-    public function getNpwpPembayarAttribute()
+    public function getPayerAttribute()
     {
-        return $this->npwp;
+        return [
+            'nama' => $this->penumpang->nama,
+            'no_identitas' => $this->penumpang->no_paspor,
+            'alamat' => $this->alamat,
+            'jenis_identitas' => 'PASPOR',
+            'npwp' => $this->npwp
+        ];
     }
 
     public function getPerhitunganAttribute() {

@@ -466,6 +466,7 @@ class CDController extends ApiController
 
             // spawn bppm
             $bppm = new BPPM([
+                'kode_kantor' => $cd->kode_kantor,
                 'tgl_dok' => date('Y-m-d')
             ]);
 
@@ -478,7 +479,7 @@ class CDController extends ApiController
             // append status
             $cd->appendStatus(
                 'BPPM', 
-                Lokasi::byName($r->get('lokasi'))->first() ?? $cd->lokasi, 
+                $r->get('lokasi') ?? $cd->lokasi->nama, 
                 null, 
                 $bppm
             );

@@ -11,8 +11,8 @@ interface IPayable
     public function billing(); // a one to many, cause probably the billing are composite
     // must have jenis penerimaan
     public function getJenisPenerimaanAttribute();
-    // must have npwp
-    public function getNpwpPembayarAttribute();
+    // grab info pembayar
+    public function getPayerAttribute();
 
     // some scopes?
     public function scopeNotBilled($query);

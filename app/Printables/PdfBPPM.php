@@ -1,6 +1,7 @@
 <?php
 namespace App\Printables;
 
+use App\BPPM;
 use Fpdf\Fpdf;
 
 class PdfBPPM extends Fpdf {
@@ -56,129 +57,50 @@ class PdfBPPM extends Fpdf {
     protected $nama_pejabat   = 'Tri Mulyadi Wibowo';
     protected $nip_pejabat    = '199103112012101001';
 
-    // constructor is private, because it's multi purpose
-    protected function __construct() {
+    // 
+    public function __construct(BPPM $bppm) {
         parent::__construct('P', 'mm', 'A4');
         $this->SetAutoPageBreak(true);
+
+        $this->bppm = $bppm;
+
+        $this->extractData();
     }
 
     // extract data from somewhere?
-    public function extractDataFromSSPCP($s) {
-        $doc = $s->billable;
-        if (!$doc) {
-            throw new \Exception("Dokumen ini tidak ada parentnya!");
-        }
+    public function extractData() {
+        $b = $this->bppm;
+        $payer = $b->payable->payer;
 
-        $this->jenis_penerimaan_negara  = $s->jenis;
+        $this->jenis_penerimaan_negara  = $b->payable->jenis_penerimaan;
 
-        $this->no_identitas     = $s->no_identitas_wajib_bayar; //$cd->penumpang->no_paspor;
-        $this->nama_penumpang   = $s->nama_wajib_bayar; //$cd->penumpang->nama;
-        $this->alamat           = $s->alamat_wajib_bayar; //$cd->alamat;
+        $this->no_identitas     = $payer['no_identitas'];
+        $this->nama_penumpang   = $payer['nama']; //$cd->penumpang->nama;
+        $this->alamat           = $payer['alamat']; //$cd->alamat;
 
-        $this->npwp_pt  = $s->npwp_wajib_bayar ?? '-'; //strlen($cd->npwp) > 13 ? $cd->npwp : '-';
+        $this->npwp_pt  = $payer['npwp'];
 
-        $this->jenis_dokumen_dasar  = $doc->jenis_dokumen_lengkap; //'CUSTOMS DECLARATION (BC 2.2)';
-        $this->nomor_dokumen_dasar  = $doc->nomor_lengkap_dok; //$cd->nomor_lengkap;
-        $this->tgl_dokumen_dasar    = formatTanggalDMY($doc->tgl_dok);
+        $this->jenis_dokumen_dasar  = $b->payable->jenis_dokumen_lengkap; //'CUSTOMS DECLARATION (BC 2.2)';
+        $this->nomor_dokumen_dasar  = $b->payable->nomor_lengkap_dok; //$cd->nomor_lengkap;
+        $this->tgl_dokumen_dasar    = formatTanggalDMY($b->payable->tgl_dok);
 
         // gotta put something into data pungutan
-        $this->data_pungutan    = [];
 
-        // 1. BEA MASUK
-        if ($s->total_bm > 0.0) {
-            $this->data_pungutan[] = [
-                'nama_akun' => 'Bea Masuk',
-                'kode_akun' => '412111',
-                'jumlah_pungutan'   => number_format($s->total_bm, 2),
-                'is_pajak'          => false
-            ];
-        }
-        // 2. PPN IMPOR
-        if ($s->total_ppn > 0.0) {
-            $this->data_pungutan[] = [
-                'nama_akun' => 'PPN Impor',
-                'kode_akun' => '411212',
-                'jumlah_pungutan'   => number_format($s->total_ppn, 2),
-                'is_pajak'          => true
-            ];
-        }
-        // 3. PPh IMPOR
-        if ($s->total_pph > 0.0) {
-            $this->data_pungutan[] = [
-                'nama_akun' => 'PPh Pasal 22 Impor',
-                'kode_akun' => '411123',
-                'jumlah_pungutan'   => number_format($s->total_pph, 2),
-                'is_pajak'          => true
-            ];
-        }
-        // 4. PPnBM
-        if ($s->total_ppnbm > 0.0) {
-            $this->data_pungutan[] = [
-                'nama_akun' => 'PPnBM Impor',
-                'kode_akun' => '411222',
-                'jumlah_pungutan'   => number_format($s->total_ppnbm, 2),
-                'is_pajak'          => true
-            ];
-        }
-        // 5. Denda
-        if ($s->total_denda > 0.0) {
-            $this->data_pungutan[] = [
-                'nama_akun' => 'Denda Administrasi Pabean',
-                'kode_akun' => '412113',
-                'jumlah_pungutan'   => number_format($s->total_denda, 2),
-                'is_pajak'          => false
-            ];
-        }
-
-        $total=$s->total_bm + $s->total_ppn + $s->total_pph + $s->total_ppnbm + $s->total_denda;
+        $total=$b->payable->pungutan->reduce(function($acc, $e){
+            return $acc + $e->bayar;
+        }, 0.0);
 
         $this->jumlah_pembayaran    = number_format($total);
         $this->jumlah_pembayaran_text = strtoupper(trim(penyebutRupiah($total)));
 
-        $this->no_bppm  = $s->nomor_lengkap_dok; //$this->formatBppmSequence($s->no_dok, $s->tgl_dok, $this->kode_kantor);
-        $this->tgl_bppm = formatTanggalDMY($s->tgl_dok);
+        $this->no_bppm  = $b->nomor_lengkap_dok; //$this->formatBppmSequence($s->no_dok, $s->tgl_dok, $this->kode_kantor);
+        $this->tgl_bppm = formatTanggalDMY($b->tgl_dok);
 
-        $this->nama_pejabat = $s->nama_pejabat;
-        $this->nip_pejabat  = $s->nip_pejabat;
+        $this->nama_pejabat = $b->pejabat->name;
+        $this->nip_pejabat  = $b->pejabat->nip;
     }
 
-    // function to create number of BPPM
-    protected function formatBppmSequence($nomor, $sqlDate, $kode_kantor) {
-        $monthLetter = [
-            '01'    => 'A',
-            '02'    => 'B',
-            '03'    => 'C',
-            '04'    => 'D',
-            '05'    => 'E',
-            '06'    => 'F',
-            '07'    => 'G',
-            '08'    => 'H',
-            '09'    => 'I',
-            '10'    => 'J',
-            '11'    => 'K',
-            '12'    => 'L',
-        ];
-
-        $month  = substr($sqlDate, 5, 2);
-        
-        $part1  = substr($sqlDate, 2, 2);
-        $part2  = $kode_kantor;
-        $part3  = $monthLetter[$month];
-        $part4  = str_pad($nomor, 7, '0', STR_PAD_LEFT);
-
-        return $part1.$part2.$part3.$part4;
-    }
-
-    // make from SSPCP
-    static public function createFromSSPCP($s) {
-        $pdf = new PdfBPPM();
-        $pdf->extractDataFromSSPCP($s);
-        $pdf->generateFirstpage();
-
-        return $pdf;
-    }
-
-    // bikin dari SSPCP
+    // bikin dari BPPM
     public function generateFirstpage() {
         $p  = $this;
 
@@ -285,25 +207,28 @@ class PdfBPPM extends Fpdf {
         $p->Cell(35, 6, 'KODE AKUN', 1, 0, 'C');
         $p->Cell(0, 6, 'JUMLAH PEMBAYARAN', 'TBL', 1, 'C');
 
-        foreach ($this->data_pungutan as $d) {
+        $pungutan = $this->bppm->payable->pungutan;
+
+        foreach ($pungutan as $d) {
             $p->SetX($p->GetX() + 5);
 
-            if ($d['is_pajak']) {
+            if ($d->jenisPungutan->kode[0] == 'P') {
                 // tax must print no_identitas
-                $p->Cell(40, 6, $d['nama_akun'], 1, 0);
+                $p->Cell(40, 6, $d->jenisPungutan->nama, 1, 0);
                 // npwp pt
                 $p->Cell(45, 6, "NPWP : " . $this->npwp_pt, 1, 0);
             } else {
                 // non tax goes here
-                $p->Cell(85, 6, $d['nama_akun'], 1, 0);
+                $p->Cell(85, 6, $d->jenisPungutan->nama, 1, 0);
             }
 
             // kode akun
-            $p->Cell(35, 6, $d['kode_akun'], 1, 0, 'C');
+            $p->Cell(35, 6, $d->jenisPungutan->kode_akun, 1, 0, 'C');
 
             // the real sheit. print some RP sign first
+            $pungutan_fmt = number_format($d->bayar, 2);
             $p->Text($p->GetX() + 2, $p->GetY() + 4, 'Rp. ');
-            $p->Cell(0, 6, $d['jumlah_pungutan'], 'LTB', 1, 'R');
+            $p->Cell(0, 6, $pungutan_fmt, 'LTB', 1, 'R');
             // $p->Ln();
         }
 

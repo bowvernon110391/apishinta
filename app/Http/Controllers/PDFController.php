@@ -65,7 +65,10 @@ class PDFController extends ApiController
                         throw new NotFoundHttpException("BPPM #{$id} was not found");
                     }
 
-                    throw new \Exception("NOT DONE YET!");
+                    $pdf = new PdfBPPM($bppm);
+                    $pdf->generateFirstpage();
+
+                    return response($pdf->Output('S'), 200, $headers);
                 
                 // Cetakan SPP
                 case 'spp':

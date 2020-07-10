@@ -121,9 +121,9 @@ Route::get('/cd/{id}/simulasi', 'CDController@simulasiHitung')
 // PUT /cd/{id}/penetapan
 Route::put('/cd/{id}/penetapan', 'CDController@storePenetapan')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
-/* // POST /cd/penetapan
-Route::post('/cd/{id}/penetapan', 'CDController@storePenetapan')
-        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE'); */
+
+Route::put('/cd/{id}/bppm', 'CDController@storeBppm')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
 //==== DETAIL CD ====================================================
 // GET /cd/2/details    => ambil data detail cd

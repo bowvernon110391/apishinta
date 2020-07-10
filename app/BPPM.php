@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use ReflectionClass;
 
 class BPPM extends AbstractDokumen implements ILinkable
 {
@@ -93,8 +94,24 @@ class BPPM extends AbstractDokumen implements ILinkable
 
     // ====================SCOPES===================================================
     public function scopeNotBilled($query) {
-        return $query->whereHasMorph('payable', function ($q) {
+        if (!count(BPPM::$payableClasses)) {
+            BPPM::$payableClasses = BPPM::listAllPayableClasses();
+        }
+
+        return $query->whereHasMorph('payable', BPPM::$payableClasses, function ($q) {
             $q->notBilled();
         });
+    }
+
+    protected static $payableClasses = [];
+
+    static public function listAllPayableClasses() {
+        $cs = get_declared_classes();
+
+        $r = array_filter($cs, function($e) { 
+            $ref = new ReflectionClass($e);
+            return $ref->implementsInterface("App\\IPayable");
+        });
+        return array_values($r);
     }
 }

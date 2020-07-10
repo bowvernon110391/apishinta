@@ -14,7 +14,9 @@ class CDTransformer extends TransformerAbstract {
         'lampiran',
 
         'instruksi_pemeriksaan',
-        'dokkap'
+        'dokkap',
+
+        'bppm'
     ];
 
     // available relations, default relations not needed to apply
@@ -29,7 +31,9 @@ class CDTransformer extends TransformerAbstract {
         'airline',
 
         'instruksi_pemeriksaan',
-        'dokkap'
+        'dokkap',
+
+        'bppm'
     ];
 
     // basic transformation, without any sweetener
@@ -134,6 +138,13 @@ class CDTransformer extends TransformerAbstract {
 
     public function includeDokkap(CD $cd) {
         return $this->collection($cd->dokkap, new DokkapTransformer);
+    }
+
+    public function includeBppm(CD $cd) {
+        $b = $cd->bppm;
+        if ($b) {
+            return $this->item($b, new BPPMTransformer);
+        }
     }
 }
 
