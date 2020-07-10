@@ -33,4 +33,11 @@ class Dokkap extends Model
     public function master() {
         return $this->morphTo();
     }
+
+    // scope
+    public function scopeByKode($query, $kode) {
+        return $query->whereHas('referensiJenisDokkap', function ($q) use ($kode) {
+            $q->byCode($kode);
+        });
+    }
 }

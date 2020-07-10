@@ -278,6 +278,9 @@ IGateable
                         return $acc + $e->brutto;
                     }, 0.0);
 
+        // ambil hawb klo ada
+        $hawb = $this->dokkap()->byKode(740)->first();
+        
         return [
             'pemberitahu' => [
                 'npwp' => '-',
@@ -296,6 +299,11 @@ IGateable
             'pos_bc11' => '-',
             'subpos_bc11' => '-',
             'subsubpos_bc11' => '-',
+
+            'hawb' => [
+                'nomor' => $hawb->nomor_lengkap_dok ?? '-',
+                'tanggal' => $hawb->tgl_dok ?? '-'
+            ]
         ];
     }
 

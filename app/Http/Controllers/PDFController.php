@@ -11,6 +11,8 @@ use App\SSPCP;
 use App\ST;
 use App\CD;
 use App\Printables\PdfLembarHitungCD;
+use App\Printables\PdfSPPB;
+use App\SPPB;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -112,6 +114,19 @@ class PDFController extends ApiController
 
                     return response($pdf->Output('S'), 200, $headers);
 
+                // Cetakan SPPB
+                case 'sppb':
+                case 'SPPB':
+                    $sppb = SPPB::find($id);
+
+                    if (!$sppb) {
+                        throw new NotFoundHttpException("SPPB #{$id} was not found");
+                    }
+
+                    $pdf = new PdfSPPB($sppb);
+                    $pdf->generateFirstPage();
+
+                    return response($pdf->Output('S'), 200, $headers);
                 default:
                     throw new BadRequestHttpException("No printing option for doctype: {$doctype}");
             }
