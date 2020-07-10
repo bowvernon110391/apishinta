@@ -16,7 +16,8 @@ class CDTransformer extends TransformerAbstract {
         'instruksi_pemeriksaan',
         'dokkap',
 
-        'bppm'
+        'bppm',
+        'billing'
     ];
 
     // available relations, default relations not needed to apply
@@ -33,7 +34,8 @@ class CDTransformer extends TransformerAbstract {
         'instruksi_pemeriksaan',
         'dokkap',
 
-        'bppm'
+        'bppm',
+        'billing'
     ];
 
     // basic transformation, without any sweetener
@@ -145,6 +147,10 @@ class CDTransformer extends TransformerAbstract {
         if ($b) {
             return $this->item($b, new BPPMTransformer);
         }
+    }
+
+    public function includeBilling(CD $cd) {
+        return $this->collection($cd->billing, new BillingTransformer);
     }
 }
 
