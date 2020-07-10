@@ -10,22 +10,26 @@ use App\Negara;
 use App\HsCode;
 use App\Kategori;
 use App\Kemasan;
+use App\Lokasi;
 use App\Pelabuhan;
 use App\Satuan;
 use App\ReferensiJenisDetailSekunder;
 use App\ReferensiJenisDokkap;
 use App\ReferensiJenisPungutan;
 use App\Services\SSO;
+use App\TPS;
 use App\Transformers\AirlineTransformer;
 use App\Transformers\HsCodeTransformer;
 use App\Transformers\NegaraTransformer;
 use App\Transformers\KategoriTransformer;
 use App\Transformers\KemasanTransformer;
+use App\Transformers\LokasiTransformer;
 use App\Transformers\PelabuhanTransformer;
 use App\Transformers\ReferensiJenisDetailSekunderTransformer;
 use App\Transformers\ReferensiJenisDokkapTransformer;
 use App\Transformers\ReferensiJenisPungutanTransformer;
 use App\Transformers\SatuanTransformer;
+use App\Transformers\TPSTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use League\Fractal\Manager;
 
@@ -334,5 +338,15 @@ class ReferensiController extends ApiController
         $jenisPungutan = ReferensiJenisPungutan::all();
 
         return $this->respondWithCollection($jenisPungutan, new ReferensiJenisPungutanTransformer);
+    }
+
+    // GET /lokasi
+    public function getLokasi() {
+        return $this->respondWithCollection(Lokasi::all(), new LokasiTransformer);
+    }
+
+    // GET /tps
+    public function getTps() {
+        return $this->respondWithCollection(TPS::all(), new TPSTransformer);
     }
 }

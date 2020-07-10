@@ -15,6 +15,7 @@ use App\Lokasi;
 use App\Penumpang;
 use App\Pungutan;
 use App\ReferensiJenisPungutan;
+use App\SPPB;
 use App\SSOUserCache;
 use App\SSPCP;
 use App\Transformers\CDTransformer;
@@ -498,6 +499,60 @@ class CDController extends ApiController
                 'id' => $bppm->id,
                 'uri' => $cd->uri . '/bppm'
             ]);
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("CD #{$id} was not found");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * Terbitkan SPPB atas CD ini
+     */
+    public function storeSppb(Request $r, $id) {
+        DB::beginTransaction();
+
+        try {
+            //code...
+            $cd = CD::findOrFail($id);
+
+            // gotta grab sppb data, in this case?
+            // type
+            $lokasi_type = expectSomething($r->get('lokasi_type'), 'Jenis Lokasi Timbun');
+            // kode
+            $lokasi_kode = expectSomething($r->get('lokasi_kode'), 'Kode Lokasi Timbun');
+
+            // #1, grab lokasi from that data
+            $lokasi = $lokasi_type::byKode($lokasi_kode)->first();
+
+            // #2, spawn sppb and associate it
+            $s = new SPPB([
+                'kode_kantor' => '050100',
+                'tgl_dok' => date('Y-m-d')
+            ]);
+
+            $s->gateable()->associate($cd);
+            $s->lokasi()->associate($lokasi);
+            $s->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+
+            // #3 save and lock sppb
+            $s->lockAndSetNumber();
+
+            // #4 append status CD
+            $cd->appendStatus('SPPB', null, 'Penerbitan SPPB', $s);
+
+            // #5 log it
+            AppLog::logInfo("CD #{$id} diterbitkan SPPB #{$s->id} oleh {$r->userInfo['username']}", $cd, false);
+
+            // commit
+            DB::commit();
+
+            // return empty
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+            
         } catch (ModelNotFoundException $e) {
             DB::rollBack();
             return $this->errorNotFound("CD #{$id} was not found");

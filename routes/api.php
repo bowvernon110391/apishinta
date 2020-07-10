@@ -122,7 +122,12 @@ Route::get('/cd/{id}/simulasi', 'CDController@simulasiHitung')
 Route::put('/cd/{id}/penetapan', 'CDController@storePenetapan')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
+// PUT /cd/{id}/bppm
 Route::put('/cd/{id}/bppm', 'CDController@storeBppm')
+        ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
+
+// PUT /cd/{id}/sppb
+Route::put('/cd/{id}/sppb', 'CDController@storeSppb')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
 //==== DETAIL CD ====================================================
@@ -284,6 +289,14 @@ Route::get('/dokkap', 'ReferensiController@getJenisDokkap')
 
 // GET /jenis-pungutan
 Route::get('/jenis-pungutan', 'ReferensiController@getJenisPungutan')
+        ->middleware($corsGroup['resourceGroup']);
+
+// GET /lokasi
+Route::get('/lokasi', 'ReferensiController@getLokasi')
+        ->middleware($corsGroup['resourceGroup']);
+        
+// GET /tps
+Route::get('/tps', 'ReferensiController@getTps')
         ->middleware($corsGroup['resourceGroup']);
 
 //====================================================================================================
