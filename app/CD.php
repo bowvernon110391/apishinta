@@ -271,7 +271,32 @@ IGateable
 
     public function getDataSppbAttribute()
     {
-        return [];
+        $total_brutto = $this->detailBarang()
+                    ->isPenetapan()
+                    ->get()
+                    ->reduce(function($acc, $e) {
+                        return $acc + $e->brutto;
+                    }, 0.0);
+
+        return [
+            'pemberitahu' => [
+                'npwp' => '-',
+                'nama' => '-'
+            ],
+
+            'importir' => $this->payer,
+
+            'sarana_pengangkut' => $this->airline->uraian,
+            'no_flight' => $this->no_flight,
+            'jumlah_jenis_kemasan' => $this->koli . ' Koli',
+            'brutto' => $total_brutto,
+
+            'no_bc11' => '-',
+            'tgl_bc11' => '-',
+            'pos_bc11' => '-',
+            'subpos_bc11' => '-',
+            'subsubpos_bc11' => '-',
+        ];
     }
 
     // ===========================DETAIL BARANG LISTEENR============================
