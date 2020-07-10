@@ -87,9 +87,9 @@ class PdfSPP extends Fpdf {
 
         // Kop surat
         $p->SetFont('Arial', 'BU', 8);
-        $p->Cell(0, 4, 'PEMBERITAHUAN PENANGGUHAN PENGELUARAN', 0, 1, 'C');
+        $p->Cell(0, 4, 'PERSETUJUAN PENANGGUHAN PENGELUARAN', 0, 1, 'C');
         $p->SetFont('Arial', 'BI', 8);
-        $p->Cell(0, 4, 'RELEASE POSTPONEMENT NOTICE', 0, 1, 'C');
+        $p->Cell(0, 4, 'RELEASE POSTPONEMENT APPROVAL', 0, 1, 'C');
 
         // no + tgl surat
         $p->SetFont('Arial', '', 8);
