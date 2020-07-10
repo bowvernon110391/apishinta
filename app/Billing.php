@@ -12,8 +12,6 @@ class Billing extends Model
     protected $table = 'billing';
 
     protected $attributes = [
-        'billable_id'   => 0,
-        'billable_type' => ''
     ];
 
     protected $guarded = [

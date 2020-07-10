@@ -16,8 +16,8 @@ class CreateBillingTable extends Migration
         Schema::create('billing', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->string('nomor', 32);
-            $table->date('tanggal');
+            $table->string('nomor', 32)->index();
+            $table->date('tanggal')->index();
 
             $table->morphs('billable');
 

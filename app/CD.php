@@ -5,7 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable
+class CD extends AbstractDokumen implements 
+IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable, IPayable
 {
     // use TraitInspectable;
     use TraitInstructable;
@@ -18,6 +19,7 @@ class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiab
 
     use TraitHasDokkaps;
     use TraitNotable;
+    use TraitPayable;
     // enable soft Deletion
     use SoftDeletes;
 
@@ -247,64 +249,16 @@ class CD extends AbstractDokumen implements IInstructable, IHasGoods, ISpecifiab
         return $this->declareFlags()->byName("KOMERSIL")->count() > 0;
     }
 
-    // get package summary
-    public function getPackageSummaryAttribute() {
-        $package_data = [];
-
-        foreach ($this->details as $d) {
-            if (isset($package_data[$d->jenis_kemasan])) {
-                // add it
-                $package_data[$d->jenis_kemasan]    += $d->jumlah_kemasan;
-            } else {
-                // new key
-                $package_data[$d->jenis_kemasan]    = $d->jumlah_kemasan;
-            }
-        }
-
-        return $package_data;
+    // get jenis penerimaan (FOR BPPM)
+    public function getJenisPenerimaanAttribute()
+    {
+        return "IMPOR";
     }
 
-    // get package summary as string
-    public function getPackageSummaryStringAttribute() {
-        $p = $this->package_summary;
-
-        $raw = [];
-
-        foreach ($p as $jenis_kemasan => $jumlah_kemasan) {
-            $raw[] = $jumlah_kemasan . ' ' . $jenis_kemasan;
-        }
-
-        return implode(", ", $raw);
-    }
-
-    // get summary of uraian
-    public function getUraianSummaryAttribute() {
-        return $this->details->map(function ($e) {
-            return $e->uraian;
-        });
-    }
-
-    // get first value of items
-    public function getFirstValue() {
-        $data_hitung = $this->simulasi_pungutan;
-
-        // check if it has any data_perhitungan
-        if (count($data_hitung['data_perhitungan']) < 1) {
-            return null;
-        }
-
-        // kembaliin data pertama?
-        return $data_hitung['data_perhitungan'][0];
-    }
-
-    // get total fob
-    public function getTotalValue($param_name) {
-        $data_hitung = $this->simulasi_pungutan;
-        // return array_reduce($data_hitung['data_perhitungan'], function ($acc, $e) { return $acc + $e; }, 0);
-
-        $fobs = array_map(function ($e) use ($param_name) { return $e[$param_name]; }, $data_hitung['data_perhitungan']);
-
-        return array_reduce($fobs, function ($acc, $e) { return $acc+$e; }, 0);
+    // get NPWP (FOR BPPM)
+    public function getNpwpPembayarAttribute()
+    {
+        return $this->npwp;
     }
 
     public function getPerhitunganAttribute() {

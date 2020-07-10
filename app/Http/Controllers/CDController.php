@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AppLog;
 use App\BPJ;
+use App\BPPM;
 use Illuminate\Http\Request;
 use App\CD;
 use App\DeclareFlag;
@@ -455,11 +456,53 @@ class CDController extends ApiController
     }
 
     /**
-     * Batalkan penetapan CD
+     * Terbitkan BPPM atas CD ini
      */
+    public function storeBppm(Request $r, $id) {
+        DB::beginTransaction();
+        try {
+            // grab cd
+            $cd = CD::findOrFail($id);
 
+            // spawn bppm
+            $bppm = new BPPM([
+                'tgl_dok' => date('Y-m-d')
+            ]);
 
-    /**
-     * Penetapan ST?
-     */
+            $bppm->payable()->associate($cd);
+            $bppm->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+
+            // lock and save
+            $bppm->lockAndSetNumber();
+
+            // append status
+            $cd->appendStatus(
+                'BPPM', 
+                Lokasi::byName($r->get('lokasi'))->first() ?? $cd->lokasi, 
+                null, 
+                $bppm
+            );
+
+            // append log
+            AppLog::logInfo(
+                "Diterima pembayaran manual atas CD #{$id} dengan BPPM #{$bppm->id} oleh {$r->userInfo['username']}",
+                $cd,
+                false
+            );
+            
+            DB::commit();
+
+            // return bppm id
+            return $this->respondWithArray([
+                'id' => $bppm->id,
+                'uri' => $cd->uri . '/bppm'
+            ]);
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("CD #{$id} was not found");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
 }
