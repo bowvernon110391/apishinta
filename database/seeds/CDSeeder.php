@@ -70,9 +70,9 @@ class CDSeeder extends Seeder
 
             $p->koli = random_int(1, 4);
 
-            $p->setNomorDokumen();
+            // $p->setNomorDokumen();
             $p->save();
-            // $p->appendStatus('CREATED');
+            $p->appendStatus('CREATED');
 
             // isi data flag
             $flagCount = random_int(0,6);
