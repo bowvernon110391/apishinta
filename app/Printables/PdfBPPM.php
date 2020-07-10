@@ -64,59 +64,6 @@ class PdfBPPM extends Fpdf {
 
     // extract data from somewhere?
     public function extractDataFromSSPCP($s) {
-        // gotta store some data which is uniquely identified from sspcp
-        /* 
-        protected $nama_kantor    = 'KANTOR PELAYANAN UTAMA BEA DAN CUKAI TIPE C SOEKARNO HATTA';
-        protected $kode_kantor    = '050100';
-
-        protected $jenis_penerimaan_negara    = 'IMPOR';
-
-        protected $jenis_identitas    = 'PASPOR';
-        protected $no_identitas       = '39823-2131232-XXYA';
-        protected $nama_penumpang     = 'Boris Johnson';
-        protected $alamat             = 'JL. Jend. Hasanuddin no 53, kav. 36, Jakarta asd asd qwdqwdqw dqw d qwd qwd qw dqw dqw d qw';
-
-        protected $npwp_pt            = '367101254622000';
-
-        protected $jenis_dokumen_dasar    = 'CUSTOMS DECLARATION (BC 2.2)';
-        protected $nomor_dokumen_dasar    = '000003/CD/T2F/SH/2020';
-        protected $tgl_dokumen_dasar      = '02-03-2020';
-
-        protected $data_pungutan  = [
-            [
-                'nama_akun' => 'Bea Masuk',
-                'kode_akun' => '412111',
-                'jumlah_pungutan'   => '1,350,000.00',
-                'is_pajak'          => false
-            ],
-            [
-                'nama_akun' => 'PPN Impor',
-                'kode_akun' => '411212',
-                'jumlah_pungutan'   => '2,050,000.00',
-                'is_pajak'          => true
-            ],
-            [
-                'nama_akun' => 'PPh Pasal 22 Impor',
-                'kode_akun' => '411123',
-                'jumlah_pungutan'   => '4,100,000.00',
-                'is_pajak'          => true
-            ]
-
-        ];
-
-        protected $jumlah_pembayaran  = '7,500,000.00';
-        protected $jumlah_pembayaran_text = "TUJUH JUTA LIMA RATUS RIBU RUPIAH";
-
-        protected $nmkasir = "Bendahara Penerimaan KPU BC Tipe C Soekarno Hatta";
-        protected $npwpkasir = "317022183992000";
-        protected $alamatkasir = "Area Kargo Bandara Soekarno Hatta";
-
-        protected $no_bppm    = '20050100C0000023';
-        protected $tgl_bppm   = '02-03-2020';
-
-        protected $nama_pejabat   = 'Tri Mulyadi Wibowo';
-        protected $nip_pejabat    = '199103112012101001';
-         */
         $doc = $s->billable;
         if (!$doc) {
             throw new \Exception("Dokumen ini tidak ada parentnya!");

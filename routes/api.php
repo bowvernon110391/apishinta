@@ -314,7 +314,7 @@ Route::delete('/bpj/{id}', 'BPJController@destroy')
 //====================================================================================================
 // ENDPOINTS PDF
 //====================================================================================================
-// GET /pdf?doc=sspcp&id=2
+// GET /pdf?doc=lembarhitungcd&id=2
 Route::get('/pdf', 'PDFController@show')
         ->middleware($corsGroup['singleItem']);
 

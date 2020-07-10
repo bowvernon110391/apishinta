@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BPPM;
 use App\Printables\PdfBPPM;
 use App\Printables\PdfSPP;
 use App\Printables\PdfST;
@@ -56,19 +57,15 @@ class PDFController extends ApiController
 
             switch ($doctype) {
                 // Cetakan BPPM
-                case 'sspcp':
-                case 'SSPCP':
                 case 'bppm':
                 case 'BPPM':
-                    $sspcp = SSPCP::find($id);
+                    $bppm = BPPM::find($id);
 
-                    if (!$sspcp) {
-                        throw new NotFoundHttpException("SSPCP #{$id} was not found");
+                    if (!$bppm) {
+                        throw new NotFoundHttpException("BPPM #{$id} was not found");
                     }
 
-                    $pdf = PdfBPPM::createFromSSPCP($sspcp);
-
-                    return response($pdf->Output('S'), 200, $headers);
+                    throw new \Exception("NOT DONE YET!");
                 
                 // Cetakan SPP
                 case 'spp':

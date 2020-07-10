@@ -40,7 +40,6 @@ class CDObserver
         $c->spp()->delete();
         $c->st()->delete();
         
-        $c->sspcp()->delete();
         $c->detailBarang()->delete();
     }
 
@@ -59,7 +58,6 @@ class CDObserver
         $c->spp()->withTrashed()->restore();
         $c->st()->withTrashed()->restore();
         
-        $c->sspcp()->withTrashed()->restore();
         $c->details()->withTrashed()->restore();
     }
 

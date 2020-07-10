@@ -36,13 +36,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /* Relation::morphMap([
-            'cd_header' => 'App\CD',
-            'cd_detail' => 'App\DetailCD',
-            'sspcp_header' => 'App\SSPCP',
-            'sspcp_detail' => 'App\DetailSSPCP',
-            'kurs'  => 'App\Kurs'
-        ]); */
         Schema::defaultStringLength(191);
 
         // register our observers here

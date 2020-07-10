@@ -69,9 +69,6 @@ class Pembatalan extends AbstractDokumen
     public function spmb() {
         return $this->morphedByMany(SPMB::class, 'cancellable', 'cancellable');
     }
-    public function sspcp() {
-        return $this->morphedByMany(SSPCP::class, 'cancellable', 'cancellable');
-    }
     public function bpj() {
         return $this->morphedByMany(BPJ::class, 'cancellable', 'cancellable');
     }
