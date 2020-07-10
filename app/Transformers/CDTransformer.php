@@ -17,7 +17,8 @@ class CDTransformer extends TransformerAbstract {
         'dokkap',
 
         'bppm',
-        'billing'
+        'billing',
+        'sppb'
     ];
 
     // available relations, default relations not needed to apply
@@ -35,7 +36,8 @@ class CDTransformer extends TransformerAbstract {
         'dokkap',
 
         'bppm',
-        'billing'
+        'billing',
+        'sppb'
     ];
 
     // basic transformation, without any sweetener
@@ -151,6 +153,12 @@ class CDTransformer extends TransformerAbstract {
 
     public function includeBilling(CD $cd) {
         return $this->collection($cd->billing, new BillingTransformer);
+    }
+
+    public function includeSppb(CD $cd) {
+        if ($cd->sppb) {
+            return $this->item($cd->sppb, new SPPBTransformer);
+        }
     }
 }
 

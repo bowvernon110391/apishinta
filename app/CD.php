@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CD extends AbstractDokumen implements 
-IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable, IPayable
+IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable, IPayable,
+IGateable
 {
     // use TraitInspectable;
     use TraitInstructable;
@@ -20,6 +21,7 @@ IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable, IPa
     use TraitHasDokkaps;
     use TraitNotable;
     use TraitPayable;
+    use TraitGateable;
     // enable soft Deletion
     use SoftDeletes;
 
@@ -267,190 +269,9 @@ IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable, IPa
         ];
     }
 
-    public function getPerhitunganAttribute() {
-        $pungutan = CD::computePungutanCD($this->pembebasan, $this->ndpbm->kurs_idr, $this->pph_tarif, $this->detailBarang()->isPenetapan()->get());
-
-    }
-
-    public function getDataPembebasanAttribute() {
-        if ($this->komersil) {
-            return null;
-        }
-
-        return [
-            'kurs_pembebasan' => (float) $this->ndpbm->kurs_idr,
-            'pembebasan' => $this->pembebasan,
-            'nilai_pembebasan_idr' => $this->ndpbm->kurs_idr * $this->pembebasan
-        ];
-    }
-
-    // simulasi perhitungan
-    public function getSimulasiPungutanAttribute() {
-        // pertama, perhitungan BM bisa berubah tergantung
-        // jenis importasi (komersil atau pribadi)?
-        $isKomersil = $this->komersil;
-        $pph_tarif = $this->pph_tarif;
-        $ppnbm_tarif = 0;
-
-        // $total_cukai = 0;   // for now, unaccounted. so set to 0
-        
-        // hitung per detil
-        $total_hitung = $this
-                        ->details
-                        ->map(function($e) use ($isKomersil, $pph_tarif) {
-                            // tentukan tarif bm
-                            $tarifBm = $isKomersil ? $e->hs->bm_tarif : 10;
-                            $jenisTarifBm = $e->hs->jenis_tarif;
-
-                            // 10% utk non komersil, klo komersil ikut hs
-                            $bm = $e->beaMasuk($isKomersil ? null : 10);
-                            // ppn by default 10%
-                            $ppn = $e->ppn($bm);
-                            // pph ikut tarif yg diset di header
-                            $pph = $e->pph($bm, $pph_tarif);
-                            // ppnbm ikut tarif yg diset per detil
-                            $ppnbm = $e->ppnbm($bm);
-
-                            return [
-                                'hs_code'       => $e->hs->kode,
-                                'bm_tarif'      => (float) $tarifBm,
-                                'bm_tarif_hs'   => (float) $e->hs->bm_tarif,
-                                'jenis_tarif_bm'=> $jenisTarifBm,
-                                'satuan_spesifik'   => $e->hs->satuan_spesifik,
-
-                                'jumlah_satuan' => $e->jumlah_satuan,
-                                'jenis_satuan'  => $e->jenis_satuan,
-
-                                'jumlah_kemasan'    => $e->jumlah_kemasan,
-                                'jenis_kemasan'     => $e->jenis_kemasan,
-
-                                'ppn_tarif'     => 10.0,
-                                'pph_tarif'     => (float) $pph_tarif,
-                                'ppnbm_tarif'   => (float) $e->ppnbm_tarif,
-                                'nilai_pabean'  => (float) $e->nilai_pabean,
-                                'fob' => (float) $e->fob,
-                                'insurance' => (float) $e->insurance,
-                                'freight' => (float) $e->freight,
-                                'cif' => (float) $e->cif,
-                                'bm' => (float) $bm,
-                                'cukai' => 0,
-                                'ppn'=> (float) $ppn,
-                                'pph'=> (float) $pph,
-                                'ppnbm' => (float) $ppnbm,
-
-                                'valuta' => $e->kurs->kode_valas,
-                                'ndpbm'  => (float) $e->kurs->kurs_idr,
-
-                                'long_description'  => $e->long_description,
-
-                                'short_description' => $e->uraian,
-                                'brutto'    => (float) $e->brutto
-                            ];
-                        });
-
-        $hitung_total = function($acc, $e) {
-            return $acc + $e;
-        };
-
-        $cari_maksimum = function($acc, $e) {
-            return $acc > $e ? $acc : $e;
-        };
-
-        // untuk non komersil, BM = (total nilai pabean - pembebasan) * 10% 
-        if (!$isKomersil) {
-            // totalkan nilai pabean
-            $nilai_pabean = $total_hitung->map(function($e) { return $e['nilai_pabean']; })->reduce($hitung_total);
-            // hitung nilai pembebasan
-            if (!$this->ndpbm) {
-                throw new \Exception("NDPBM belum diset!");
-            }
-
-            $nilai_pembebasan = $this->pembebasan * $this->ndpbm->kurs_idr;
-            $nilai_pabean -= $nilai_pembebasan;
-
-            // gotta check if nilai_pabean < nilai_pembebasan
-            if ($nilai_pabean <= 0.0) {
-                throw new \Exception("Total nilai barang di bawah pembebasan. Perhitungan tidak dapat dilanjutkan", 8008);
-            }
-
-            $data_pembebasan = [
-                'nilai_pembebasan'  => $this->pembebasan,
-                'valuta'            => $this->ndpbm->kode_valas,
-                'ndpbm'             => $this->ndpbm->kurs_idr,
-                'nilai_pembebasan_rp'   => $nilai_pembebasan,
-                'nilai_dasar_perhitungan'   => $nilai_pabean,
-                'tarif_bm_universal'    => 10.0
-            ];
-
-            // ambil tarif ppnbm dari tarif maksimum yang diset di barang
-            $ppnbm_tarif = $total_hitung->map(function ($e) { return $e['ppnbm_tarif']; })->reduce($cari_maksimum, 0);
-
-            // hitung bm pakai nilai_pabean * 10%;
-            $total_bm = ceil($nilai_pabean * 0.1 / 1000.0) * 1000.0;
-            $total_cukai = 0;
-            $total_ppn = ceil( ($nilai_pabean + $total_bm) * 0.1 / 1000.0 ) * 1000.0;
-            $total_pph = ceil( ($nilai_pabean + $total_bm) * ($pph_tarif * 0.01) / 1000.0 ) * 1000.0;
-            $total_ppnbm = ceil( ($nilai_pabean + $total_bm) * ($ppnbm_tarif * 0.01) / 1000.0 ) * 1000.0;
-
-            // ambil kurs usd per tanggal hari ini?
-        } else {
-            // total dari total hitung        
-            $total_bm       = $total_hitung->map(function($e) { return $e['bm']; })->reduce($hitung_total);
-            $total_cukai    = $total_hitung->map(function($e) { return $e['cukai']; })->reduce($hitung_total);
-            $total_ppn      = $total_hitung->map(function($e) { return $e['ppn']; })->reduce($hitung_total);
-            $total_pph      = $total_hitung->map(function($e) { return $e['pph']; })->reduce($hitung_total);
-            $total_ppnbm    = $total_hitung->map(function($e) { return $e['ppnbm']; })->reduce($hitung_total);
-        }
-
-        return [
-            'komersil'  => $isKomersil,
-            'pph_tarif' => $pph_tarif,
-            'ppnbm_tarif' => $ppnbm_tarif,
-            'total_bm'  => $total_bm,
-            'total_cukai'  => $total_cukai,
-            'total_ppn'  => $total_ppn,
-            'total_pph'  => $total_pph,
-            'total_ppnbm'  => $total_ppnbm,
-            'total_bm_pajak'    => $total_bm+$total_cukai+$total_ppn+$total_pph+$total_ppnbm,
-
-            'data_perhitungan'  => $total_hitung->toArray(),
-            'data_pembebasan'   => $data_pembebasan ?? null
-        ];
-    }
-
-    // get billing_info attribute
-    public function getBillingInfoAttribute() {
-        // if we have no details, return null?
-        try {
-            $p = $this->simulasi_pungutan;
-
-            return [
-                'jenis' => 'IMPOR',
-                'tagihan'   => [
-                    'total_bm'  => $p['total_bm'],
-                    'total_ppn' => $p['total_ppn'],
-                    'total_pph' => $p['total_pph'],
-                    'total_ppnbm'   => $p['total_ppnbm'],
-                    'total_denda'   => 0
-                ],
-                'wajib_bayar'   => [
-                    'nama'  => $this->penumpang->nama,
-                    'alamat'=> $this->alamat,
-                    'npwp'  => strlen(trim($this->npwp)) == 15 ? $this->npwp : '',
-                    'identitas' => [
-                        'nomor' => $this->penumpang->no_paspor,
-                        'jenis' => 'PASPOR'
-                    ]
-                ],
-                'kurs'  => [
-                    'valuta'    => $this->ndpbm->kode_valas,
-                    'nilai'     => $this->ndpbm->kurs_idr
-                ]
-            ];
-        } catch (\Exception $e) {
-            throw $e;
-            return null;
-        }
+    public function getDataSppbAttribute()
+    {
+        return [];
     }
 
     // ===========================DETAIL BARANG LISTEENR============================
