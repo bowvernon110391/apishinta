@@ -53,6 +53,7 @@ if (!function_exists('grabsKursData')) {
 			// dump($html);
 		} catch (\Exception $e) {
 			// return empty data, will be interpreted as service unavailable
+			throw $e;
 			return null;
 		}
 		
