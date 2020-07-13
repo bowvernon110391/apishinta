@@ -561,4 +561,42 @@ class CDController extends ApiController
             return $this->errorBadRequest($e->getMessage());
         }
     }
+
+    /**
+     * store billing data to cd
+     */
+    public function storeBilling(Request $r, $id) {
+        DB::beginTransaction();
+        try {
+            // grab cd
+            $cd = CD::findOrFail($id);
+
+            // store some new billing data
+            $b = $cd->billing()->create([
+                'nomor' => expectSomething($r->get('nomor'), 'Nomor Billing'),
+                'tanggal' => expectSomething($r->get('tanggal'), 'Tanggal Billing')
+            ]);
+
+            // append status
+            $cd->appendStatus(
+                'BILLING',
+                null,
+                'Penerbitan Billing untuk Customs Declaration',
+                $b
+            );
+
+            // commit
+            DB::commit();
+
+            // return empty (Billing data is not important)
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("CD #{$id} was not found");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
 }

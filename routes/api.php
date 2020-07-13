@@ -126,6 +126,10 @@ Route::put('/cd/{id}/penetapan', 'CDController@storePenetapan')
 Route::put('/cd/{id}/bppm', 'CDController@storeBppm')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
 
+// POST /cd/{id}/billing
+Route::post('/cd/{id}/billing', 'CDController@storeBilling')
+        ->middleware($corsGroup['resourceGroup'], 'role:PDTT,CONSOLE');
+
 // PUT /cd/{id}/sppb
 Route::put('/cd/{id}/sppb', 'CDController@storeSppb')
         ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
