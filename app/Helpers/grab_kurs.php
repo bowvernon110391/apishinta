@@ -49,7 +49,11 @@ if (!function_exists('grabsKursData')) {
 		// source data
 		try {
 			//code...
-			$html = file_get_contents('https://fiskal.kemenkeu.go.id/informasi-publik/kurs-pajak');
+			$html = file_get_contents(
+				'https://fiskal.kemenkeu.go.id/informasi-publik/kurs-pajak',
+				false,
+				$arrContextOptions
+			);
 			// dump($html);
 		} catch (\Exception $e) {
 			// return empty data, will be interpreted as service unavailable
