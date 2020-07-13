@@ -574,7 +574,12 @@ class CDController extends ApiController
             // store some new billing data
             $b = $cd->billing()->create([
                 'nomor' => expectSomething($r->get('nomor'), 'Nomor Billing'),
-                'tanggal' => expectSomething($r->get('tanggal'), 'Tanggal Billing')
+                'tanggal' => expectSomething($r->get('tanggal'), 'Tanggal Billing'),
+
+                // the rest of the data can be null (empty)
+                'ntb' => $r->get('ntb'),
+                'ntpn' => $r->get('ntpn'),
+                'tgl_ntpn' => $r->get('tgl_ntpn')
             ]);
 
             // append status

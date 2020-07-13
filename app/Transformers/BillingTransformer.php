@@ -9,7 +9,11 @@ class BillingTransformer extends TransformerAbstract {
         return [
             'id' => (int) $b->id,
             'nomor' => $b->nomor,
-            'tanggal' => $b->tanggal
+            'tanggal' => $b->tanggal,
+
+            'ntb' => $b->ntb,
+            'ntpn' => $b->ntpn,
+            'tgl_ntpn' => $b->tgl_ntpn
         ];
     }
 }

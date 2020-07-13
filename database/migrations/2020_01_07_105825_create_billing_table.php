@@ -19,6 +19,10 @@ class CreateBillingTable extends Migration
             $table->string('nomor', 32)->index();
             $table->date('tanggal')->index();
 
+            $table->string('ntb')->nullable();
+            $table->string('ntpn')->nullable();
+            $table->date('tgl_ntpn')->nullable()->index();
+
             $table->morphs('billable');
 
             $table->timestamps();
