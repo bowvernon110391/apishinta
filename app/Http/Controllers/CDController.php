@@ -519,13 +519,13 @@ class CDController extends ApiController
             $cd = CD::findOrFail($id);
 
             // gotta grab sppb data, in this case?
-            // type
-            $lokasi_type = expectSomething($r->get('lokasi_type'), 'Jenis Lokasi Timbun');
-            // kode
-            $lokasi_kode = expectSomething($r->get('lokasi_kode'), 'Kode Lokasi Timbun');
 
             // #1, grab lokasi from that data
-            $lokasi = $lokasi_type::byKode($lokasi_kode)->first();
+            $lokasi = $cd->lokasi;
+
+            if (!$lokasi) {
+                throw new \Exception("Lokasi CD tidak boleh kosong!");
+            }
 
             // #2, spawn sppb and associate it
             $s = new SPPB([
