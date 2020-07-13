@@ -52,7 +52,7 @@ if (!function_exists('grabsKursData')) {
 			$html = file_get_contents(
 				'https://fiskal.kemenkeu.go.id/informasi-publik/kurs-pajak',
 				false,
-				$arrContextOptions
+				stream_context_create($arrContextOptions)
 			);
 			// dump($html);
 		} catch (\Exception $e) {
