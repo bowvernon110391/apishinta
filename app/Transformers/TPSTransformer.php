@@ -6,6 +6,10 @@ use League\Fractal\TransformerAbstract;
 
 class TPSTransformer extends TransformerAbstract {
 
+    protected $availableIncludes = [
+        'gudang'
+    ];
+
     public function transform(TPS $t) {
         $data = [
             'id' => (int) $t->id,
@@ -16,5 +20,11 @@ class TPSTransformer extends TransformerAbstract {
         ];
 
         return $data;
+    }
+
+    public function includeGudang(TPS $t)
+    {
+        $g = $t->gudang;
+        return $this->collection($g, new GudangTransformer);
     }
 }
