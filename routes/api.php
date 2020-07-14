@@ -315,6 +315,10 @@ Route::post('/pjt', 'ReferensiController@storePjt')
 Route::get('/gudang', 'ReferensiController@getGudang')
         ->middleware($corsGroup['resourceGroup']);
 
+// POST /tps/{id}/gudang
+Route::post('/tps/{id}/gudang', 'ReferensiController@storeGudang')
+        ->middleware($corsGroup['resourceGroup'], 'role');
+
 
 //====================================================================================================
 // ENDPOINTS BPJ

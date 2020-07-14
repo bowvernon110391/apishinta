@@ -35,6 +35,7 @@ use App\Transformers\ReferensiJenisPungutanTransformer;
 use App\Transformers\SatuanTransformer;
 use App\Transformers\TPSTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 use League\Fractal\Manager;
 use PDOException;
 
@@ -362,7 +363,7 @@ class ReferensiController extends ApiController
 
     // POST /pjt
     public function storePjt(Request $r) {
-        
+        DB::beginTransaction();
         try {
             // grab data,
             $nama = expectSomething($r->get('nama'), 'Nama PJT');
@@ -388,14 +389,19 @@ class ReferensiController extends ApiController
             // log it?
             AppLog::logInfo("PJT #{$p->id} was input by {$r->userInfo['username']}", $p, false);
 
+            // commit
+            DB::commit();
+
             // return
             return $this->respondWithArray([
                 'id' => $p->id,
                 'uri' => '/pjt/' . $p->id
             ]);
         } catch (PDOException $e) {
+            DB::rollBack();
             return $this->errorBadRequest("PJT duplikat!");
         } catch (\Throwable $e) {
+            DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
     }
@@ -403,5 +409,47 @@ class ReferensiController extends ApiController
     // GET /gudang
     public function getGudang() {
         return $this->respondWithCollection(Gudang::all(), new GudangTransformer);
+    }
+
+    // POST /tps/{id}/gudang
+    public function storeGudang(Request $r, $tpsId) {
+        DB::beginTransaction();
+        try {
+            // grab tps
+            $t = TPS::findOrFail($tpsId);
+
+            // grab data
+            $kode = expectSomething($r->get('kode'), 'Kode Gudang');
+            $kode = strtoupper(trim($kode));
+
+            // kode gudang kudu 4 karakter
+            if (strlen($kode) != 4) throw new \Exception("Kode gudang harus 4 karakter ==> {$kode}");
+
+            // store
+            $g = $t->gudang()->create([
+                'kode' => $kode
+            ]);
+
+            // Log it
+            AppLog::logInfo("Kode Gudang {$kode} ditambahkan oleh {$r->userInfo['username']}", $g, false);
+
+            // commit
+            DB::commit();
+
+            // return new gudang info
+            return $this->respondWithArray([
+                'id' => (int) $g->id,
+                'uri' => '/gudang/' . $g->id
+            ]);
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("TPS #{$tpsId} was not found.");
+        } catch (PDOException $e) {
+            DB::rollBack();
+            return $this->errorBadRequest("Kode GUDANG DUPLIKAT");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 }

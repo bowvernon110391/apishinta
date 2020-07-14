@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gudang extends Model
 {
+    use TraitLoggable;
     // settings
     protected $table='gudang';
 
