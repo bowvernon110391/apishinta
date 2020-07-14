@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Airline;
 use App\AppLog;
 use App\DetailSekunder;
+use App\Gudang;
 use Illuminate\Http\Request;
 use App\Negara;
 use App\HsCode;
@@ -12,6 +13,7 @@ use App\Kategori;
 use App\Kemasan;
 use App\Lokasi;
 use App\Pelabuhan;
+use App\PJT;
 use App\Satuan;
 use App\ReferensiJenisDetailSekunder;
 use App\ReferensiJenisDokkap;
@@ -19,12 +21,14 @@ use App\ReferensiJenisPungutan;
 use App\Services\SSO;
 use App\TPS;
 use App\Transformers\AirlineTransformer;
+use App\Transformers\GudangTransformer;
 use App\Transformers\HsCodeTransformer;
 use App\Transformers\NegaraTransformer;
 use App\Transformers\KategoriTransformer;
 use App\Transformers\KemasanTransformer;
 use App\Transformers\LokasiTransformer;
 use App\Transformers\PelabuhanTransformer;
+use App\Transformers\PJTTransformer;
 use App\Transformers\ReferensiJenisDetailSekunderTransformer;
 use App\Transformers\ReferensiJenisDokkapTransformer;
 use App\Transformers\ReferensiJenisPungutanTransformer;
@@ -348,5 +352,15 @@ class ReferensiController extends ApiController
     // GET /tps
     public function getTps() {
         return $this->respondWithCollection(TPS::all(), new TPSTransformer);
+    }
+
+    // GET /pjt
+    public function getPjt() {
+        return $this->respondWithCollection(PJT::all(), new PJTTransformer);
+    }
+
+    // GET /gudang
+    public function getGudang() {
+        return $this->respondWithCollection(Gudang::all(), new GudangTransformer);
     }
 }

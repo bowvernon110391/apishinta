@@ -14,6 +14,11 @@ class TPS extends Model
         'updated_at'
     ];
 
+    // relations
+    public function gudang() {
+        return $this->hasMany(Gudang::class, 'tps_id');
+    }
+
     // scopes
     public function scopeByKode($query, $kode) {
         return $query->where('kode', $kode);

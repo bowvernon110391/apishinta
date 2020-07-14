@@ -303,6 +303,15 @@ Route::get('/lokasi', 'ReferensiController@getLokasi')
 Route::get('/tps', 'ReferensiController@getTps')
         ->middleware($corsGroup['resourceGroup']);
 
+// GET /pjt
+Route::get('/pjt', 'ReferensiController@getPjt')
+        ->middleware($corsGroup['resourceGroup']);
+        
+// GET /gudang
+Route::get('/gudang', 'ReferensiController@getGudang')
+        ->middleware($corsGroup['resourceGroup']);
+
+
 //====================================================================================================
 // ENDPOINTS BPJ
 // BPJ itu classified, jd kasih guard di api endpointsnya
