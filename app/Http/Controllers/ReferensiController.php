@@ -36,6 +36,7 @@ use App\Transformers\SatuanTransformer;
 use App\Transformers\TPSTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use League\Fractal\Manager;
+use PDOException;
 
 class ReferensiController extends ApiController
 {
@@ -357,6 +358,46 @@ class ReferensiController extends ApiController
     // GET /pjt
     public function getPjt() {
         return $this->respondWithCollection(PJT::all(), new PJTTransformer);
+    }
+
+    // POST /pjt
+    public function storePjt(Request $r) {
+        
+        try {
+            // grab data,
+            $nama = expectSomething($r->get('nama'), 'Nama PJT');
+            $npwp = expectSomething($r->get('npwp'), 'NPWP PJT');
+            $alamat = $r->get('alamat');
+
+            // clear all sign
+            $nama = trim(strtoupper($nama));
+            $npwp = preg_replace('/[^\d]/i', "", $npwp);
+
+            // validate
+            if (strlen($nama) < '4') throw new \Exception("Nama PJT Terlalu pendek --> {$nama}");
+            if (strlen($npwp) != 15) throw new \Exception("NPWP harus 15 digit --> {$npwp} = " . strlen($npwp) . " digit");
+
+            // create new PJT
+            $p = new PJT([
+                'nama' => $nama,
+                'npwp' => $npwp,
+                'alamat' => $alamat
+            ]);
+            $p->save();
+
+            // log it?
+            AppLog::logInfo("PJT #{$p->id} was input by {$r->userInfo['username']}", $p, false);
+
+            // return
+            return $this->respondWithArray([
+                'id' => $p->id,
+                'uri' => '/pjt/' . $p->id
+            ]);
+        } catch (PDOException $e) {
+            return $this->errorBadRequest("PJT duplikat!");
+        } catch (\Throwable $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
     }
 
     // GET /gudang

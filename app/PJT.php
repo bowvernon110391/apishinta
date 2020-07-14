@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PJT extends Model
 {
+    use TraitLoggable;
     // settings
     protected $table = 'pjt';
 

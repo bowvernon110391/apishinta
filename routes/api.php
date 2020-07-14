@@ -306,6 +306,10 @@ Route::get('/tps', 'ReferensiController@getTps')
 // GET /pjt
 Route::get('/pjt', 'ReferensiController@getPjt')
         ->middleware($corsGroup['resourceGroup']);
+
+// POST /pjt
+Route::post('/pjt', 'ReferensiController@storePjt')
+        ->middleware($corsGroup['resourceGroup'], 'role');
         
 // GET /gudang
 Route::get('/gudang', 'ReferensiController@getGudang')
