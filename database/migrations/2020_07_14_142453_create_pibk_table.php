@@ -48,6 +48,13 @@ class CreatePibkTable extends Migration
             // koli
             $table->unsignedInteger('koli');
 
+            // bc11
+            $table->unsignedSmallInteger('no_bc11')->nullable();
+            $table->date('tgl_bc11')->nullable();
+            $table->unsignedSmallInteger('pos_bc11')->nullable();
+            $table->unsignedSmallInteger('subpos_bc11')->nullable();
+            $table->unsignedSmallInteger('subsubpos_bc11')->nullable();
+
             $table->timestamps();
 
             // setup foreign keys

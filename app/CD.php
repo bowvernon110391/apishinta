@@ -2,12 +2,11 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CD extends AbstractDokumen implements 
-IInstructable, IHasGoods, ISpecifiable, ITariffable, IHasPungutan, INotable, IPayable,
-IGateable
+IInstructable, IHasGoods, ISpecifiable, ITariffable, 
+IHasPungutan, INotable, IPayable, IGateable
 {
     // use TraitInspectable;
     use TraitInstructable;
