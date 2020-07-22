@@ -39,16 +39,16 @@ class PIBKTransformer extends TransformerAbstract {
         
         'ndpbm',
         'status',
-        'lampiran',
-        'instruksi_pemeriksaan',
+        // 'lampiran',
+        // 'instruksi_pemeriksaan',
         
-        'dokkap',
+        // 'dokkap',
         
         'bppm',
         'billing',
         'sppb',
 
-        'details'
+        // 'details'
     ];
 
     public function transform(PIBK $p) {
@@ -87,7 +87,7 @@ class PIBKTransformer extends TransformerAbstract {
 
             // importir
             'alamat' => (string) $p->alamat,
-            'npwm' => (string) $p->npwp
+            'npwp' => (string) $p->npwp
         ];
     }
 
@@ -138,7 +138,9 @@ class PIBKTransformer extends TransformerAbstract {
     // 'ndpbm',
     public function includeNdpbm(PIBK $p) {
         $n = $p->ndpbm;
-        return $this->item($n, new KursTransformer);
+        if ($n) {
+            return $this->item($n, new KursTransformer);
+        }
     }
 
     // 'status',
