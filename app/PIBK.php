@@ -166,4 +166,38 @@ IHasPungutan, INotable, IPayable, IGateable
         $nomorLengkap = str_pad($this->no_dok, 6,"0", STR_PAD_LEFT);
         return $nomorLengkap;
     }
+
+    // scopes
+    public function scopeByQuery($query, $q, $from=null, $to=null) {
+        return $query->where('npwp', 'like', "%$q%")
+        ->orWhere('alamat', 'like', "%$q%")
+        ->orWhere('no_flight', 'like', "%$q%")
+        ->orWhere('nomor_lengkap_dok', 'like', "%$q%")
+        ->orWhere(function($q1) use ($q) {
+            $q1->byImportir($q);
+        })
+        ->when($from, function($q1) use ($from) {
+            $q1->from($from);
+        })
+        ->when($to, function($q1) use ($to) {
+            $q1->to($to);
+        })
+        ->latest()
+        ->orderBy('id', 'desc')
+        ;
+    }
+
+    public function scopeFrom($query, $from) {
+        return $query->where('tgl_dok', '>=', $from);
+    }
+
+    public function scopeTo($query, $to) {
+        return $query->where('tgl_dok', '<=', $to);
+    }
+
+    public function scopeByImportir($query, $q) {
+        return $query->whereHasMorph('importir', [Penumpang::class], function($q1) use ($q) {
+            $q1->where('nama', 'like', "%$q%");
+        });
+    }
 }
