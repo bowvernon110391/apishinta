@@ -4,15 +4,13 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Jasny\SSO\Broker;
 
-use function Psy\debug;
-
 class SSO {
     public $sso = null;
 
     public function __construct(Request $r)
     {
         $this->sso = new Broker(
-            'http://sso.bcsoetta.org/',
+            'https://ssoserv.bcsoetta.org/',
             '5',
             '5h1n74aPPs'
         ); 
@@ -21,7 +19,7 @@ class SSO {
         $token = $r->bearerToken();
         $this->sso->token = $token;
 
-        info("SSO spawned with token : $token");
+        // info("SSO spawned with token : $token");
     }
 
     public function getUserInfo() {
