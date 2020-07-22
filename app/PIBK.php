@@ -63,6 +63,14 @@ IHasPungutan, INotable, IPayable, IGateable
         return $this->belongsTo(Kurs::class, 'ndpbm_id');
     }
 
+    public function pelabuhanAsal() {
+        return $this->belongsTo(Pelabuhan::class, 'kd_pelabuhan_asal', 'kode');
+    }
+
+    public function pelabuhanTujuan() {
+        return $this->belongsTo(Pelabuhan::class, 'kd_pelabuhan_tujuan', 'kode');
+    }
+
     // scopes
 
     // attributes

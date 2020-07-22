@@ -5,6 +5,51 @@ use App\PIBK;
 use League\Fractal\TransformerAbstract;
 
 class PIBKTransformer extends TransformerAbstract {
+    protected $availableIncludes = [
+        'importir',
+        'airline',
+        'pelabuhan_asal',
+        'pelabuhan_tujuan',
+        'pemberitahu',
+        'source',
+        'lokasi',
+        
+        'ndpbm',
+        'status',
+        'lampiran',
+        'instruksi_pemeriksaan',
+        
+        'dokkap',
+        
+        'bppm',
+        'billing',
+        'sppb',
+
+        'details'
+    ];
+
+    protected $defaultIncludes = [
+        'importir',
+        'airline',
+        'pelabuhan_asal',
+        'pelabuhan_tujuan',
+        'pemberitahu',
+        'source',
+        'lokasi',
+        
+        'ndpbm',
+        'status',
+        'lampiran',
+        'instruksi_pemeriksaan',
+        
+        'dokkap',
+        
+        'bppm',
+        'billing',
+        'sppb',
+
+        'details'
+    ];
 
     public function transform(PIBK $p) {
         // use common theme
@@ -16,6 +61,12 @@ class PIBKTransformer extends TransformerAbstract {
             
             // data barang
             'koli' => (int) $p->koli,
+
+            // importir
+            'importir_type' => $p->importir_type,
+
+            // source
+            'source_type' => $p->source_type,
 
             // bc11
             'no_bc11' => $p->no_bc11,
@@ -38,5 +89,104 @@ class PIBKTransformer extends TransformerAbstract {
             'alamat' => (string) $p->alamat,
             'npwm' => (string) $p->npwp
         ];
+    }
+
+    // importir
+    public function includeImportir(PIBK $p) {
+        return $this->item($p->importir, spawnTransformer($p->importir));
+    }
+
+    // airline
+    public function includeAirline(PIBK $p) {
+        return $this->item($p->airline, new AirlineTransformer);
+    }
+
+    // 'pelabuhan_asal',
+    public function includePelabuhanAsal(PIBK $p) {
+        return $this->item($p->pelabuhanAsal, new PelabuhanTransformer);
+    }
+
+    // 'pelabuhan_tujuan',
+    public function includePelabuhanTujuan(PIBK $p) {
+        return $this->item($p->pelabuhanTujuan, new PelabuhanTransformer);
+    }
+
+    // 'pemberitahu', optional
+    public function includePemberitahu(PIBK $p) {
+        $pp = $p->pemberitahu;
+        if ($pp) {
+            return $this->item($pp, spawnTransformer($pp));
+        }
+    }
+
+    // 'source', optional
+    public function includeSource(PIBK $p) {
+        $s = $p->source;
+        if ($s) {
+            return $this->item($s, spawnTransformer($s));
+        }
+    }
+
+    // 'lokasi', optional
+    public function includeLokasi(PIBK $p) {
+        $l = $p->lokasi;
+        if ($l) {
+            return $this->item($l, spawnTransformer($l));
+        }
+    }
+    
+    // 'ndpbm',
+    public function includeNdpbm(PIBK $p) {
+        $n = $p->ndpbm;
+        return $this->item($n, new KursTransformer);
+    }
+
+    // 'status',
+    public function includeStatus(PIBK $p) {
+        return $this->collection($p->status, new StatusTransformer);
+    }
+
+    // 'lampiran',
+    public function includeLampiran(PIBK $p) {
+        return $this->collection($p->lampiran, new LampiranTransformer);
+    }
+
+    // 'instruksi_pemeriksaan', optional
+    public function includeInstruksiPemeriksaan(PIBK $p) {
+        $ip = $p->instruksiPemeriksaan;
+        if ($ip) {
+            return $this->item($ip, new InstruksiPemeriksaanTransformer);
+        }
+    }
+    
+    // 'dokkap',
+    public function includeDokkap(PIBK $p) {
+        return $this->collection($p->dokkap, new DokkapTransformer);
+    }
+    
+    // 'bppm', optional
+    public function includeBppm(PIBK $p) {
+        $b = $p->bppm;
+        if ($b) {
+            return $this->item($b, new BPPMTransformer);
+        }
+    }
+
+    // 'billing', optional
+    public function includeBilling(PIBK $p) {
+        return $this->collection($p->billing, new BillingTransformer);
+    }
+
+    // 'sppb', optional
+    public function includeSppb(PIBK $p) {
+        $s = $p->sppb;
+        if ($s) {
+            return $this->item($s, new SPPBTransformer);
+        }
+    }
+
+    // 'details'
+    public function includeDetails(PIBK $p) {
+        return $this->collection($p->detailBarang, new DetailBarangTransformer);
     }
 }

@@ -498,3 +498,13 @@ Route::put('/penetapan/{id}', 'DetailBarangController@updatePenetapan')
 
 Route::delete('/penetapan/{id}', 'DetailBarangController@deletePenetapan')
 ->middleware($corsGroup['singleItem'], 'role:PDTT,CONSOLE');
+
+//====================================================================================================
+// ENDPOINTS PIBK
+// kasih guard di endpointnya
+//====================================================================================================
+Route::get('/pibk', 'PIBKController@index')
+->middleware($corsGroup['resourceGroup'], 'role');
+
+Route::get('/pibk/{id}', 'PIBKController@show')
+->middleware($corsGroup['singleItem'], 'role');
