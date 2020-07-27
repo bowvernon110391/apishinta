@@ -10,6 +10,10 @@ class GudangTransformer extends TransformerAbstract {
         'tps'
     ];
 
+    protected $defaultIncludes = [
+        'tps'
+    ];
+
     public function transform(Gudang $g) {
         return [
             'id' => (int) $g->id,

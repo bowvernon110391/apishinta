@@ -64,9 +64,15 @@ class PIBKTransformer extends TransformerAbstract {
 
             // importir
             'importir_type' => $p->importir_type,
+            'importir_id' => (int) $p->importir_id,
 
             // source
             'source_type' => $p->source_type,
+            'source_id' => (int) $p->source_id,
+
+            // lokasi
+            'lokasi_type' => $p->lokasi_type,
+            'lokasi_id' => (int) $p->lokasi_id,
 
             // bc11
             'no_bc11' => $p->no_bc11,
@@ -84,6 +90,7 @@ class PIBKTransformer extends TransformerAbstract {
 
             'kd_airline' => (string) $p->kd_airline,
             'no_flight' => (string) $p->no_flight,
+            'tgl_kedatangan' => $p->tgl_kedatangan,
 
             // importir
             'alamat' => (string) $p->alamat,
