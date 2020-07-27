@@ -87,7 +87,10 @@ class PIBKTransformer extends TransformerAbstract {
 
             // importir
             'alamat' => (string) $p->alamat,
-            'npwp' => (string) $p->npwp
+            'npwp' => (string) $p->npwp,
+
+            // is it locked?
+            'is_locked' => $p->is_locked
         ];
     }
 

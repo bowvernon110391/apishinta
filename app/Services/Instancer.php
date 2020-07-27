@@ -7,6 +7,7 @@ use App\CD;
 use App\InstruksiPemeriksaan;
 use App\Lampiran;
 use App\LHP;
+use App\PIBK;
 use App\SPMB;
 use App\SPP;
 use App\ST;
@@ -18,6 +19,7 @@ class Instancer
         'cd'    => CD::class,
         'spp'   => SPP::class,
         'st'    => ST::class,
+        'pibk' => PIBK::class,
         'spmb'  => SPMB::class,
         'bpj'   => BPJ::class,
         'lampiran'  => Lampiran::class,

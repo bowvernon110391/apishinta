@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\PIBK;
+use App\Transformers\DetailBarangTransformer;
 use App\Transformers\PIBKTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -57,6 +58,24 @@ class PIBKController extends ApiController
         } catch (\Throwable $e) {
             return $this->errorBadRequest($e->getMessage());
         }
+    }
+
+    /**
+     * Show detail barang of a pibk
+     */
+    public function showDetails(Request $r, $id) {
+        $pibk = PIBK::find($id);
+
+        if (!$pibk) {
+            return $this->errorNotFound("PIBK #{$id} was not found");
+        }
+
+        // grab details
+        $paginator = $pibk->detailBarang()/* ->isPenetapan() */
+                    ->paginate($r->get('number', 10))
+                    ->appends($r->except('page'));
+        
+        return $this->respondWithPagination($paginator, new DetailBarangTransformer);
     }
 
     /**

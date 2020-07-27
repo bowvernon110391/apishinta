@@ -508,3 +508,6 @@ Route::get('/pibk', 'PIBKController@index')
 
 Route::get('/pibk/{id}', 'PIBKController@show')
 ->middleware( 'role');
+
+Route::get('/pibk/{id}/details', 'PIBKController@showDetails')
+->middleware('role');
