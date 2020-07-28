@@ -23,7 +23,7 @@ class KursCheck extends Command
      *
      * @var string
      */
-    protected $description = 'Cek data kurs terbaru dari BKF';
+    protected $description = 'Cek data kurs yang ada di DB';
 
     /**
      * Create a new command instance.

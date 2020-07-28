@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\KursUpdate;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+
     ];
 
     /**
@@ -26,6 +27,13 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        // update kurs. run every wednesday, hourly, between 00:01 am and 07:00 am WIB
+        $schedule->command(KursUpdate::class)
+                ->wednesdays()
+                ->hourly()
+                ->between('00:01', '07:00')
+                ->timezone('Asia/Jakarta');
     }
 
     /**

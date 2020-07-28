@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Kurs;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Helper\Table;
 
 class KursUpdate extends Command
 {
@@ -20,7 +22,7 @@ class KursUpdate extends Command
      *
      * @var string
      */
-    protected $description = 'Update data kurs dengan menarik data dari data kurs pajak di situs BKF';
+    protected $description = 'Update data kurs dengan menarik data kurs pajak di situs BKF';
 
     /**
      * Create a new command instance.
@@ -40,10 +42,13 @@ class KursUpdate extends Command
     public function handle()
     {
         // just do what KursController::update does
+        Log::info("kurs:update => pulling data from BKF...");
         try {
             $kursData = grabKursData();
+            Log::info("kurs:update => data pulled...");
         } catch (\Throwable $e) {
-            $this->line("<error>Error pulling kurs from BKF: $e->getMessage()</>\n");
+            $this->line("<error>Error pulling kurs from BKF: {$e->getMessage()}</>\n");
+            Log::error("kurs:update => [ERROR] {$e->getMessage()}");
             return false;
         }
 
@@ -53,12 +58,13 @@ class KursUpdate extends Command
 
         // do we have it?
         if ($kursData) {
+            Log::info("kurs:update => syncing kurs data with pulled data...");           
             
             DB::beginTransaction();
 
             try {
                 // save for each kurs
-                /* foreach ($kursData['data'] as $valas => $nilaiKurs) {
+                foreach ($kursData['data'] as $valas => $nilaiKurs) {
                     // try to search first
                     $k = Kurs::where('kode_valas', $valas)
                                 ->where('jenis', 'KURS_PAJAK')
@@ -93,7 +99,7 @@ class KursUpdate extends Command
 
                         $inserted ++;
                     }
-                } */
+                }
                 DB::commit();
 
                 // show the info first
@@ -109,13 +115,28 @@ class KursUpdate extends Command
                     ];
                 } );
 
-                dd($kursData);
-            } catch (\Throwable $e) {
+                // dd($kursData['data']);
+                $table = new Table($this->output);
+
+                $table->setHeaders([
+                    'Valuta',
+                    'Nilai Kurs',
+                    'Tgl Awal',
+                    'Tgl Akhir'
+                ]);
+
+                $table->setRows($kursData['data']);
+                $table->render();
+
+                Log::info("kurs:update => done. inserted: {$inserted}, updated: {$updated}", $kursData['data']);
+            } catch (\Exception $e) {
                 DB::rollBack();
                 $this->line("<error>DB ERROR: {$e->getMessage()}</>");
+                Log::error("kurs:update => [ERROR] {$e->getMessage()}");
             }
         } else {
             $this->line("<error>No kurs data pulled from BKF site!</>");
+            Log::warning("kurs:update => [WARNING] BKF site returned no data...");
         }
     }
 }
