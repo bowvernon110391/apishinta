@@ -27,7 +27,9 @@ class SSOUserCacheSeeder extends Seeder
             // gotta call some
             $user = $sso->getUserById(random_int(1, 612));
             if ($user) {
-                SSOUserCache::cacheUserData($user['data']);
+                $user = $user['data'][0];
+                // var_dump($user[0]);
+                SSOUserCache::cacheUserData($user);
                 ++$cached;
             }
         }
