@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Kurs;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -44,9 +46,6 @@ class KursCheck extends Command
      */
     public function handle()
     {
-        //
-        /* print_r($this->arguments());
-        print_r($this->options()); */
         // grab data
         $valuta = $this->argument('valuta');
         $tanggal = $this->option('tanggal');
@@ -61,8 +60,27 @@ class KursCheck extends Command
                 })
                 ->get()->toArray();
         
-        dump("Menampilkan data kurs [ ". implode(", ", $valuta) ." ] per tanggal {$tanggal}:\n");
-        dump($kurs);
+        $this->line("<info>data kurs [ <comment>". implode(", ", $valuta) ."</> ] per tanggal</> <comment>{$tanggal}</>:\n");
+        // dd($kurs);
+
+        if (!count($kurs)) {
+            $this->line("<error>No data found</>");
+            return;
+        }
+
+        $table = new Table($this->output);
+        $table->setHeaders([
+            'id',
+            'kode_valas',
+            'kurs_idr',
+            'jenis',
+            'tanggal_awal',
+            'tanggal_akhir',
+            'created_at',
+            'updated_at',
+        ]);
         // dd($this->options());
+        $table->setRows($kurs);
+        $table->render();
     }
 }
