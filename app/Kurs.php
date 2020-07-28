@@ -50,6 +50,9 @@ class Kurs extends Model
     }
 
     public function scopeKode($query, $kode) {
+        if (is_array($kode)) {
+            return $query->whereIn('kode_valas', $kode);
+        }
         return $query->where('kode_valas', 'like', "%{$kode}%");
     }
 
