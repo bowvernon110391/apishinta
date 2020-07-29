@@ -16,5 +16,8 @@ class DatabaseSeeder extends Seeder
         $this->call(KursSeeder::class);
         $this->call(SSOUserCacheSeeder::class);
         $this->call(CDSeeder::class);
+        // call ST and SPP Seeder
+        $this->call(SPPSeeder::class);
+        $this->call(STSeeder::class);
     }
 }
