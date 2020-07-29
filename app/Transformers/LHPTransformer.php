@@ -39,7 +39,7 @@ class LHPTransformer extends TransformerAbstract {
 
             'pemeriksa' => $pemeriksa,
 
-            'lokasi' => $l->lokasi ? $l->lokasi->nama : null,
+            'lokasi' => $l->lokasi ? $l->lokasi->kode : null,
 
             'instructable_uri' => $instructable_uri,
 
