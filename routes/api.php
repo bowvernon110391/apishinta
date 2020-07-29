@@ -517,3 +517,6 @@ Route::post('/pibk', 'PIBKController@store')
 
 Route::put('/pibk/{id}', 'PIBKController@update')
 ->middleware('role:PDTT,CONSOLE,PELAKSANA_ADMINISTRASI');
+
+Route::delete('/pibk/{id}', 'PIBKController@destroy')
+->middleware('role:PDTT,CONSOLE,PELAKSANA_ADMINISTRASI');
