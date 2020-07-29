@@ -12,6 +12,7 @@
         "fideloper/proxy": "^4.0",
         "fpdf/fpdf": "^1.81",
         "fruitcake/laravel-cors": "^2.0",
+        "guzzlehttp/guzzle": "7.0",
         "jasny/sso": "^0.3.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
