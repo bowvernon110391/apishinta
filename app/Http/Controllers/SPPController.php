@@ -76,18 +76,18 @@ class SPPController extends ApiController
             // save and then log
             $spp->save();
 
-            // log
-            AppLog::logInfo("SPP #{$spp->id} diinput oleh {$r->userInfo['username']}", $spp);
-
             // directly lock spp
             $spp->lockAndSetNumber('CREATED FROM CD');
 
             // lock cd too
             $cd->lockAndSetNumber('LOCKED BY SPP');
 
+            // log
+            AppLog::logInfo("SPP #{$spp->id} diinput oleh {$r->userInfo['username']}", $spp);
+
             // add initial status for spp
             $spp->appendStatus(
-                'CREATED', 
+                'PENERBITAN', 
                 $nama_lokasi, 
                 "Penerbitan SPP nomor {$spp->nomor_lengkap} dari Customs Declaration nomor {$cd->nomor_lengkap}", 
                 $cd,

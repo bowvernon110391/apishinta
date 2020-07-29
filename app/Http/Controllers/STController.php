@@ -89,7 +89,7 @@ class STController extends ApiController
 
             // add initial status for spp
             $st->appendStatus(
-                'CREATED', 
+                'PENERBITAN', 
                 $nama_lokasi, 
                 "Penerbitan ST nomor {$st->nomor_lengkap} dari Customs Declaration nomor {$cd->nomor_lengkap}", 
                 $cd,

@@ -7,11 +7,13 @@ use League\Fractal\TransformerAbstract;
 class StatusTransformer extends TransformerAbstract {
 
     protected $availableIncludes = [
-        'detail'
+        'detail',
+        'user'
     ];
 
     protected $defaultIncludes = [
-        'detail'
+        'detail',
+        'user'
     ];
 
     public function transform(Status $status) {
@@ -26,6 +28,11 @@ class StatusTransformer extends TransformerAbstract {
     public function includeDetail(Status $s) {
         if ($s->detail)
             return $this->item($s->detail, new StatusDetailTransformer);
+    }
+
+    public function includeUser(Status $s) {
+        if ($s->user)
+            return $this->item($s->user, new SSOUserCacheTransformer);
     }
 }
 
