@@ -76,7 +76,7 @@ class LHPController extends ApiController
 
             $l->save();
             // log
-            AppLog::logInfo("LHP #{$l->id} updated by {$r->userInfo['username']}", $l, true);
+            AppLog::logInfo("LHP #{$l->id} updated by {$r->userInfo['username']}", $l);
 
             // if locking is requested, lock it
             if ($r->get('lock') == true) {

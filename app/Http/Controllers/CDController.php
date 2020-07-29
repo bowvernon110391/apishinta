@@ -61,7 +61,7 @@ class CDController extends ApiController
             $tgl_dok = expectSomething($r->get('tgl_dok'), 'Tanggal Dokumen');
             $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
             $penumpang_id = expectSomething($r->get('penumpang_id'), 'Id Penumpang');
-            $npwp_nib = $r->get('npwp_nib');
+            $npwp_nib = $r->get('npwp_nib') ?? '';
             $no_flight = expectSomething($r->get('no_flight'), 'Nomor flight');
             $kd_airline = $r->get('kd_airline');
             $tgl_kedatangan = expectSomething($r->get('tgl_kedatangan'), 'Tanggal Kedatangan');
@@ -111,7 +111,7 @@ class CDController extends ApiController
             ]);
 
             // set npwp/nib
-            if ($npwp_nib) {
+            if (/* $npwp_nib */true) {
                 $cd->npwp = $cd->nib = $npwp_nib;
             }
 
@@ -138,7 +138,7 @@ class CDController extends ApiController
             // $cd->setNomorDokumen();  // diset nanti pas penetapan
 
             // log it
-            AppLog::logInfo("CD #{$cd->id} diinput oleh {$r->userInfo['username']}", $cd);
+            AppLog::logInfo("CD #{$cd->id} diinput oleh {$r->userInfo['username']}", $cd, false);
 
             // Update status
             $cd->appendStatus('CREATED', $lokasi);
@@ -243,11 +243,11 @@ class CDController extends ApiController
             
             $declare_flags  = $r->get('declare_flags');
             $lokasi = expectSomething($r->get('lokasi'), 'Lokasi');
-            $npwp_nib = $r->get('npwp_nib');
+            $npwp_nib = $r->get('npwp_nib') ?? '';
             // $ndpbm = expectSomething($r->get('ndpbm'), 'NDPBM');
 
             // set npwp/nib
-            if ($npwp_nib) {
+            if (/* $npwp_nib */true) {
                 $cd->npwp = $cd->nib = $npwp_nib;
             }
 
@@ -285,7 +285,7 @@ class CDController extends ApiController
             $cd->syncDokkap($r->get('dokkap')['data']);
 
             // log it
-            AppLog::logInfo("CD #{$cd->id} diupdate oleh {$r->userInfo['username']}", $cd);
+            AppLog::logInfo("CD #{$cd->id} diupdate oleh {$r->userInfo['username']}", $cd, false);
 
             // validate
             $cd->validate();

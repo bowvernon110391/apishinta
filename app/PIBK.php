@@ -102,7 +102,7 @@ IHasPungutan, INotable, IPayable, IGateable
             $nama = $this->importir->nama;
             // nomor identitas
             // bisa npwp/paspor
-            $no_identitas = $this->npwp ?? $this->importir->no_paspor;
+            $no_identitas = strlen($this->npwp) ? $this->npwp : $this->importir->no_paspor;
             $jenis_identitas = $this->npwp ? 'NPWP' : 'PASPOR';
             $npwp = $this->npwp;
         }
@@ -138,6 +138,13 @@ IHasPungutan, INotable, IPayable, IGateable
             $pemberitahu['nama'] = $this->pemberitahu->nama;
         }
 
+        $summary_package = $this->summaryPackage($this->detailBarang);
+        $tmp = [];
+        foreach ($summary_package as $jenis => $jumlah) {
+            $tmp[] = "{$jumlah} {$jenis}";
+        }
+        $jumlah_jenis_kemasan = implode(", ", $tmp);
+
         return [
             'pemberitahu' => $pemberitahu,
 
@@ -145,7 +152,7 @@ IHasPungutan, INotable, IPayable, IGateable
 
             'sarana_pengangkut' => $this->airline->uraian,
             'no_flight' => $this->no_flight,
-            'jumlah_jenis_kemasan' => $this->koli . ' Koli',
+            'jumlah_jenis_kemasan' => $jumlah_jenis_kemasan,
             'brutto' => $total_brutto,
 
             'no_bc11' => $this->no_bc11 ?? '-',
@@ -207,5 +214,10 @@ IHasPungutan, INotable, IPayable, IGateable
         return $query->whereHasMorph('importir', [Penumpang::class], function($q1) use ($q) {
             $q1->where('nama', 'like', "%$q%");
         });
+    }
+
+    public function scopeTanpaPemberitahu($query) {
+        return $query->where('pemberitahu_id', 0)
+                    ->orWhereNull('pemberitahu_id');
     }
 }

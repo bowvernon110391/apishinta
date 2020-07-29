@@ -511,3 +511,9 @@ Route::get('/pibk/{id}', 'PIBKController@show')
 
 Route::get('/pibk/{id}/details', 'PIBKController@showDetails')
 ->middleware('role');
+
+Route::post('/pibk', 'PIBKController@store')
+->middleware('role:PDTT,CONSOLE,PELAKSANA_ADMINISTRASI');
+
+Route::put('/pibk/{id}', 'PIBKController@update')
+->middleware('role:PDTT,CONSOLE,PELAKSANA_ADMINISTRASI');

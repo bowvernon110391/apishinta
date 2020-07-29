@@ -66,6 +66,10 @@ class PIBKTransformer extends TransformerAbstract {
             'importir_type' => $p->importir_type,
             'importir_id' => (int) $p->importir_id,
 
+            // pemberitahu
+            'pemberitahu_type' => $p->pemberitahu_type,
+            'pemberitahu_id' => (int) $p->pemberitahu_id,
+
             // source
             'source_type' => $p->source_type,
             'source_id' => (int) $p->source_id,
@@ -97,7 +101,10 @@ class PIBKTransformer extends TransformerAbstract {
             'npwp' => (string) $p->npwp,
 
             // is it locked?
-            'is_locked' => $p->is_locked
+            'is_locked' => $p->is_locked,
+
+            // last status
+            'last_status' => $p->short_last_status
         ];
     }
 
