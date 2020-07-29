@@ -18,6 +18,7 @@ class Status extends Model
         'statusable_type' => ''
     ];
 
+    // relations
     public function statusable(){
         return $this->morphTo();
     }
@@ -26,6 +27,11 @@ class Status extends Model
         return $this->hasOne('App\StatusDetail', 'status_id', 'id');
     }
 
+    public function user() {
+        return $this->belongsTo(SSOUserCache::class, 'user_id', 'user_id');
+    }
+
+    // scopes
     public function scopeByDoctype($query, $doctype) {
         return $query->where('statusable_type', $doctype);
     }

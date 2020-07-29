@@ -26,9 +26,16 @@ trait TraitStatusable {
         return $this->status()->latest()->orderBy('id', 'desc')->get();
     }
     
-    public function appendStatus($name, $lokasi = null, $keterangan = null, $linkable = null, $other_data = null) {
+    public function appendStatus($name, $lokasi = null, $keterangan = null, $linkable = null, $other_data = null, SSOUserCache $user = null) {
         // Better to create the status instance first
-        $s = new Status(['status' => $name, 'lokasi' => $lokasi]);
+        $s = new Status([
+            'status' => $name, 
+            'lokasi' => $lokasi
+            ]);
+        // associate with user if provided
+        if ($user) {
+            $s->user()->associate($user);
+        }
         
         $this->status()->save(
             // Status::create(['status' => $name, 'lokasi' => $lokasi])

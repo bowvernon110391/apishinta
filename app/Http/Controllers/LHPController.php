@@ -86,12 +86,26 @@ class LHPController extends ApiController
                 // lock parent too?
                 if ($l->inspectable) {
                     // Append status first to parent
-                    $l->inspectable->appendStatus('LHP', null, "LHP telah direkam", $l, null);
+                    $l->inspectable->appendStatus(
+                        'LHP', 
+                        null, 
+                        "LHP telah direkam", 
+                        $l, 
+                        null,
+                        SSOUserCache::byId($r->userInfo['user_id'])
+                    );
                     if (get_class($l->inspectable) == InstruksiPemeriksaan::class) {
                         // lock it! (CAUSE IP IS LOCKED BY LHP)
                         $l->inspectable->lockAndSetNumber();
                         // also append to parent, the "REAL" document
-                        $l->inspectable->instructable->appendStatus('LHP', null, "LHP telah direkam", $l, null);
+                        $l->inspectable->instructable->appendStatus(
+                            'LHP', 
+                            null, 
+                            "LHP telah direkam", 
+                            $l, 
+                            null,
+                            SSOUserCache::byId($r->userInfo['user_id'])
+                        );
                         
                         // append log too?
                         AppLog::logInfo("IP #{$l->inspectable->id} was closed by LHP #{$l->id}", $l->inspectable, false);
@@ -161,7 +175,14 @@ class LHPController extends ApiController
 
                 // save and add status
                 $l->save();
-                $l->appendStatus('CREATED', null, 'mulai diperiksa oleh ' . $r->userInfo['username'], $parent);
+                $l->appendStatus(
+                    'CREATED', 
+                    null, 
+                    'mulai diperiksa oleh ' . $r->userInfo['username'], 
+                    $parent,
+                    null,
+                    SSOUserCache::byId($r->userInfo['user_id'])
+                );
                 // also add number?
                 $l->setNomorDokumen();
             } else {

@@ -8,5 +8,5 @@ interface IStatusable
     public function getShortLastStatusAttribute();
     public function status();
     public function statusOrdered();
-    public function appendStatus($name, $lokasi = null, $keterangan = null, $linkable = null, $other_data = null);
+    public function appendStatus($name, $lokasi = null, $keterangan = null, $linkable = null, $other_data = null, SSOUserCache $user = null);
 }

@@ -80,18 +80,32 @@ class STController extends ApiController
             // save and then log
             $st->save();
 
+            // directly lock
+            $st->lockAndSetNumber();
+            $cd->lockAndSetNumber();
+
             // log
             AppLog::logInfo("ST #{$st->id} diinput oleh {$r->userInfo['username']}", $st);
 
             // add initial status for spp
-            $st->appendStatus('CREATED', $nama_lokasi, 'CREATED FROM CD', $cd);
+            $st->appendStatus(
+                'CREATED', 
+                $nama_lokasi, 
+                "Penerbitan ST nomor {$st->nomor_lengkap} dari Customs Declaration nomor {$cd->nomor_lengkap}", 
+                $cd,
+                null,
+                SSOUserCache::byId($r->userInfo['user_id'])
+            );
 
             // add new status fir cd
-            $cd->appendStatus('ST', $nama_lokasi, "LOCKED BY ST", $st);
-
-            // directly lock
-            $st->lockAndSetNumber();
-            $cd->lockAndSetNumber();
+            $cd->appendStatus(
+                'ST', 
+                $nama_lokasi, 
+                "Dikunci dengan ST nomor {$st->nomor_lengkap}", 
+                $st,
+                null,
+                SSOUserCache::byId($r->userInfo['user_id'])
+            );
 
             // add keterangan to st
             $st->keterangan()->create([

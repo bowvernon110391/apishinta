@@ -86,7 +86,14 @@ class IPController extends ApiController
 
                 $ip->save();
 
-                $ip->appendStatus('MODIFIED', null, "Diterbitkan ulang oleh {$r->userInfo['username']}");
+                $ip->appendStatus(
+                    'PENERBITAN ULANG IP', 
+                    null, 
+                    "Penerbitan ulang Instruksi Pemeriksaan",
+                    null,
+                    null,
+                    SSOUserCache::byId($r->userInfo['user_id'])
+                );
                 AppLog::logInfo("IP #{$ip->id} diterbitkan ulang oleh {$r->userInfo['username']}", $ip);
             } else {
                 // create new IP
@@ -105,8 +112,22 @@ class IPController extends ApiController
                 $ip->refresh();
 
                 // gotta append log?
-                $doc->appendStatus('INSTRUKSI_PEMERIKSAAN', null, null, $ip, 'instruksi_pemeriksaan');
-                $ip->appendStatus('CREATED', null, null, $doc, 'instructable');
+                $doc->appendStatus(
+                    'INSTRUKSI PEMERIKSAAN', 
+                    null, 
+                    "Instruksi Pemeriksaan diterbitkan oleh {$r->userInfo['name']}", 
+                    $ip, 
+                    'instruksi_pemeriksaan',
+                    SSOUserCache::byId($r->userInfo['user_id'])
+                );
+                $ip->appendStatus(
+                    'CREATED', 
+                    null, 
+                    null, 
+                    $doc, 
+                    'instructable',
+                    SSOUserCache::byId($r->userInfo['user_id'])
+                );
                 AppLog::logInfo("IP #{$ip->id} diterbitkan oleh {$r->userInfo['username']}", $ip);
 
                 $ip->lockAndSetNumber();    // lock it so it gets numbered?

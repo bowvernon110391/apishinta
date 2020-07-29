@@ -431,7 +431,9 @@ class CDController extends ApiController
             $cd->appendStatus(
                 'PENETAPAN',
                 null,
-                'PENETAPAN PUNGUTAN CD',
+                "Penetapan Pungutan atas CD",
+                null,
+                null,
                 $l->petugas
             );
 
@@ -481,8 +483,10 @@ class CDController extends ApiController
             $cd->appendStatus(
                 'BPPM', 
                 $r->get('lokasi') ?? $cd->lokasi->nama, 
-                null, 
-                $bppm
+                "Penerbitan Bukti Penerimaan Pembayaran Manual nomor {$bppm->nomor_lengkap}", 
+                $bppm,
+                null,
+                SSOUserCache::byId($r->userInfo['user_id'])
             );
 
             // append log
@@ -541,7 +545,14 @@ class CDController extends ApiController
             $s->lockAndSetNumber();
 
             // #4 append status CD
-            $cd->appendStatus('SPPB', null, 'Penerbitan SPPB', $s);
+            $cd->appendStatus(
+                'SPPB', 
+                null, 
+                "Penerbitan SPPB nomor {$s->nomor_lengkap_dok}", 
+                $s,
+                null,
+                SSOUserCache::byId($r->userInfo['user_id'])
+            );
 
             // #5 log it
             AppLog::logInfo("CD #{$id} diterbitkan SPPB #{$s->id} oleh {$r->userInfo['username']}", $cd, false);
@@ -586,8 +597,10 @@ class CDController extends ApiController
             $cd->appendStatus(
                 'BILLING',
                 null,
-                'Penerbitan Billing untuk Customs Declaration',
-                $b
+                "Perekaman Data billing nomor {$b->nomor}",
+                $b,
+                null,
+                SSOUserCache::byId($r->userInfo['user_id'])
             );
 
             // commit
