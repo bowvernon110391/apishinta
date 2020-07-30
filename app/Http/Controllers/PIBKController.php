@@ -317,4 +317,27 @@ class PIBKController extends ApiController
             return $this->errorBadRequest($e->getMessage());
         }
     }
+
+    /**
+     * Return computed pungutan
+     */
+    public function simulasiHitung(Request $r, $id) {
+        $p = PIBK::find($id);
+        
+        if (!$p) {
+            return $this->errorNotFound("PIBK #{$id} was not found");
+        }
+
+        try {
+            $pungutan = $p->computePungutanImpor();
+            $keterangan = $p->keterangan()->first();
+
+            return $this->respondWithArray([
+                'pungutan' => $pungutan,
+                'keterangan' => $keterangan
+            ]);
+        } catch (\Throwable $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
 }

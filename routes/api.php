@@ -520,3 +520,6 @@ Route::put('/pibk/{id}', 'PIBKController@update')
 
 Route::delete('/pibk/{id}', 'PIBKController@destroy')
 ->middleware('role:PDTT,CONSOLE,PELAKSANA_ADMINISTRASI');
+
+Route::get('/pibk/{id}/simulasi', 'PIBKController@simulasiHitung')
+->middleware('role');

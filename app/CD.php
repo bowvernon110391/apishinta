@@ -335,70 +335,7 @@ IHasPungutan, INotable, IPayable, IGateable
     }
 
     public function computePungutanCdKomersil () {
-        // grab all data barang
-        if (!count($this->detailBarang)) {
-            throw new \Exception("Tidak ada detail barang. Perhitungan tidak dapat dilakukan");
-            return null;
-        }
-
-        // just collect each detail barang and pour into one
-        /**
-         * barang : [
-         *  - tarif
-         *  - desc
-         *  - pungutan
-         * ]
-         * pungutan: [
-         *  - per type
-         * ]
-         */
-
-        $barang = $this->detailBarang->map(function ($e) {
-            return [
-                'tarif' => $e->valid_tarif,
-                'pungutan' => $e->computePungutanImpor(),
-                
-                'uraian' => $e->nice_format,
-                'uraian_print' => $e->print_format,
-                'jumlah_jenis_kemasan' => $e->jumlah_kemasan . ' ' . $e->jenis_kemasan,
-                'jumlah_jenis_satuan' => $e->jumlah_satuan . ' ' . $e->jenis_satuan,
-                'hs_code' => $e->hs->kode,
-                'hs_raw_code' => $e->hs->raw_code,
-                'fob' => (float) $e->fob,
-                'insurance' => (float) $e->insurance,
-                'freight' => (float) $e->freight,
-                'cif' => (float) $e->cif,
-                'nilai_pabean' => $e->nilai_pabean,
-                'valuta' => $e->kurs->kode_valas,
-                'ndpbm' => (float) $e->kurs->kurs_idr
-            ];
-        });
-
-        $pungutan_bayar = [];
-        $pungutan_bebas = [];
-        $pungutan_tunda = [];
-        $pungutan_tanggung_pemerintah = [];
-
-        // sum them
-        foreach ($barang as $b) {
-            foreach ($b['pungutan'] as $p) {
-                $pungutan_bayar[$p->jenisPungutan->kode] = ($pungutan_bayar[$p->jenisPungutan->kode] ?? 0) + $p->bayar;
-                $pungutan_bebas[$p->jenisPungutan->kode] = ($pungutan_bebas[$p->jenisPungutan->kode] ?? 0) + $p->bebas;
-                $pungutan_tunda[$p->jenisPungutan->kode] = ($pungutan_tunda[$p->jenisPungutan->kode] ?? 0) + $p->tunda;
-                $pungutan_tanggung_pemerintah[$p->jenisPungutan->kode] = ($pungutan_tanggung_pemerintah[$p->jenisPungutan->kode] ?? 0) + $p->tanggung_pemerintah;
-            }
-        }
-
-        // return em?
-        return [
-            'barang' => $barang,
-            'pungutan' => [
-                'bayar' => $pungutan_bayar,
-                'bebas' => $pungutan_bebas,
-                'tunda' => $pungutan_tunda,
-                'tanggung_pemerintah' => $pungutan_tanggung_pemerintah
-            ]
-        ];
+        return $this->computePungutanImpor();
     }
 
     public function computePungutanCdPersonal () {
