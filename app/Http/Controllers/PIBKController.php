@@ -369,6 +369,25 @@ class PIBKController extends ApiController
                 throw new \Exception("Tidak ada pungutan untuk PIBK ini! cek kembali datanya");
             }
 
+            // let's check total of them
+            $bayar = array_reduce($pungutan['bayar'], function($acc, $e) { return $acc + $e; }, 0);
+            $bebas = array_reduce($pungutan['bebas'], function($acc, $e) { return $acc + $e; }, 0);
+            $tunda = array_reduce($pungutan['tunda'], function($acc, $e) { return $acc + $e; }, 0);
+            $tanggung_pemerintah = array_reduce($pungutan['tanggung_pemerintah'], function($acc, $e) { return $acc + $e; }, 0);
+
+            // makes sense gk hasil perhitungannya?
+            if ($bayar < 1000.0) {
+                throw new \Exception("Total Pungutan Bayar < Rp 1000!, computed: {$bayar}" );
+            }
+
+            // bebas, tunda, tanggung pemerintah harus 0
+            if ($bebas + $tunda + $tanggung_pemerintah > 0) {
+                throw new \Exception("Penetapan PIBK harus bayar full, computed => bebas: {$bebas}, tunda: {$tunda}, tanggung_pemerintah: {$tanggung_pemerintah}");
+            }
+
+            // grab new data
+            $pungutan = $pungutan['bayar'];
+
             // #1, SPAWN PUNGUTAN
             foreach ($pungutan as $kode => $jmlPungutan) {
                 $refJenis = ReferensiJenisPungutan::byKode($kode)->first();

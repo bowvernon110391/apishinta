@@ -32,6 +32,9 @@ class InstruksiPemeriksaanTransformer extends TransformerAbstract {
 
             'instructable_uri'  => $ip->instructable ? $ip->instructable->uri : null,
 
+            'instructable_type' => $ip->instructable_type,
+            'instructable_nomor_lengkap' => $ip->instructable->nomor_lengkap_dok ?? '',
+
             'last_status' => $ip->short_last_status,
             'is_locked' => $ip->is_locked
         ];
