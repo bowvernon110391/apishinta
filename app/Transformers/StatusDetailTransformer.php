@@ -15,7 +15,9 @@ class StatusDetailTransformer extends TransformerAbstract {
             'id'    => (int) $s->id,
             'keterangan'    => $s->keterangan,
             'other_data'    => $s->other_data,
-            'linkable_type' => class_basename($s->linkable),
+            'linkable_type' => $s->linkable_type,
+            'linkable_id'   => (int) $s->linkable_id,
+            'linkable_basetype' => class_basename($s->linkable),
             'created_at'    => (string) $s->created_at,
             'updated_at'    => (string) $s->updated_at
         ];
