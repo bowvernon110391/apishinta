@@ -146,7 +146,7 @@ class PdfSPPB extends Fpdf
         $jenis_dok = $this->sppb->gateable->jenis_dokumen_lengkap;
 
         $pdf->SetX(15);
-        $pdf->Cell(65, 4, "Nomor {$jenis_dok}", 0, 0, 'R');
+        $pdf->Cell(85, 4, "Nomor {$jenis_dok}", 0, 0, 'R');
         $pdf->Cell(3.5, 4, ':');
         $pdf->Cell(55, 4, $this->sppb->gateable->nomor_lengkap_dok, 0, 0);
 

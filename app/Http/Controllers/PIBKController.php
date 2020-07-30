@@ -9,6 +9,7 @@ use App\Lock;
 use App\PIBK;
 use App\Pungutan;
 use App\ReferensiJenisPungutan;
+use App\SPPB;
 use App\SSOUserCache;
 use App\Transformers\DetailBarangTransformer;
 use App\Transformers\PIBKTransformer;
@@ -503,6 +504,112 @@ class PIBKController extends ApiController
                 'id' => $bppm->id,
                 'uri' => $pibk->uri . '/bppm'
             ]);
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("PIBK #{$id} was not found");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * store billing data to pibk
+     */
+    public function storeBilling(Request $r, $id) {
+        DB::beginTransaction();
+        try {
+            // grab cd
+            $pibk = PIBK::findOrFail($id);
+
+            // store some new billing data
+            $b = $pibk->billing()->create([
+                'nomor' => expectSomething($r->get('nomor'), 'Nomor Billing'),
+                'tanggal' => expectSomething($r->get('tanggal'), 'Tanggal Billing'),
+
+                // the rest of the data can be null (empty)
+                'ntb' => $r->get('ntb'),
+                'ntpn' => $r->get('ntpn'),
+                'tgl_ntpn' => $r->get('tgl_ntpn')
+            ]);
+
+            // append status
+            $pibk->appendStatus(
+                'BILLING',
+                null,
+                "Perekaman Data billing nomor {$b->nomor}",
+                $b,
+                null,
+                SSOUserCache::byId($r->userInfo['user_id'])
+            );
+
+            // commit
+            DB::commit();
+
+            // return empty (Billing data is not important)
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("PIBK #{$id} was not found");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * Terbitkan SPPB atas PIBK ini
+     */
+    public function storeSppb(Request $r, $id) {
+        DB::beginTransaction();
+
+        try {
+            //code...
+            $pibk = PIBK::findOrFail($id);
+
+            // gotta grab sppb data, in this case?
+
+            // #1, grab lokasi from that data
+            $lokasi = $pibk->lokasi;
+
+            if (!$lokasi) {
+                throw new \Exception("Lokasi PIBK tidak boleh kosong!");
+            }
+
+            // #2, spawn sppb and associate it
+            $s = new SPPB([
+                'kode_kantor' => '050100',
+                'tgl_dok' => date('Y-m-d')
+            ]);
+
+            $s->gateable()->associate($pibk);
+            $s->lokasi()->associate($lokasi);
+            $s->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+
+            // #3 save and lock sppb
+            $s->lockAndSetNumber();
+
+            // #4 append status CD
+            $pibk->appendStatus(
+                'SPPB', 
+                null, 
+                "Penerbitan SPPB nomor {$s->nomor_lengkap_dok}", 
+                $s,
+                null,
+                SSOUserCache::byId($r->userInfo['user_id'])
+            );
+
+            // #5 log it
+            AppLog::logInfo("PIBK #{$id} diterbitkan SPPB #{$s->id} oleh {$r->userInfo['username']}", $pibk, false);
+
+            // commit
+            DB::commit();
+
+            // return empty
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+            
         } catch (ModelNotFoundException $e) {
             DB::rollBack();
             return $this->errorNotFound("PIBK #{$id} was not found");

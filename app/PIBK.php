@@ -102,14 +102,15 @@ IHasPungutan, INotable, IPayable, IGateable
             $nama = $this->importir->nama;
             // nomor identitas
             // bisa npwp/paspor
-            $no_identitas = strlen($this->npwp) ? $this->npwp : $this->importir->no_paspor;
-            $jenis_identitas = $this->npwp ? 'NPWP' : 'PASPOR';
+            $no_identitas = $this->importir->no_paspor;
+            $jenis_identitas = 'PASPOR';
             $npwp = $this->npwp;
         }
 
         return [
             'nama' => $nama,
             'no_identitas' => $no_identitas,
+            'alamat' => $this->alamat,
             'jenis_identitas' => $jenis_identitas,
             'npwp' => $npwp
         ];

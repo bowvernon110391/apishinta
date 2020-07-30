@@ -77,6 +77,7 @@ class PdfBPPM extends Fpdf {
         $this->no_identitas     = $payer['no_identitas'];
         $this->nama_penumpang   = $payer['nama']; //$cd->penumpang->nama;
         $this->alamat           = $payer['alamat']; //$cd->alamat;
+        $this->jenis_identitas  = $payer['jenis_identitas'];
 
         $this->npwp_pt  = $payer['npwp'];
 
