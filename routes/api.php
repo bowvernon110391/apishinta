@@ -526,3 +526,6 @@ Route::get('/pibk/{id}/simulasi', 'PIBKController@simulasiHitung')
 
 Route::put('/pibk/{id}/penetapan', 'PIBKController@storePenetapan')
 ->middleware('role:PDTT,CONSOLE');
+
+Route::put('/pibk/{id}/bppm', 'PIBKController@storeBppm')
+->middleware('role:PDTT,CONSOLE');

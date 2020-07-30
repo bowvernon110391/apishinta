@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AppLog;
+use App\BPPM;
 use App\Kurs;
 use App\Lock;
 use App\PIBK;
@@ -451,6 +452,60 @@ class PIBKController extends ApiController
         } catch (ModelNotFoundException $e) {
             DB::rollBack();
             return $this->errorNotFound("PIBK #{$id} was not found!");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * Terbitkan BPPM atas PIBK ini
+     */
+    public function storeBppm(Request $r, $id) {
+        DB::beginTransaction();
+        try {
+            // grab cd
+            $pibk = PIBK::findOrFail($id);
+
+            // spawn bppm
+            $bppm = new BPPM([
+                'kode_kantor' => $pibk->kode_kantor,
+                'tgl_dok' => date('Y-m-d')
+            ]);
+
+            $bppm->payable()->associate($pibk);
+            $bppm->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+
+            // lock and save
+            $bppm->lockAndSetNumber();
+
+            // append status
+            $pibk->appendStatus(
+                'BPPM', 
+                $r->get('lokasi') ?? $pibk->lokasi->nama ?? $pibk->lokasi->kode, 
+                "Penerbitan Bukti Penerimaan Pembayaran Manual nomor {$bppm->nomor_lengkap}", 
+                $bppm,
+                null,
+                SSOUserCache::byId($r->userInfo['user_id'])
+            );
+
+            // append log
+            AppLog::logInfo(
+                "Diterima pembayaran manual atas PIBK #{$id} dengan BPPM #{$bppm->id} oleh {$r->userInfo['username']}",
+                $pibk,
+                false
+            );
+            
+            DB::commit();
+
+            // return bppm id
+            return $this->respondWithArray([
+                'id' => $bppm->id,
+                'uri' => $pibk->uri . '/bppm'
+            ]);
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("PIBK #{$id} was not found");
         } catch (\Throwable $e) {
             DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
