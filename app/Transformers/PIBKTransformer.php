@@ -162,7 +162,7 @@ class PIBKTransformer extends TransformerAbstract {
 
     // 'status',
     public function includeStatus(PIBK $p) {
-        return $this->collection($p->status, new StatusTransformer);
+        return $this->collection($p->statusOrdered(), new StatusTransformer);
     }
 
     // 'lampiran',
