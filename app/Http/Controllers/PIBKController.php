@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\AppLog;
 use App\Kurs;
+use App\Lock;
 use App\PIBK;
+use App\Pungutan;
+use App\ReferensiJenisPungutan;
+use App\SSOUserCache;
 use App\Transformers\DetailBarangTransformer;
 use App\Transformers\PIBKTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -337,6 +341,99 @@ class PIBKController extends ApiController
                 'keterangan' => $keterangan
             ]);
         } catch (\Throwable $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * store said pungutan
+     */
+    public function storePenetapan(Request $r, $id) {
+        // Use transaction
+        DB::beginTransaction();
+        try {
+            // grab pibk
+            $pibk = PIBK::findOrFail($id);
+
+            // is it locked?
+            if ($pibk->is_locked) {
+                throw new \Exception("PIBK sudah terkunci!");
+            }
+
+            // grab pungutan
+            $data = $pibk->computePungutanImpor();
+
+            $pungutan = $data['pungutan'];
+
+            if (!count($pungutan)) {
+                throw new \Exception("Tidak ada pungutan untuk PIBK ini! cek kembali datanya");
+            }
+
+            // #1, SPAWN PUNGUTAN
+            foreach ($pungutan as $kode => $jmlPungutan) {
+                $refJenis = ReferensiJenisPungutan::byKode($kode)->first();
+
+                if (!$refJenis) {
+                    throw new \Exception("Jenis Pungutan '{$kode}' tidak terdaftar di sistem!");
+                }
+
+                $p = new Pungutan([
+                    'bayar' => $jmlPungutan,
+                    'bebas' => 0,
+                    'tunda' => 0,
+                    'tanggung_pemerintah' => 0
+                ]);
+
+
+                $pejabat = SSOUserCache::byId($r->userInfo['user_id']);
+                $p->pejabat()->associate($pejabat);
+                $p->dutiable()->associate($pibk);
+                $p->jenisPungutan()->associate($refJenis);
+
+                $p->save();
+            }
+
+            // #2, KETERANGAN
+            $pibk->keterangan()->create([
+                'keterangan' => $r->get('keterangan', '') ?? ''
+            ]);
+
+            // #3, LOCK
+            $l = new Lock([
+                'keterangan' => "Penetapan pungutan PIBK"
+            ]);
+
+            
+            $l->petugas()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            $pibk->lock()->save($l);
+            
+            // #4, APPEND STATUS
+            $pibk->appendStatus(
+                'PENETAPAN',
+                null,
+                "Penetapan Pungutan atas PIBK",
+                null,
+                null,
+                $l->petugas
+            );
+            
+            // #5, LOG IT
+            AppLog::logInfo("PIBK #{$id} ditetapkan pungutannya oleh {$r->userInfo['username']}", $pibk, false);
+
+            // #6, SET NOMOR DOKUMEN
+            $pibk->setNomorDokumen();
+
+            // commit
+            DB::commit();
+
+            // just return 204
+            return $this->setStatusCode(204)
+                        ->respondWithEmptyBody();
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("PIBK #{$id} was not found!");
+        } catch (\Throwable $e) {
+            DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
     }

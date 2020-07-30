@@ -523,3 +523,6 @@ Route::delete('/pibk/{id}', 'PIBKController@destroy')
 
 Route::get('/pibk/{id}/simulasi', 'PIBKController@simulasiHitung')
 ->middleware('role');
+
+Route::put('/pibk/{id}/penetapan', 'PIBKController@storePenetapan')
+->middleware('role:PDTT,CONSOLE');
