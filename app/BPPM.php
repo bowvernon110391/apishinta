@@ -93,17 +93,23 @@ class BPPM extends AbstractDokumen implements ILinkable
     }
 
     // ====================SCOPES===================================================
-    public function scopeNotBilled($query) {
-        if (!count(BPPM::$payableClasses)) {
+    public function scopeWhereHasBilling($query, bool $state) {
+        /* if (!count(BPPM::$payableClasses)) {
             BPPM::$payableClasses = BPPM::listAllPayableClasses();
-        }
+        } */
 
-        return $query->whereHasMorph('payable', BPPM::$payableClasses, function ($q) {
-            $q->notBilled();
+        return $query->whereHasMorph('payable', BPPM::$payableClasses, function ($q) use ($state) {
+            if (!$state)
+                $q->notBilled();
+            else
+                $q->billed();
         });
     }
 
-    protected static $payableClasses = [];
+    protected static $payableClasses = [
+        CD::class,
+        PIBK::class
+    ];
 
     static public function listAllPayableClasses() {
         $cs = get_declared_classes();
