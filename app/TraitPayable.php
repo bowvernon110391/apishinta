@@ -16,4 +16,8 @@ trait TraitPayable
     public function scopeNotBilled($query) {
         return $query->whereDoesntHave('billing');
     }
+
+    public function scopeBilled($query) {
+        return $query->whereHas('billing');
+    }
 }

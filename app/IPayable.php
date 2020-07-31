@@ -16,4 +16,5 @@ interface IPayable
 
     // some scopes?
     public function scopeNotBilled($query);
+    public function scopeBilled($query);
 }
