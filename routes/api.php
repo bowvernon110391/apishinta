@@ -468,8 +468,10 @@ Route::get('/excel/kurs', 'ExcelController@exportKurs')
 ->middleware( 'role');
 Route::get('/excel/kurs/bkf', 'ExcelController@exportKursBkf');
 Route::get('/excel/kurs/{tanggal}', 'ExcelController@exportKurs');
-Route::post('/excel/kurs', 'ExcelController@importKurs')
-;
+Route::post('/excel/kurs', 'ExcelController@importKurs');
+
+Route::get('/excel/bppm', 'ExcelController@exportBppm')
+->middleware('role');
 
 
 //====================================================================================================

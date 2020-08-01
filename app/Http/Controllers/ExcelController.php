@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BPPMExport;
 use App\Exports\KursBkfExport;
 use App\Exports\KursExport;
 use App\Imports\KursImportToJson;
@@ -37,6 +38,17 @@ class ExcelController extends ApiController
                 'data' => $data[0]
             ]);
         } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    // export bppm
+    public function exportBppm(Request $r) {
+        try {
+            $filename = 'bppm.xlsx';
+
+            return (new BPPMExport)->buildQuery($r)->download($filename);
+        } catch (\Throwable $e) {
             return $this->errorBadRequest($e->getMessage());
         }
     }
