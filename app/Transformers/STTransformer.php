@@ -20,6 +20,7 @@ class STTransformer extends TransformerAbstract {
         'cd',
         'negara_asal',
         'status',
+        'pibk',
 
         'instruksi_pemeriksaan'
     ];
@@ -74,6 +75,14 @@ class STTransformer extends TransformerAbstract {
         $cd = $s->cd;
 
         return $this->item($cd, new CDTransformer);
+    }
+
+    // include PIBK
+    public function includePIBK(ST $s) {
+        $pibk = $s->pibk;
+
+        if ($pibk)
+            return $this->item($pibk, new PIBKTransformer);
     }
 }
 

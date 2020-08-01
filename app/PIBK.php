@@ -299,7 +299,7 @@ IHasPungutan, INotable, IPayable, IGateable
         $s->appendStatus(
             'PIBK',
             null,
-            "Penerbitan PIBK #{$p->id} sebagai penyelesaian atas SPP",
+            "Penerbitan PIBK #{$p->id} sebagai penyelesaian atas " . class_basename($s),
             $p,
             null,
             SSOUserCache::byId($r->userInfo['user_id'])
