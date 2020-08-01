@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\AppLog;
 use App\CD;
 use App\Lokasi;
+use App\PIBK;
 use App\SSOUserCache;
 use App\ST;
 use App\Transformers\STTransformer;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
@@ -235,6 +237,51 @@ class STController extends ApiController
         } catch (NotFoundResourceException $e) {
             return $this->errorNotFound("CD #{$cdId} was not found");
         } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     * Create PIBK From this
+     */
+    public function storePIBK(Request $r, $id) {
+        DB::beginTransaction();
+
+        try {
+            // first, grab the instance
+            $s = ST::findOrFail($id);
+
+            // if it's not locked, throw error
+            if (!$s->is_locked) {
+                throw new \Exception("For some reason, this document is unlocked. Something's fishy....");
+            }
+
+            // if it already have pibk, return that instead (IDEMPOTENT RESPONSE)
+            $p = $s->pibk;
+
+            if ($p) {
+                DB::rollBack();
+                return $this->respondWithArray([
+                    'id' => (int) $p->id,
+                    'uri' => $p->uri
+                ]);
+            }
+
+            $p = PIBK::createFromSource($r, $s);
+            
+            // commit
+            DB::commit();
+
+            // return info on the pibk?
+            return $this->respondWithArray([
+                'id' => (int) $p->id,
+                'uri' => $p->uri
+            ]);
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return $this->errorNotFound("ST #{$id} was not found");
+        } catch (\Throwable $e) {
+            DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
     }

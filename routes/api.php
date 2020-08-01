@@ -223,6 +223,9 @@ Route::get('/cd/{id}/st_mockup', 'STController@generateMockup')
 Route::delete('/st/{id}', 'STController@destroy')
         ->middleware( 'role:PDTT,CONSOLE,KASI');
 
+// PUT /spp/{id}/pibk   => terbitkan PIBK dari SPP
+Route::put('/st/{id}/pibk', 'STController@storePIBK')
+        ->middleware('role:PDTT,CONSOLE');
 
 //====================================================================================================
 // ENDPOINTS untuk data referensi umum (negara, satuan, kemasan, hs)
