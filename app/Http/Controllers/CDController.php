@@ -326,7 +326,7 @@ class CDController extends ApiController
         try {
             $cdId = $cd->id;
 
-            AppLog::logWarning("CD #{$id} dihapus oleh {$r->userInfo['username']}", $cd);
+            AppLog::logWarning("CD #{$id} dihapus oleh {$r->userInfo['username']}", $cd, true);
 
             $cd->delete();            
 

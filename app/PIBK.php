@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Http\Request;
 
 class PIBK extends AbstractDokumen implements
 IInstructable, IHasGoods, ISpecifiable, ITariffable,
@@ -220,5 +221,90 @@ IHasPungutan, INotable, IPayable, IGateable
     public function scopeTanpaPemberitahu($query) {
         return $query->where('pemberitahu_id', 0)
                     ->orWhereNull('pemberitahu_id');
+    }
+
+    // functions (HELPERS, mostly)
+
+    /**
+     * static createFromSource
+     *  create PIBK dari source object
+     * @$r : request object
+     * @$s : source. for now only support (SPP and ST)
+     */
+    static public function createFromSource(Request $r, $s) : PIBK {
+        // it doesn't have one. let's create it
+        $pemberitahu_type = $r->get('pemberitahu_type');
+        $pemberitahu_id = $r->get('pemberitahu_id');
+        $lokasi_type = expectSomething($r->get('lokasi_type'), 'Jenis Lokasi Barang');
+        $lokasi_id = expectSomething($r->get('lokasi_id'), 'ID Lokasi Barang');
+
+        $p = new PIBK([
+            'tgl_dok' => date('Y-m-d'),
+            'pemberitahu_type' => $pemberitahu_type,
+            'pemberitahu_id' => $pemberitahu_id,
+
+            'lokasi_type' => $lokasi_type,
+            'lokasi_id' => $lokasi_id,
+            
+            'npwp' => $s->cd->npwp ?? '',
+            'alamat' => $s->cd->alamat ?? '',
+
+            'tgl_kedatangan' => $s->cd->tgl_kedatangan,
+            'no_flight' => $s->cd->no_flight,
+            'kd_airline' => $s->cd->kd_airline,
+            
+            'kd_pelabuhan_asal' => $s->cd->kd_pelabuhan_asal,
+            'kd_pelabuhan_tujuan' => $s->cd->kd_pelabuhan_tujuan,
+
+            'pph_tarif' => $s->cd->pph_tarif ?? 15.0
+        ]);
+
+        // gotta grab kurs
+        $ndpbm = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first();
+
+        if (!$ndpbm) {
+            throw new \Exception("Kurs NDPBM invalid. Pastikan data kurs up-to-date");
+        }
+
+        // associate with importir, source and ndpbm
+        $p->importir()->associate($s->cd->penumpang);
+        $p->source()->associate($s);
+        $p->ndpbm()->associate($ndpbm);
+
+        // save it
+        $p->save();
+
+        // duplicate data barang? di controller aja?
+        // copy barang dan dokkap dari cd
+        $p->copyDetailBarang($s->cd);
+        $p->copyDokkap($s->cd);
+
+        // so just log it
+        AppLog::logInfo(
+            "PIBK #{$p->id} diterbitkan dari SPP #{$s->id} oleh {$r->userInfo['username']}",
+            $p
+        );
+        
+        // append status utk source dan pibknya
+        // append status pibk
+        $p->appendStatus(
+            'CREATED',
+            null,
+            "PIBK #{$p->id} diterbitkan dari " . class_basename($s) ." #{$s->id} nomor {$s->nomor_lengkap_dok} tanggal {$s->tgl_dok}",
+            $s,
+            null,
+            SSOUserCache::byId($r->userInfo['user_id'])
+        );
+        // append status source?
+        $s->appendStatus(
+            'PIBK',
+            null,
+            "Penerbitan PIBK #{$p->id} sebagai penyelesaian atas SPP",
+            $p,
+            null,
+            SSOUserCache::byId($r->userInfo['user_id'])
+        );
+
+        return $p;
     }
 }

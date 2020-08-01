@@ -197,7 +197,7 @@ class STController extends ApiController
 
         // attempt deletion
         try {
-            AppLog::logWarning("ST #{$id} dihapus oleh {$r->userInfo['username']}", $st);
+            AppLog::logWarning("ST #{$id} dihapus oleh {$r->userInfo['username']}", $st, true);
 
             $st->delete();
 

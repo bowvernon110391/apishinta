@@ -47,6 +47,10 @@ class ST extends AbstractDokumen implements IInstructable, INotable
         return $this->belongsTo(SSOUserCache::class, 'pejabat_id', 'user_id');
     }
 
+    public function pibk() {
+        return $this->morphOne(PIBK::class, 'source');
+    }
+
     // =============================================
     // TRAIT OVERRIDES
     // =============================================

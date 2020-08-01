@@ -128,7 +128,7 @@ class PIBKController extends ApiController
             $pibk->syncDokkap($r->get('dokkap')['data']);
 
             // log it
-            AppLog::logInfo("PIBK #{$pibk->id} diinput oleh {$r->userInfo['username']}", false);
+            AppLog::logInfo("PIBK #{$pibk->id} diinput oleh {$r->userInfo['username']}", $pibk, false);
 
             // append created status
             $pibk->appendStatus('CREATED');
@@ -312,7 +312,10 @@ class PIBKController extends ApiController
             if (!canEdit($p->is_locked, $r->userInfo)) {
                 throw new \Exception("PIBK #{$id} is locked and you don't have enough privilege to bypass it");
             }
-
+            
+            // Log it
+            AppLog::logWarning("PIBK #{$p->id} dihapus oleh {$r->userInfo['username']}", $p, true);
+            
             $p->delete();
 
             return $this->setStatusCode(204)

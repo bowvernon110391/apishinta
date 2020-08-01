@@ -34,7 +34,7 @@ class PIBKTransformer extends TransformerAbstract {
         'pelabuhan_asal',
         'pelabuhan_tujuan',
         'pemberitahu',
-        'source',
+        // 'source',
         'lokasi',
         
         'ndpbm',
@@ -73,6 +73,7 @@ class PIBKTransformer extends TransformerAbstract {
             // source
             'source_type' => $p->source_type,
             'source_id' => (int) $p->source_id,
+            'source_uri' => $p->source->uri ?? null,
 
             // lokasi
             'lokasi_type' => $p->lokasi_type,

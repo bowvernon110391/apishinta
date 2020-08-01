@@ -99,4 +99,34 @@ trait TraitHasGoods {
             ]
         ];
     }
+
+    /**
+     * copyDetailBarang
+     *  copy detail barang dari sumber
+     */
+    public function copyDetailBarang(IHasGoods $s) {
+        $r = app('request');
+        // gotta grab data barang first
+        $barangs = $s->detailBarang;
+
+        foreach ($barangs as $b) {
+            $duplicate = $b->replicate();
+            
+            // $this->detailBarang()->save($duplicate);
+            $duplicate->header()->associate($this);
+            $duplicate->save();
+
+            // if barang is penetapan, create one too
+            if ($b->is_penetapan) {
+                $p = new Penetapan();
+                $p->penetapan()->associate($duplicate);
+                $p->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+                $p->save();
+            }
+
+            // trigger handler
+            
+            $this->onCreateItem($duplicate);
+        }
+    }
 }

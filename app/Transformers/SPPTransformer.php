@@ -9,6 +9,7 @@ class SPPTransformer extends TransformerAbstract {
     // defaultly loaded relations
     protected $defaultIncludes = [
         'cd',
+        // 'pibk',
         'negara_asal',
         'status',
 
@@ -18,6 +19,7 @@ class SPPTransformer extends TransformerAbstract {
     // available relations, default relations not needed to apply
     protected $availableIncludes = [
         'cd',
+        'pibk',
         'negara_asal',
         'status',
 
@@ -65,6 +67,14 @@ class SPPTransformer extends TransformerAbstract {
         $cd = $s->cd;
 
         return $this->item($cd, new CDTransformer);
+    }
+
+    // include pibk
+    public function includePIBK(SPP $s) {
+        $pibk = $s->pibk;
+
+        if ($pibk) 
+            return $this->item($pibk, new PIBKTransformer);
     }
 }
 

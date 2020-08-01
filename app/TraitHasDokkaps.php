@@ -46,4 +46,19 @@ trait TraitHasDokkaps
             }
         }
     }
+
+    /**
+     * copyDokkap
+     */
+    public function copyDokkap($s) {
+        if (!method_exists($s, 'dokkap')) {
+            throw new \Exception("Cannot copy dokkap. class type '". get_class($s) . "' doesnt support dokkap");
+        }
+
+        $ds = $s->dokkap;
+
+        foreach ($ds as $d) {
+            $s->dokkap()->save($d->replicate());
+        }
+    }
 }

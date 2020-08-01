@@ -187,6 +187,10 @@ Route::get('/cd/{id}/spp_mockup', 'SPPController@generateMockup')
 Route::delete('/spp/{id}', 'SPPController@destroy')
         ->middleware( 'role:PDTT,CONSOLE,KASI');
 
+// PUT /spp/{id}/pibk   => terbitkan PIBK dari SPP
+Route::put('/spp/{id}/pibk', 'SPPController@storePIBK')
+        ->middleware('role:PDTT,CONSOLE');
+
 //====================================================================================================
 // ENDPOINTS ST
 // ST itu classified, jd kasih guard di api endpointsnya
