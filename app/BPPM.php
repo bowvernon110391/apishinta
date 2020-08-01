@@ -106,6 +106,27 @@ class BPPM extends AbstractDokumen implements ILinkable
         });
     }
 
+    public function scopeByQuery($query, $q='', $from, $to) {
+        // by nomor lengkap maybe? or by payer?
+        return $query->where('nomor_lengkap_dok', 'like', "%$q%")
+                ->orWhereHas('pejabat', function ($q1) use ($q) {
+                    $q1->where('name', 'like', "%$q%");
+                })
+                ->when($from, function ($q1) use ($from) {
+                    $q1->where('tgl_dok', '>=', $from);
+                })
+                ->when($to, function ($q1) use ($to) {
+                    $q1->where('tgl_dok', '<=', $to);
+                });    
+    }
+
+    // deep search (search on payable data)
+    public function scopeDeepQuery($query, $q, $from, $to) {
+        return $query->whereHasMorph('payable', BPPM::$payableClasses, function ($q1) use ($q, $from, $to) {
+            $q1->byQuery($q, $from, $to);
+        });
+    }
+
     protected static $payableClasses = [
         CD::class,
         PIBK::class

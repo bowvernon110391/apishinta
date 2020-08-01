@@ -542,3 +542,10 @@ Route::post('/pibk/{id}/billing', 'PIBKController@storeBilling')
 
 Route::put('/pibk/{id}/sppb', 'PIBKController@storeSppb')
 ->middleware('role:PDTT,CONSOLE');
+
+//====================================================================================================
+// ENDPOINTS BPPM
+// kasih guard di endpointnya
+//====================================================================================================
+Route::get('/bppm', 'BPPMController@index')
+->middleware('role');

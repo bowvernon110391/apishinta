@@ -185,7 +185,7 @@ IHasPungutan, INotable, IPayable, IGateable
     }
 
     // scopes
-    public function scopeByQuery($query, $q, $from=null, $to=null) {
+    public function scopeByQuery($query, $q='', $from=null, $to=null) {
         return $query->where('npwp', 'like', "%$q%")
         ->orWhere('alamat', 'like', "%$q%")
         ->orWhere('no_flight', 'like', "%$q%")
