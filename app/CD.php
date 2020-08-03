@@ -175,6 +175,16 @@ IHasPungutan, INotable, IPayable, IGateable
         return CD::queryScope($query, $q, $from, $to);
     }
 
+    public function scopeKomersil($query, $flag = true) {
+        $f = 'whereHas';
+        if (!$flag) {
+            $f = 'whereDoesntHave';
+        }
+        return $query->$f('declareFlags', function ($q1) {
+            $q1->where('declare_flag.id', 5);
+        });
+    }
+
     // extrak data declareflags dalam bentuk flat array
     public function getFlatDeclareFlagsAttribute() {
         $flags = [];
