@@ -38,6 +38,10 @@ class PIBKSeeder extends Seeder
 
             $doc = $doctype::whereDoesntHave('pibk')->first();
 
+            if (!$doc) {
+                continue;
+            }
+
             // make a pibk out of it
             $uri = $doc->uri . '/pibk';
             echo "Calling endpoint: '$uri'\n";
