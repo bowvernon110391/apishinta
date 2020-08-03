@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\AppLog;
 use App\Exports\BPPMExport;
 use App\Exports\KursBkfExport;
 use App\Exports\KursExport;
+use App\Imports\BillingImport;
 use App\Imports\KursImportToJson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Excel as ExcelExcel;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -49,6 +52,51 @@ class ExcelController extends ApiController
 
             return (new BPPMExport)->buildQuery($r)->download($filename);
         } catch (\Throwable $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    // import billing
+    public function importBilling(Request $r) {
+        DB::beginTransaction();
+        try {
+            $file = $r->file('file');
+
+            if (!$file) throw new \Exception("No excel file provided!");
+
+            $data = (new BillingImport)->importToModels($file);
+
+            // just directly insert into db
+            $total = count($data);
+            $inserted = 0;
+            $omitted = 0;
+
+            foreach ($data as $b) {
+                // check if payable already has billing
+                if ($b->billable->billing()->count()) {
+                    $omitted++;
+                    continue;
+                }
+
+                // it doesn't, go on
+                $b->save();
+
+                // and log who's inserting it
+                AppLog::logInfo("Billing #{$b->id} nomor {$b->nomor} untuk dokumen {$b->billable->jenis_dokumen} #{$b->billable->id} diinput oleh {$r->userInfo['username']}", $b);
+                AppLog::logInfo("Dokumen {$b->billable->jenis_dokumen} #{$b->billable->id} nomor {$b->billable->nomor_lengkap} diinput data billingnya dengan billing #{$b->id} nomor {$b->nomor} oleh {$r->userInfo['username']}", $b->billable);
+
+                $inserted++;
+            }
+
+            DB::commit();
+
+            return $this->respondWithArray([
+                'total' => (int) $total,
+                'inserted' => (int) $inserted,
+                'omitted' => (int) $omitted
+            ]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
     }
