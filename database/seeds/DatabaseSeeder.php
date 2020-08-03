@@ -21,5 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(STSeeder::class);
         // generate PIBK from said ST and SPP
         $this->call(PIBKSeeder::class);
+        // spawn BPPM from available data
+        $this->call(BPPMSeeder::class);
     }
 }
