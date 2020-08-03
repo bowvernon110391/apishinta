@@ -14,9 +14,10 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Events\BeforeSheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class BPPMExport implements FromCollection, WithMapping, WithHeadings, WithColumnFormatting
-,ShouldAutoSize, WithEvents
+,WithEvents,ShouldAutoSize
 {
     use Exportable;
 
@@ -93,20 +94,18 @@ class BPPMExport implements FromCollection, WithMapping, WithHeadings, WithColum
 
     public function registerEvents(): array
     {
-        return [
-            AfterSheet::class, function (AfterSheet $e) {
-                $s = $e->sheet->getDelegate();
-            },
+        $dataCount = $this->query->count();
 
-            BeforeSheet::class, function(BeforeSheet $e) {
+        return [
+            AfterSheet::class => function (AfterSheet $e) use ($dataCount) {
                 $s = $e->sheet->getDelegate();
-                $s->getStyle('A1:X1')->applyFromArray([
-                    'font' => [
-                        'bold' => true
-                    ],
-                    'alignment' => [
-                        'horizontal' => 'center',
-                        'vertical' => 'center'
+
+                ++$dataCount;
+
+                $s->getStyle("T2:X{$dataCount}")->applyFromArray([
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => "FFFF00"]
                     ]
                 ]);
             }
