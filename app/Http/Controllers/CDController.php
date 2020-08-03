@@ -482,7 +482,7 @@ class CDController extends ApiController
             // append status
             $cd->appendStatus(
                 'BPPM', 
-                $r->get('lokasi') ?? $cd->lokasi->nama, 
+                $r->get('lokasi') ?? $cd->lokasi->kode ?? null, 
                 "Penerbitan Bukti Penerimaan Pembayaran Manual nomor {$bppm->nomor_lengkap}", 
                 $bppm,
                 null,

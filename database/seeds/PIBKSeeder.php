@@ -36,7 +36,7 @@ class PIBKSeeder extends Seeder
             // and create PIBK out of it
             $doctype = $f->randomElement([SPP::class, ST::class]);
 
-            $doc = $doctype::whereDoesntHave('pibk')->first();
+            $doc = $doctype::whereDoesntHave('pibk')->inRandomOrder()->first();
 
             if (!$doc) {
                 continue;

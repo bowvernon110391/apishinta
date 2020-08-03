@@ -486,7 +486,7 @@ class PIBKController extends ApiController
             // append status
             $pibk->appendStatus(
                 'BPPM', 
-                $r->get('lokasi') ?? $pibk->lokasi->nama ?? $pibk->lokasi->kode, 
+                $r->get('lokasi') ?? $pibk->lokasi->kode ?? null, 
                 "Penerbitan Bukti Penerimaan Pembayaran Manual nomor {$bppm->nomor_lengkap}", 
                 $bppm,
                 null,
