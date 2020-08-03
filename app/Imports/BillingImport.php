@@ -16,8 +16,13 @@ class BillingImport implements ToModel, WithHeadingRow
 
     protected $models = [];
 
+    protected $rowId = 1;
+
     public function model(array $r)
     {
+        // increment row number (for error reporting)
+        ++$this->rowId;
+
         // read the rest of data
         $no_bppm = trim($r['nomor_bppm']);
 
@@ -32,7 +37,7 @@ class BillingImport implements ToModel, WithHeadingRow
 
         // if we can't find it, throw some error
         if (!$bppm) {
-            throw new \Exception("BPPM '{$no_bppm}' is invalid!");
+            throw new \Exception("error pada baris ke- {$this->rowId} ---> BPPM '{$no_bppm}' is invalid!");
             return;
         }
 
@@ -41,19 +46,19 @@ class BillingImport implements ToModel, WithHeadingRow
 
         $billingPattern = '/^62\d{13}$/si';
         if (!preg_match($billingPattern, $kode_billing)) {
-            throw new \Exception("Kode billing tidak sesuai format! => '{$kode_billing}'");
+            throw new \Exception("error pada baris ke- {$this->rowId} ---> Kode billing tidak sesuai format! => '{$kode_billing}'");
             return ;
         }
 
         $ntb = $r['ntb'];
         if (strlen(trim($ntb)) < 5) {
-            throw new \Exception("Nomor Transaksi bank terlalu pendek: '{$ntb}'");
+            throw new \Exception("error pada baris ke- {$this->rowId} ---> Nomor Transaksi bank terlalu pendek: '{$ntb}'");
             return;
         }
 
         $ntpn = $r['ntpn'];
         if (strlen(trim($ntpn)) < 16) {
-            throw new \Exception("Nomor Transaksi penerimaan negara terlalu pendek: '{$ntpn}'");
+            throw new \Exception("error pada baris ke- {$this->rowId} ---> Nomor Transaksi penerimaan negara terlalu pendek: '{$ntpn}'");
             return;
         }
 
@@ -84,7 +89,7 @@ class BillingImport implements ToModel, WithHeadingRow
         // associate with bppm's payable
         if (!$bppm->payable) {
             // bppm kopong! throw error
-            throw new \Exception("BPPM nomor '{$no_bppm}' tidak memiliki dokumen dasar pembayaran!");
+            throw new \Exception("error pada baris ke- {$this->rowId} ---> BPPM nomor '{$no_bppm}' tidak memiliki dokumen dasar pembayaran!");
             return;
         }
 
