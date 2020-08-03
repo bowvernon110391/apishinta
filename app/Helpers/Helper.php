@@ -112,6 +112,7 @@ if (!function_exists('getUserInfo')) {
                     "roles" => [
                       "KASI",
                       "CONSOLE",
+                      "PERBENDAHARAAN"
                     ],
                   ],
                 ],
