@@ -21,6 +21,8 @@ IHasPungutan, INotable, IPayable, IGateable
     use TraitNotable;
     use TraitPayable;
     use TraitGateable;
+
+    use TraitCancellable;
     // enable soft Deletion
     use SoftDeletes;
 

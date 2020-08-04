@@ -7,6 +7,7 @@ use App\CD;
 use App\InstruksiPemeriksaan;
 use App\Lampiran;
 use App\LHP;
+use App\Pembatalan;
 use App\PIBK;
 use App\SPMB;
 use App\SPP;
@@ -26,6 +27,7 @@ class Instancer
         'lhp'   => LHP::class,
         'ip'    => InstruksiPemeriksaan::class,
         'instruksi_pemeriksaan' => InstruksiPemeriksaan::class,
+        'pembatalan' => Pembatalan::class
 
     ];
 

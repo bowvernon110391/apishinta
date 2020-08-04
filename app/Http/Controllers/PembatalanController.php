@@ -30,7 +30,15 @@ class PembatalanController extends ApiController
 
         // perhaps it's only grab the unlocked ones?
         if (($status = $r->get('status'))) {
-            $query = $query->byStatus($status);
+            switch ($status) {
+                case 'unlocked':
+                    $query->unlocked();
+                break;
+
+                case 'locked':
+                    $query->locked();
+                break;
+            }
         }
 
         $paginator = $query

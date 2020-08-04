@@ -49,7 +49,21 @@ class Pembatalan extends AbstractDokumen
         return Pembatalan::$supported[$classname];
     }
 
-    
+    // some custom attribute
+    public function getJenisDokumenAttribute()
+    {
+        return 'pembatalan';
+    }
+
+    public function getJenisDokumenLengkapAttribute()
+    {
+        return "Surat Persetujuan Pembatalan";
+    }
+
+    public function getSkemaPenomoranAttribute()
+    {
+        return "PEMBATALAN-";
+    }
 
     // all cancellable
     public function cancellable() {
@@ -110,28 +124,5 @@ class Pembatalan extends AbstractDokumen
 
     public function scopeKeterangan($query, $keterangan) {
         return $query->where('keterangan', 'LIKE', "%{$keterangan}%");
-    }
-
-    // by status
-    public function scopeByStatus($query, $status) {
-        $status = strtoupper($status);
-
-        if ($status == 'LOCKED') {
-            return $query->locked();
-        } else if ($status == 'UNLOCKED') {
-            return $query->unlocked();
-        } 
-
-        return $query;
-    }
-
-    // got the unlocked
-    public function scopeUnlocked($query) {
-        return $query->byLastStatusOtherThan('CLOSED');
-    }
-
-    // got the locked
-    public function scopeLocked($query) {
-        return $query->byLastStatus('CLOSED');
     }
 }
