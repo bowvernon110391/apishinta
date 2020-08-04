@@ -265,9 +265,13 @@ class PembatalanController extends ApiController
             // it's there, let's lock it
             // locking is idempotent. should always return true
             // unless something happened
-            if (!$p->lockAndSetNumber()) {
+            /* if (!$p->lockAndSetNumber()) {
                 throw new \Exception("Something weird really happened. Dunno what though");
-            }
+            } */
+            $p->lock()->create([
+                'keterangan' => '',
+                'petugas_id' => $r->userInfo['user_id'] ?? null
+            ]);
 
             // success! log it
             AppLog::logInfo("{$r->userInfo['username']} locked Pembatalan #{$id}", $p, false);

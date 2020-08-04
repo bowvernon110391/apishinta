@@ -49,6 +49,18 @@ class Pembatalan extends AbstractDokumen
         return Pembatalan::$supported[$classname];
     }
 
+    public function lockAndSetNumber($keterangan = '', $force = false) {
+        // first, we set number
+        // $this->setNomorDokumen($force);
+
+        // add lock
+        $r = app('request');    // obtain request object
+        $this->lock()->create([
+            'petugas_id' => $r->userInfo['user_id'] ?? null,
+            'keterangan' => $keterangan
+        ]);
+    }
+
     // some custom attribute
     public function getJenisDokumenAttribute()
     {
