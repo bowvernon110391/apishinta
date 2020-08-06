@@ -22,6 +22,8 @@ class PenumpangController extends ApiController
         if ( ($q=$request->get('q')) ) {
             // wildcard search, gunakan apa yg ada
             $qSearch = "%{$q}%";
+
+            // search on his name | no_paspor | pekerjaan | negara | email | phone
             $queryPenumpang = Penumpang::where("nama", "LIKE", $qSearch)
                                         ->orWhere("no_paspor", "LIKE", $qSearch)
                                         ->orWhere("pekerjaan", "LIKE", $qSearch)
