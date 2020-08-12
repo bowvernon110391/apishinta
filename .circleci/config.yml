@@ -29,7 +29,8 @@ jobs:
       - run: sudo docker-php-ext-install mbstring
       - run: sudo docker-php-ext-install zip
       - run: sudo docker-php-ext-install gd
-      - run: sudo apt-get install php-mysql
+      - run: sudo docker-php-ext-install pdo_mysql
+      - run: sudo docker-php-ext-enable pdo_mysql
       - run: sudo apt install -y mariadb-client
 
       # Download and cache dependencies
