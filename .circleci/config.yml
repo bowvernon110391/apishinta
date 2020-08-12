@@ -10,7 +10,8 @@ jobs:
       - image: circleci/php:7.2-node-browsers
       - image: circleci/mysql:5.7-ram
         environment:
-        - MYSQL_ROOT_PASSWORD=root
+          MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        command: [--max-allowed-packet=67108864]
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -66,8 +67,8 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
       # prepare the database
-      - run: mysqladmin create test -h 127.0.0.1 -P 3306 --user="root" --password="root" 
-      - run: php artisan migrate --env=testing --force
+      - run: mysqladmin create test -h 127.0.0.1 -P 3306 --user="root" 
+      - run: php -d memory_limit=2048M artisan migrate --env=testing --force
 
       # run tests with phpunit or codecept
       - run: ./vendor/bin/phpunit
