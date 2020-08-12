@@ -10,7 +10,7 @@ jobs:
       - image: circleci/php:7.2-node-browsers
       - image: circleci/mysql:5.7-ram
         environment:
-          MYSQL_ROOT_PASSWORD:root
+        - MYSQL_ROOT_PASSWORD=root
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
