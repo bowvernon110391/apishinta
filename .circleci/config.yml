@@ -64,7 +64,7 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
       # prepare the database
-      - run: mysqladmin create test -h localhost -P 3306 --user="root" --password="root" 
+      - run: mysqladmin create test -h 127.0.0.1 -P 3306 --user="root" --password="root" 
       - run: php artisan migrate --env=testing --force
 
       # run tests with phpunit or codecept
