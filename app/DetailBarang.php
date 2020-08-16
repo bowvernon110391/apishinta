@@ -90,6 +90,21 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
             ]
         ];
 
+        // bm follows header if it's CD
+        if ($this->header && get_class($this->header) == CD::class) {
+            if (!$this->header->komersil) {
+                $tarif['BM'] = [
+                    'tarif' => 10.0,
+                    'jenis' => 'ADVALORUM'
+                ];
+
+                // if there's PPnBM, remove it?
+                if (array_key_exists('PPnBM', $tarif)) {
+                    unset($tarif['PPnBM']);
+                }
+            }
+        }
+
         // pph follows header
         if ($this->header && ($this->header->pph_tarif ?? $this->header->tarif_pph) ) {
             $tarif['PPh'] = [
