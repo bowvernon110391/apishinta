@@ -323,33 +323,152 @@ IHasPungutan, INotable, IPayable, IGateable
     {
         AppLog::logInfo("CD #{$this->id} must do something on DetailBarang #{$d->id}", $d);
         $this->validate();
+        $this->setPembebasanProporsional();
     }
 
     public function onCreateItem(DetailBarang $d)
     {
         AppLog::logInfo("CD #{$this->id} must setup initial data on Detail Barang #{$d->id}", $d);
         $this->validate();
+        $this->setPembebasanProporsional();
     }
 
     public function onDeleteItem(DetailBarang $d)
     {
         AppLog::logInfo("CD #{$this->id} onDelete {$d->id}", $d);
+        $this->validate();
+        $this->setPembebasanProporsional();
     }
 
     // ===========================HELPER=============================================
-    public function validate() {
-        // RULE #1: Personal Use CD MUST NOT HAVE OVERRIDDEN TARIFS
-        if (!$this->komersil) {
-            if ($this->detailBarang()->isPenetapan()->whereHas('tarif')->count()) {
-                throw new \Exception("CD personal-use must not have overridden tariffs!");
-            }
+    // this will set pembebasan per barang secara proporsional
+    public function setPembebasanProporsional() {
+        $total_cif = $this->detailBarang->sum('cif');
+
+        // prevent division by zero
+        if ($total_cif <= 0.00001) {
+            return;
+        }
+
+        foreach ($this->detailBarang as $d) {
+            // set its value
+            $d->pembebasan = $this->pembebasan * ($d->cif / $total_cif);
+            $d->save();
         }
     }
 
+    public function validate() {
+        // RULE #1: Personal Use CD MUST NOT HAVE OVERRIDDEN TARIFS
+        //  RULE #1 is nullified, cause apparently some stuffs can use custom tariffs
+        /* if (!$this->komersil) {
+            if ($this->detailBarang()->isPenetapan()->whereHas('tarif')->count()) {
+                throw new \Exception("CD personal-use must not have overridden tariffs!");
+            }
+        } */
+        // if we're set to komersil, zero out all pembebasan
+        if ($this->komersil) {
+            foreach ($this->detailBarang as $d) {
+                $d->pembebasan = 0;
+                $d->save();
+            }
+        } else {
+            // otherwise, recompute nilai pembebasan
+            $this->setPembebasanProporsional();
+        }
+    }
+
+    // SKEMA: MFN
     public function computePungutanCdKomersil () {
         return $this->computePungutanImpor();
     }
 
+    // SKEMA: PEMBEBASAN PROPORSIONAL (KEP KEPALA KANTOR BC SOETTA)
+    public function computePungutanCdPembebasanProporsional () {
+        // grab all data barang
+        if (!count($this->detailBarang)) {
+            throw new \Exception("Tidak ada detail barang. Perhitungan tidak dapat dilakukan");
+            return null;
+        }
+
+        // just collect each detail barang and pour into one
+        /**
+         * barang : [
+         *  - tarif
+         *  - desc
+         *  - pungutan
+         * ]
+         * pungutan: [
+         *  - per type
+         * ]
+         */
+
+        $usd = $this->ndpbm;
+        if (!$usd) {
+            throw new \Exception("Cannot compute pungutan impor, kurs USD tidak ditemukan!");
+        }
+
+        $pembebasan = [
+            'pembebasan' => (float) $this->pembebasan,
+            'pembebasan_idr' => (float) $this->pembebasan * $usd->kurs_idr
+        ];
+
+        $barang = $this->detailBarang->map(function ($e) use($usd) {
+            // compute pungutan impor + pembebasan di sini
+
+            return [
+                'tarif' => $e->valid_tarif,
+                'pungutan' => $e->computePungutanImporWithPembebasan(),
+                
+                'uraian' => $e->nice_format,
+                'uraian_print' => $e->print_format,
+                'jumlah_jenis_kemasan' => $e->jumlah_kemasan . ' ' . $e->jenis_kemasan,
+                'jumlah_jenis_satuan' => $e->jumlah_satuan . ' ' . $e->jenis_satuan,
+                'hs_code' => $e->hs->kode,
+                'hs_raw_code' => $e->hs->raw_code,
+                'fob' => (float) $e->fob,
+                'insurance' => (float) $e->insurance,
+                'freight' => (float) $e->freight,
+                'cif' => (float) $e->cif,
+                'nilai_pabean' => $e->nilai_pabean,
+                'valuta' => $e->kurs->kode_valas,
+                'ndpbm' => (float) $e->kurs->kurs_idr,
+
+                // pembebasan
+                'pembebasan' => (float) $e->pembebasan,
+                'pembebasan_idr' => (float) $e->pembebasan * (float) $usd->kurs_idr,
+                'nilai_dasar' => (float) $e->nilai_pabean - ((float) $e->pembebasan * (float) $usd->kurs_idr)
+            ];
+        });
+
+        $pungutan_bayar = [];
+        $pungutan_bebas = [];
+        $pungutan_tunda = [];
+        $pungutan_tanggung_pemerintah = [];
+
+        // sum them
+        foreach ($barang as $b) {
+            foreach ($b['pungutan'] as $p) {
+                $pungutan_bayar[$p->jenisPungutan->kode] = ($pungutan_bayar[$p->jenisPungutan->kode] ?? 0) + $p->bayar;
+                $pungutan_bebas[$p->jenisPungutan->kode] = ($pungutan_bebas[$p->jenisPungutan->kode] ?? 0) + $p->bebas;
+                $pungutan_tunda[$p->jenisPungutan->kode] = ($pungutan_tunda[$p->jenisPungutan->kode] ?? 0) + $p->tunda;
+                $pungutan_tanggung_pemerintah[$p->jenisPungutan->kode] = ($pungutan_tanggung_pemerintah[$p->jenisPungutan->kode] ?? 0) + $p->tanggung_pemerintah;
+            }
+        }
+
+        // return em?
+        return [
+            'pembebasan' => $pembebasan,
+            'barang' => $barang,
+            'pungutan' => [
+                'bayar' => $pungutan_bayar,
+                'bebas' => $pungutan_bebas,
+                'tunda' => $pungutan_tunda,
+                'tanggung_pemerintah' => $pungutan_tanggung_pemerintah
+            ]
+        ];
+    }
+
+    // SKEMA: PEMBEBASAN P-09/BC/2018
     public function computePungutanCdPersonal () {
         // grab all data barang
         if (!count($this->detailBarang)) {

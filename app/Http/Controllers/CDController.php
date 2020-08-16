@@ -349,7 +349,7 @@ class CDController extends ApiController
         }
 
         try {
-            $pungutan = $cd->komersil ? $cd->computePungutanCdKomersil() : $cd->computePungutanCdPersonal();
+            $pungutan = $cd->komersil ? $cd->computePungutanCdKomersil() : $cd->computePungutanCdPembebasanProporsional();
             $keterangan = $cd->keterangan()->first();
 
             return $this->respondWithArray([

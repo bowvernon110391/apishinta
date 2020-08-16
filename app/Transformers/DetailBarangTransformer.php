@@ -57,6 +57,8 @@ class DetailBarangTransformer extends TransformerAbstract {
 
             'kategori_tags' => $d->kategori_tags,
 
+            'pembebasan' => (float) $d->pembebasan,
+
             // is it penetapan?
             'is_penetapan' => $d->is_penetapan
         ];

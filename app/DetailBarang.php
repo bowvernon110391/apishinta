@@ -196,6 +196,98 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
         return $pungutan;
     }
 
+    // SKEMA: PEMBEBASAN PER BARANG
+    public function computePungutanImporWithPembebasan() {
+        // spawn a collection of Pungutan here
+        $valid_tarif = $this->valid_tarif;
+
+        // filter all bm tarif
+        $tarif_bm = array_filter($valid_tarif, function ($e) {
+            return substr($e, 0, 2) == 'BM';
+        }, ARRAY_FILTER_USE_KEY);
+        
+        // filter all pajak tarif
+        $tarif_pajak = array_filter($valid_tarif, function ($e) {
+            return substr($e, 0, 2) == 'PP';
+        }, ARRAY_FILTER_USE_KEY);
+
+        // PUNGUTAN
+        $pungutan = [];
+        
+        // #1 hitung BEA MASUK dan TOTALNYA
+        $total_bm = 0;
+
+        // compute nilai dasar
+        if (!$this->header) {
+            throw new \Exception("Cannot compute nilai pungutan: DetailBarang #{$this->id} has no Header!");
+        }
+
+        $nilai_pembebasan_idr = (float) ($this->pembebasan * ($this->header->ndpbm->kurs_idr) );
+        $nilai_dasar = $this->nilai_pabean - $nilai_pembebasan_idr;
+
+        // assert that nilai dasar is valid
+        if ($nilai_dasar < 0) {
+            $nilai_pembebasan_idr = number_format($nilai_pembebasan_idr, 2);
+            $nilai_pabean = number_format($this->nilai_pabean, 2);
+            throw new \Exception("Cannot compute nilai pungutan: (DetailBarang #{$this->id}) Nilai Pembebasan (Rp {$nilai_pembebasan_idr}) > Nilai Pabean (Rp {$nilai_pabean})");
+        }
+
+        foreach ($tarif_bm as $kode => $tbm) {
+            if ($tbm['jenis'] == 'SPESIFIK') {
+                // hitung metode spesifik
+                $bm = (float) $this->jumlah_satuan * $tbm['tarif'];
+            } else {
+                // hitung metode persentase
+                $bm = ceil(/* $this->nilai_pabean */ $nilai_dasar * $tbm['tarif'] * 0.01 / 1000.0) * 1000.0;
+            }
+            // accumulate first
+            $total_bm += $bm;
+
+            // compute bayar, bebas, tunda, tanggung_pemerintah
+            $bm_bayar = round($bm * ($tbm['bayar'] ?? 100.0) * 0.01, -3);
+            $bm_bebas = round($bm * ($tbm['bebas'] ?? 0) * 0.01, -3);
+            $bm_tunda = round($bm * ($tbm['tunda'] ?? 0) * 0.01, -3);
+            $bm_tanggung_pemerintah = round($bm * ($tbm['tanggung_pemerintah'] ?? 0) * 0.01, -3);
+
+            // spawn new pungutan
+            $p = new Pungutan([
+                'bayar' => $bm_bayar,
+                'bebas' => $bm_bebas,
+                'tunda' => $bm_tunda,
+                'tanggung_pemerintah' => $bm_tanggung_pemerintah,
+            ]);
+
+            $p->jenisPungutan()->associate(ReferensiJenisPungutan::byKode($kode)->first());
+
+            $pungutan[] = $p;
+        }
+
+        // #2 HITUNG PAJAK2nya
+        $nilai_impor = $total_bm + $nilai_dasar;
+
+        foreach ($tarif_pajak as $kode => $tp) {
+            // hitung pajak
+            $pajak = ceil($nilai_impor * $tp['tarif'] * 0.01 / 1000.0) * 1000.0;
+
+            $bayar = round($pajak * ($tp['bayar'] ?? 100.0) * 0.01, -3);
+            $bebas = round($pajak * ($tp['bebas'] ?? 0) * 0.01, -3);
+            $tunda = round($pajak * ($tp['tunda'] ?? 0) * 0.01, -3);
+            $tanggung_pemerintah = round($pajak * ($tp['tanggung_pemerintah'] ?? 0) * 0.01, -3);
+
+            $p = new Pungutan([
+                'bayar' => $bayar,
+                'bebas' => $bebas,
+                'tunda' => $tunda,
+                'tanggung_pemerintah' => $tanggung_pemerintah,
+            ]);
+            $p->jenisPungutan()->associate(ReferensiJenisPungutan::byKode($kode)->first());
+
+            $pungutan[] = $p;
+        }
+
+        return $pungutan;
+    }
+
     public function getNiceFormatAttribute() {
         $desc = $this->uraian;
         $desc .= "\n" . number_format($this->brutto, 2) ." KG";
