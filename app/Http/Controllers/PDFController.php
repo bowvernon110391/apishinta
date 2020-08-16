@@ -7,10 +7,11 @@ use App\Printables\PdfBPPM;
 use App\Printables\PdfSPP;
 use App\Printables\PdfST;
 use App\SPP;
-use App\SSPCP;
 use App\ST;
 use App\CD;
+use App\PIBK;
 use App\Printables\PdfLembarHitungCD;
+use App\Printables\PdfLembarHitungPIBK;
 use App\Printables\PdfSPPB;
 use App\SPPB;
 use Illuminate\Http\Request;
@@ -110,6 +111,19 @@ class PDFController extends ApiController
                     }
 
                     $pdf = new PdfLembarHitungCD($cd);
+                    $pdf->generateFirstPage();
+
+                    return response($pdf->Output('S'), 200, $headers);
+
+                case 'lembarhitungpibk':
+                case 'lembarpibk':
+                    $pibk = PIBK::find($id);
+
+                    if (!$pibk) {
+                        throw new NotFoundHttpException("PIBK #{$id} was not found");
+                    }
+
+                    $pdf = new PdfLembarHitungPIBK($pibk);
                     $pdf->generateFirstPage();
 
                     return response($pdf->Output('S'), 200, $headers);

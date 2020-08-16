@@ -320,6 +320,12 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
     public function getPrintFormatAttribute() {
         $desc = $this->uraian;
         $desc .= "\n" . number_format($this->brutto, 2) ." KG" . ", {$this->jumlah_kemasan} {$this->jenis_kemasan}";
+        if ($this->jumlah_satuan && $this->jenis_satuan) {
+            $desc .= ", {$this->jumlah_satuan} {$this->jenis_satuan}";
+        }
+        if ($this->netto) {
+            $desc .= ", Netto: " . number_format($this->netto, 2) . "KG";
+        }
         // append all additional desc
         if ($this->detailSekunder()->count()) {
             $desc.= "\n------------------\n";
