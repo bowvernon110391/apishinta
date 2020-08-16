@@ -19,6 +19,6 @@ interface IHasGoods {
     public function onUpdateItem(DetailBarang $d);
 
     public function computePungutanImpor();
-    public function copyDetailBarang(IHasGoods $s);
+    public function copyDetailBarang(IHasGoods $s, bool $zeroPembebasan = true);
 
 }

@@ -104,7 +104,7 @@ trait TraitHasGoods {
      * copyDetailBarang
      *  copy detail barang dari sumber
      */
-    public function copyDetailBarang(IHasGoods $s) {
+    public function copyDetailBarang(IHasGoods $s, bool $zeroPembebasan = true) {
         $r = app('request');
         // gotta grab data barang first
         $barangs = $s->detailBarang;
@@ -114,6 +114,10 @@ trait TraitHasGoods {
             
             // $this->detailBarang()->save($duplicate);
             $duplicate->header()->associate($this);
+            // zero out pembebasan
+            if ($zeroPembebasan)
+                $duplicate->pembebasan = 0;
+                
             $duplicate->save();
 
             // if barang is penetapan, create one too
