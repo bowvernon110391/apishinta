@@ -9,6 +9,7 @@ use App\HsCode;
 use App\Kurs;
 use App\Lokasi;
 use App\Penumpang;
+use App\ReferensiJenisPungutan;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -220,5 +221,126 @@ class PerhitunganTest extends TestCase
         $this->assertEquals(512000, $pungutan['pungutan']['bayar']['BM'], 'Nilai BM');
         $this->assertEquals(633000, $pungutan['pungutan']['bayar']['PPN'], 'Perhitungan PPN');
         $this->assertEquals(475000, $pungutan['pungutan']['bayar']['PPh'], 'Perhitungan PPh');
+    }
+
+    /**
+     * Test skema perhitungan Pembebasan Proporsional (PDTT-KEP KK)
+     */
+    public function testHitungSkemaPembebasanProporsional3() {
+        $c = $this->generateCD();
+
+        $c->ndpbm->kurs_idr = 14661;
+        $c->pembebasan = 500;
+        
+        $c->push();
+
+        // make sure it's non komersil
+        $this->assertTrue(!$c->komersil);
+
+        // make sure ndpbm set to correct value
+        $this->assertEquals($c->ndpbm->kurs_idr,14661,'Kurs USD');
+
+        // add detail barang sesuai contoh pdtt
+
+        // 1. Sepatu
+        $d = new DetailBarang([
+            'uraian' => "Sepatu",
+            'jumlah_kemasan' => 1,
+            'jenis_kemasan' => 'PK',
+            'fob' => 750,
+            'hs_id' => HsCode::usable()->byExactHS('87141090')->first()->id,
+            'insurance' => 0,
+            'freight' => 0,
+            'brutto' => 0.5,
+            'kurs_id' => $c->ndpbm->id
+        ]);
+        $c->detailBarang()->save($d);
+        $d->refresh();
+        $d->tarif()->create([
+            'jenis_pungutan_id' => ReferensiJenisPungutan::byKode('PPh')->first()->id,
+            'tarif' => 10.0,
+            'bayar' => 100.0
+        ]);
+
+        // 2. Mainan
+        $d = new DetailBarang([
+            'uraian' => "Mainan",
+            'jumlah_kemasan' => 1,
+            'jenis_kemasan' => 'PK',
+            'fob' => 135,
+            'hs_id' => HsCode::usable()->byExactHS('87141090')->first()->id,
+            'insurance' => 0,
+            'freight' => 0,
+            'brutto' => 0.5,
+            'kurs_id' => $c->ndpbm->id
+        ]);
+        $c->detailBarang()->save($d);
+
+        // 3. Kaos
+        $d = new DetailBarang([
+            'uraian' => "Kaos",
+            'jumlah_kemasan' => 1,
+            'jenis_kemasan' => 'PK',
+            'fob' => 145,
+            'hs_id' => HsCode::usable()->byExactHS('87141090')->first()->id,
+            'insurance' => 0,
+            'freight' => 0,
+            'brutto' => 0.5,
+            'kurs_id' => $c->ndpbm->id
+        ]);
+        $c->detailBarang()->save($d);
+        
+        // 4. Parfum
+        $d = new DetailBarang([
+            'uraian' => "Sepatu",
+            'jumlah_kemasan' => 1,
+            'jenis_kemasan' => 'PK',
+            'fob' => 200,
+            'hs_id' => HsCode::usable()->byExactHS('87141090')->first()->id,
+            'insurance' => 0,
+            'freight' => 0,
+            'brutto' => 0.5,
+            'kurs_id' => $c->ndpbm->id
+        ]);
+        $c->detailBarang()->save($d);
+        $d->refresh();
+        $d->tarif()->create([
+            'jenis_pungutan_id' => ReferensiJenisPungutan::byKode('PPh')->first()->id,
+            'tarif' => 10.0,
+            'bayar' => 100.0
+        ]);
+
+        // ensure 3 detail barang
+        $this->assertCount(4, $c->detailBarang, 'Jumlah Detail Barang');
+
+        // set pembebasan
+        $c->setPembebasanProporsional();
+        $pungutan = $c->computePungutanCdPembebasanProporsional();
+
+        // dump it
+        echo "Dumping calculation for Skema Pembebasan Proporsional 3:\n";
+        dump($pungutan);
+
+        // make sure it has pembebasan
+        $this->assertArrayHasKey('pembebasan', $pungutan, 'Pembebasan CD Personal');
+        $this->assertArrayHasKey('pembebasan', $pungutan['pembebasan'], 'Nilai Pembebasan USD');
+        $this->assertArrayHasKey('pembebasan_idr', $pungutan['pembebasan'], 'Nilai Pembebasan IDR');
+
+
+        $this->assertEquals(500.0, $pungutan['pembebasan']['pembebasan'], 'Nilai Pembebasan USD');
+        $this->assertEquals(7330500.0, $pungutan['pembebasan']['pembebasan_idr'], 'Nilai Pembebasan IDR');
+
+        // make sure it has summary pungutan
+        $this->assertArrayHasKey('pungutan', $pungutan, 'Pungutan Impor CD Personal Skema Pembebasan Proporsional');
+        $this->assertArrayHasKey('bayar', $pungutan['pungutan'], 'Data Pungutan Bayar');
+
+        // make sure it consists of BM, PPN, PPh
+        $this->assertArrayHasKey('BM', $pungutan['pungutan']['bayar'], 'Perhitungan BM');
+        $this->assertArrayHasKey('PPN', $pungutan['pungutan']['bayar'], 'Perhitungan PPN');
+        $this->assertArrayHasKey('PPh', $pungutan['pungutan']['bayar'], 'Perhitungan PPh');
+
+        $this->assertEquals(1073000, $pungutan['pungutan']['bayar']['BM'], 'Nilai BM');
+        $this->assertEquals(1179000, $pungutan['pungutan']['bayar']['PPN'], 'Perhitungan PPN');
+        $this->assertEquals(1112000, $pungutan['pungutan']['bayar']['PPh'], 'Perhitungan PPh');
     }
 }

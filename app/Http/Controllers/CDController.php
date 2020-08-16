@@ -382,10 +382,10 @@ class CDController extends ApiController
             }
 
             // okay, grab computed data
-            $data = $cd->computePungutanCdPersonal();
+            $data = $cd->computePungutanCdPembebasanProporsional();
 
             // grab pungutan
-            $pungutan = $data['pungutan'];
+            $pungutan = $data['pungutan']['bayar'];
 
             if (!count($pungutan)) {
                 throw new \Exception("Tidak ada pungutan untuk CD ini! cek kembali datanya");
