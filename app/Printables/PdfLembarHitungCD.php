@@ -5,8 +5,39 @@ use App\CD;
 use Fpdf\Fpdf;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class PdfLembarHitungCD extends Fpdf {
+class PdfLembarHitungCD extends PDF_MC_Table {
     protected $cd = null;
+
+    public static $dict = [
+        'BM'=> [
+            'Bea Masuk',
+            'Import Duty'
+        ],
+        'BMI'=> [
+            'Bea Masuk Imbalan',
+            'Reciprocal Duty'
+        ],
+        'BMAD'=> [
+            'Bea Masuk Anti Dumping',
+            'Duty for Anti Dumping'
+        ],
+        'BMTP'=> [
+            'Bea Masuk Tindak Pengamaman',
+            'Duty for Protection'
+        ],
+        'PPN'=> [
+            'PPN Impor',
+            'Value Added Tax'
+        ],
+        'PPh'=> [
+            'PPh Impor',
+            'Income Tax'
+        ],
+        'PPnBM'=> [
+            'PPnBM Impor',
+            'Luxury Goods Tax'
+        ]
+    ];
 
     public function __construct(CD $cd)
     {
@@ -14,7 +45,7 @@ class PdfLembarHitungCD extends Fpdf {
 
         parent::__construct('L', 'mm', 'A4');
         $this->AliasNbPages();
-        $this->SetAutoPageBreak(true);
+        $this->SetAutoPageBreak(true, 5);
     }
 
     protected function font($style = '', $color=[0,0,0]) {
@@ -33,12 +64,12 @@ class PdfLembarHitungCD extends Fpdf {
         }
 
         // feed data
-        $data = $this->cd->computePungutanCdPersonal();
+        $data = $this->cd->computePungutanCdPembebasanProporsional();
 
         $lock = $this->cd->lock;
         $petugas = $lock->petugas;
 
-        $nilai_impor = $data['nilai_impor'];
+        // $nilai_impor = $data['nilai_impor'];
         $nama_pejabat   = $petugas->name;
         $nama_penumpang = $this->cd->penumpang->nama;
         $nomor_paspor = $this->cd->penumpang->no_paspor;
@@ -104,359 +135,154 @@ class PdfLembarHitungCD extends Fpdf {
         // draw calculation table
         $this->font();
 
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
+        $widths = [
+            7,
+            63,
+            22.5,
+            22.5,
+            22.5,
+            22.5,
+            16,
+            25,
+            37.5,
+            40
+        ];
 
-        // No.
-        $pdf->MultiCell(7, 8, 'No.', 0, 'L');
+        $this->SetWidths($widths);
 
-        $pdf->Rect($row_x, $row_y, 7, $pdf->GetY()-$row_y);
+        $this->SetAligns([
+            'V',
+            'L',
+            'V',
+            'V',
+            'V',
+            'C',
+            'C',
+            'C',
+            'V',
+            'C'
+        ]);
 
-        // Uraian Barang
-        $pdf->SetXY($row_x + 7, $row_y);
-        $pdf->Cell(63, 4, 'Uraian Barang', 0, 2);
+        $this->Row([
+            "No.",
+            "Uraian Barang\n(Goods Description)",
+            "(1) Cost/FOB",
+            "(2) Insurance",
+            "(3) Freight",
+            "CIF\n(1+2+3)",
+            "Valuta\n(Currency)",
+            "Pembebasan\n(Deminimis)",
+            "HS Code and Tarriffs",
+            "Bea Masuk dan Pajak\n(Duty and Tax)"
+        ]);
 
-        $this->font('I');
-        $pdf->Cell(63, 4, 'Goods Description', 0, 2);
+        // per detail barang
+        $this->SetAligns([
+            'L',
+            'L',
+            'R',
+            'R',
+            'R',
+            'R',
+            'C',
+            'R',
+            'L',
+            'R'
+        ]);
 
-        $pdf->Rect($row_x + 7, $row_y, 63, $pdf->GetY()-$row_y);
+        $no = 1;
+        foreach ($data['barang'] as $d) {
+            // format output
+            $cif = $d['valuta']. ' ' . number_format($d['cif']) . "\n= " . "Rp " . number_format($d['nilai_pabean'],2);
+            $pembebasan = "USD " . number_format($d['pembebasan'], 2) . "\n= Rp " . number_format($d['pembebasan_idr'], 2);
+            $hs_code_tarif = "{$d['hs_raw_code']}\n";
+            $duty_tax = "";
 
-        // (1) Cost/FOB
-        $pdf->SetXY($row_x + 70, $row_y);
-        $this->font();
-        $pdf->MultiCell(22.5, 8, '(1) Cost/FOB', 0);
+            foreach ($d['tarif'] as $kode => $t) {
+                $hs_code_tarif.= "{$kode}: {$t['tarif']}";
+                if (substr($kode,0,2) == 'BM') {
+                    if ($t['jenis'] == 'ADVALORUM') {
+                        $hs_code_tarif .= '%';
+                    }
+                    $hs_code_tarif .= " ({$t['jenis']})";
+                } else {
+                    $hs_code_tarif .= '%';
+                }
+                
+                $hs_code_tarif .= "\n";
+            }
 
-        $pdf->Rect($row_x + 70, $row_y, 22.5, $pdf->GetY()-$row_y);
+            foreach ($d['pungutan'] as $p) {
+                $duty_tax .= "{$p->jenisPungutan->kode}: Rp " . number_format($p->bayar,2);
+                $duty_tax .= "\n";
+            }
 
-        // (2) Insurance
-        $pdf->SetXY($row_x + 70 + 22.5, $row_y);
-        $this->font();
-        $pdf->MultiCell(22.5, 8, '(2) Insurance', 0);
+            $row = [
+                $no++,
+                $d['uraian_print'],
+                $d['fob'],
+                $d['insurance'],
+                $d['freight'],
+                $cif,
+                '1 ' . $d['valuta'] . "\n= Rp " . number_format($d['ndpbm'],2),
+                $pembebasan,
+                $hs_code_tarif,
+                $duty_tax
+            ];
 
-        $pdf->Rect($row_x + 70 + 22.5, $row_y, 22.5, $pdf->GetY()-$row_y);
-
-        // (3) Freight
-        $pdf->SetXY($row_x + 70 + 22.5 + 22.5, $row_y);
-        $this->font();
-        $pdf->MultiCell(22.5, 8, '(3) Freight', 0);
-
-        $pdf->Rect($row_x + 70 + 22.5 + 22.5, $row_y, 22.5, $pdf->GetY()-$row_y);
-
-        // (4) CIF: [(1)+(2)+(3)]
-        $pdf->SetXY($row_x + 70 + 22.5 + 22.5 + 22.5, $row_y);
-        $this->font();
-        $pdf->MultiCell(25, 4, '(4) CIF: [(1)+(2)+(3)]', 0, 'L');
-
-        $pdf->Rect($row_x + 70 + 22.5 + 22.5 + 22.5, $row_y, 25, $pdf->GetY()-$row_y);
-
-        // Valuta
-        $pdf->SetXY($row_x + 70 + 22.5 + 22.5 + 22.5 + 25, $row_y);
-        $this->font();
-        $pdf->Cell(14.5, 4, 'Valuta', 0, 2);
-        $this->font('I');
-        $pdf->Cell(14.5, 4, 'Currency', 0, 2);
-
-        $pdf->Rect($row_x + 70 + 22.5 + 22.5 + 22.5 + 25, $row_y, 14.5, $pdf->GetY()-$row_y);
-
-        // (5) NDPBM
-        $pdf->SetXY($row_x + 70 + 22.5 + 22.5 + 22.5 + 25 + 14.5, $row_y);
-        $this->font();
-        $pdf->Cell(4, 4, '(5)');
-        $pdf->Cell(25, 4, 'NDPBM', 0, 2);
-        $this->font('I');
-        $pdf->Cell(25, 4, 'Tax Currency Rate', 0, 2);
-
-        $pdf->Rect($row_x + 70 + 22.5 + 22.5 + 22.5 + 25 + 14.5, $row_y, 30, $pdf->GetY()-$row_y);
-
-        // (6) Nilai Pabean
-        $pdf->SetXY($row_x + 70 + 22.5 + 22.5 + 22.5 + 25 + 14.5 + 30, $row_y);
-
-        $row_x  = $pdf->GetX();
-        $this->font();
-        $pdf->Cell(4, 4, '(6)');
-        $pdf->Cell(0, 4, 'Nilai Pabean (Rp): [(4)x(5)]', 0, 2);
-        $this->font('I');
-        $pdf->Cell(0, 4, 'Customs Value', 0, 0);
-
-        $max_x = $pdf->GetX();
-        $pdf->Ln();
-
-        $last_col_width = $max_x-$row_x;
-
-        $pdf->Rect($row_x, $row_y, $max_x-$row_x, $pdf->GetY()-$row_y);
-
-        // render data barang here
-        $no = 1;    // number starts from 1
-
-        foreach($data['barang'] as $d) {
-            $this->font();
-
-            // print_r($d[0]);
-            // record row_x row_y
-            $row_x  = $pdf->GetX();
-            $row_y  = $pdf->GetY();
-
-            // no
-            $pdf->SetXY($row_x, $row_y);
-            $pdf->Cell(7, 4, $no, 0, 0);
-
-            // Uraian Barang
-            $uraian = $d['uraian_print'];
-
-            $pdf->SetXY($row_x + 7, $row_y);
-            $pdf->MultiCell(63, 4, $uraian, 0, 'L');
-
-            // record y every time we write data
-            $max_y = $pdf->GetY();
-
-            // FOB
-            $pdf->SetXY($row_x + 70, $row_y);
-            $pdf->Cell(22.5, 4, number_format($d['fob'], 2), 0, 0, 'R');
-
-            // record y every time we write data
-            $max_y = max($max_y, $pdf->GetY());
-
-            // Insurance
-            // $pdf->SetXY($row_x + 92.5, $row_y);
-            $pdf->Cell(22.5, 4, number_format($d['insurance'], 2), 0, 0, 'R');
-
-            // record y every time we write data
-            $max_y = max($max_y, $pdf->GetY());
-            
-            // Freight
-            // $pdf->SetXY($row_x + 92.5 + 22.5, $row_y);
-            $pdf->Cell(22.5, 4, number_format($d['freight'], 2), 0, 0, 'R');
-
-            // record y every time we write data
-            $max_y = max($max_y, $pdf->GetY());
-            
-            // CIF
-            // $pdf->SetXY($row_x + 92.5 + 22.5 + 22.5, $row_y);
-            $pdf->Cell(25, 4, number_format($d['cif'], 2), 0, 0, 'R');
-
-            // record y every time we write data
-            $max_y = max($max_y, $pdf->GetY());
-            
-            // Valuta
-            // $pdf->SetXY($row_x + 92.5 + 22.5 + 22.5 + 25, $row_y);
-            $pdf->Cell(14.5, 4, $d['valuta'], 0, 0, 'R');
-
-            // record y every time we write data
-            $max_y = max($max_y, $pdf->GetY());
-
-            // NDPBM
-            // $pdf->SetXY($row_x + 92.5 + 22.5 + 22.5 + 25 + 14.5)
-            $pdf->Cell(30, 4, number_format($d['ndpbm'], 2), 0, 0, 'R');
-            
-            // record y every time we write data
-            $max_y = max($max_y, $pdf->GetY());
-            
-            // Nilai Pabean
-            // $pdf->SetXY($row_x + 92.5 + 22.5 + 22.5 + 25 + 14.5)
-            $pdf->Cell($last_col_width, 4, number_format($d['nilai_pabean'], 2), 0, 1, 'R');
-            
-            // record y every time we write data
-            $max_y = max($max_y, $pdf->GetY());
-
-            // Draw Rectangle nao
-            $pdf->Rect($row_x, $row_y, 7, $max_y-$row_y);   // no
-            $pdf->Rect($row_x + 7, $row_y, 63, $max_y-$row_y);   // uraian barang
-            $pdf->Rect($row_x + 70, $row_y, 22.5, $max_y-$row_y);   // Cost
-            $pdf->Rect($row_x + 92.5, $row_y, 22.5, $max_y-$row_y);   // Insurance
-            $pdf->Rect($row_x + 115, $row_y, 22.5, $max_y-$row_y);   // Freight
-            $pdf->Rect($row_x + 137.5, $row_y, 25, $max_y-$row_y);   // CIF
-            $pdf->Rect($row_x + 162.5, $row_y, 14.5, $max_y-$row_y);   // Valuta
-            $pdf->Rect($row_x + 177, $row_y, 30, $max_y-$row_y);   // Valuta
-            $pdf->Rect($row_x + 207, $row_y, $last_col_width, $max_y-$row_y);   // Nilai Pabean
-
-            
-            // for next line, set cursor
-            $pdf->SetY($max_y);
-
-            $no++;
-
-            // $pdf->Ln();
+            $this->Row($row);
         }
 
-        // total
+        $this->CheckPageBreak(8);
+        $this->Ln();
         $this->font('B');
-        $pdf->Cell(207, 4, '(7) Total', 1, 0, 'C');
-
-        // Total Nilai Pabean
-        $total_nilai_pabean = array_reduce($data['barang'], function ($acc, $e) { return $acc + $e['nilai_pabean']; }, 0);
-
-        $pdf->Cell(0, 4, number_format($total_nilai_pabean, 2), 1, 1, 'R');
-
-        // add line for beautiful output
-        $pdf->Ln(2);
-
-        // Pembebasan
-        $this->font();
-
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        // (8) Pembebasan
-        $pdf->SetX($row_x + 7);
-        $pdf->Cell(63, 4, '(8) Pembebasan', 0, 2);
-        $this->font('I');
-        $pdf->Cell(63, 4, 'De minimis value', 0, 0);
-
-        // value of Pembebasan
-        $this->font();
-        $pdf->Cell(22.5, 4, number_format($data['pembebasan'], 2), 0, 0, 'R');
-
-        // valuta of pembebasan
-        $pdf->Cell(22.5, 4, "USD", 0, 0, 'C');
-
-        // x
-        $pdf->Cell(47.5, 4, 'x', 0, 0, 'C');
-
-        // kurs ndpbm
-        $pdf->SetX($row_x + 7 + 63 + 22.5 + 22.5 + 22.5 + 25 + 14.5 );
-        $pdf->Cell(30, 4, number_format($data['ndpbm'], 2), 0, 0, 'R');
-
-        // Nilai Pembebasan Rp
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['nilai_pembebasan_idr'], 2), 0, 1, 'R');
-
-        $pdf->Text(297-8.5, $pdf->GetY() - 1.5, '-');
-        // $pdf->Write(4, '-');
-
-
-        // Draw the underline + minus sign
-        // $pdf->Text(297-10, $row_y, '(-)');
-
-        // $pdf->Ln();
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        $pdf->Line($row_x, $row_y, 287, $row_y);
-
-
-        // Nilai Dasar Perhitungan
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        $pdf->SetX($row_x + 7);
-        $this->font();
-        $pdf->Cell(63, 4, '(9) Nilai dasar perhitungan BM + Pajak: [(7)-(8)]', 0, 2);
-        $this->font('I');
-        $pdf->Cell(63, 4, 'Base Value for Tax and Duty calculation', 0, 0);
-
-        // Bold
-        $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['nilai_dasar_idr'], 2), 0, 1, 'R');
-
-        $pdf->Line($pdf->GetX(), $pdf->GetY(), 287, $pdf->GetY());
-
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        // Title
-        $pdf->Ln();
-        $pdf->SetX($row_x + 7);
-        $pdf->Cell(63, 4, 'BEA MASUK DAN PAJAK', 0, 2);
+        $this->SetX($this->GetX()+7);
+        $this->Cell(0,4,"BEA MASUK DAN PAJAK",0,1);
         $this->font('BI');
-        $pdf->Cell(63, 4, 'TAX AND DUTY', 0, 1);
+        $this->SetX($this->GetX()+7);
+        $this->Cell(0,4,"DUTY AND TAX SUMMARY",0,1);
+        
+        $total_h = 4 * count($data['pungutan']['bayar']) * 2 + 8;
 
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
+        $this->CheckPageBreak($total_h);
 
-        // 10. Bea Masuk
-        $this->font();
-        $pdf->SetX($row_x + 7);
-        $pdf->Cell(63, 4, "(10) Bea Masuk: [(9) x 10%]", 0, 2);
-        $this->font('I');
-        $pdf->Cell(63, 4, 'Customs Duty', 0, 0);
+        // spawn data
+        foreach ($data['pungutan']['bayar'] as $kode => $total) {
+            $this->SetX($this->GetX()+7);
+            $w = $this->GetStringWidth(PdfLembarHitungCD::$dict[$kode][0]);
+            $this->font();
+            $this->Cell($w, 4, PdfLembarHitungCD::$dict[$kode][0], 0, 1);
 
+            $this->SetX($this->GetX()+7);
+            $w = $this->GetStringWidth(PdfLembarHitungCD::$dict[$kode][1]);
+            $this->font('I');
+            $this->Cell($w, 4, PdfLembarHitungCD::$dict[$kode][1], 0, 0);
+            
+            $this->SetX($this->GetX()+$w);
+            $this->font('B');
+            $this->Cell(0, 4, number_format($total,2),0,1,'R');
+            $this->Line($this->GetX(), $this->GetY(), $this->GetPageWidth()-$this->rMargin, $this->GetY());
+        }
+
+        // Total
+        $total_pungutan = array_reduce($data['pungutan']['bayar'], function($acc,$e){ return $acc+$e; },0.0);
+
+        $this->SetX($this->GetX()+7);
         $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['pungutan']['bm'], 2), 0, 1, 'R');
-
-        $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
-
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        // 11. Nilai Impor
-        $this->font('',[255, 0, 0]);
-        $pdf->SetX($row_x + 7);
-        $pdf->Cell(63, 4, "(11) Nilai Impor: [(9)+(10)]", 0, 2);
-        $this->font('I',[255, 0, 0]);
-        $pdf->Cell(63, 4, 'Import Value', 0, 0);
-
-        $this->font('B',[255, 0, 0]);
-
-        $pdf->SetX($row_x + 7 + 63 + 22.5 + 22.5 + 22.5 + 25 + 14.5 );
-        $pdf->Cell(30, 4, number_format($nilai_impor, 2), 0, 1, 'R');
-
-        $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
-
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        // 12. PPN
-        $this->font();
-        $pdf->SetX($row_x + 7);
-        $pdf->Cell(63, 4, "(12) PPN: [(11) x 10%]", 0, 2);
-        $this->font('I');
-        $pdf->Cell(63, 4, 'Value Added Tax', 0, 0);
-
-        $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['pungutan']['ppn'], 2), 0, 1, 'R');
-
-        $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
-
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        // 13. PPh
-        $this->font();
-        $pdf->SetX($row_x + 7);
-        $pdf->Cell(63, 4, "(13) PPh: [(11) x ". number_format($data['tarif_pph'], 2) ."%]", 0, 2);
-        $this->font('I');
-        $pdf->Cell(63, 4, 'Value Added Tax', 0, 0);
-
-        $this->font('B');
-        $pdf->Cell(0, 4, number_format($data['pungutan']['pph'], 2), 0, 1, 'R');
-
-        $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
-
-        // record row_x row_y
-        $row_x  = $pdf->GetX();
-        $row_y  = $pdf->GetY();
-
-        // 14. Total
-        $this->font('B');
-        $pdf->SetX($row_x + 7);
-        $pdf->Cell(63, 4, "Total Bea Masuk dan Pajak", 0, 2);
+        $this->Cell(0, 4, 'Total Bea Masuk dan Pajak', 0, 1);
+        $this->SetX($this->GetX()+7);
         $this->font('BI');
-        $pdf->Cell(63, 4, 'Total Duty and Tax', 0, 0);
-
-        $total_pungutan = array_reduce($data['pungutan'], function ($acc, $val) { return $acc+$val; }, 0);
-
+        $this->Cell(50, 4, 'Total Duty and Tax', 0, 0);
         $this->font('B');
-        $pdf->Cell(0, 4, number_format($total_pungutan, 2), 0, 1, 'R');
-        $pdf->Line($row_x, $pdf->GetY(), 287, $pdf->GetY());
-        $pdf->Line($row_x, $pdf->GetY() + 1, 287, $pdf->GetY() + 1);
+        $this->Cell(0, 4, number_format($total_pungutan,2),0,1,'R');
+        $this->Line($this->GetX(), $this->GetY(), $this->GetPageWidth()-$this->rMargin, $this->GetY());
+        $this->Line($this->GetX(), $this->GetY()+1, $this->GetPageWidth()-$this->rMargin, $this->GetY()+1);
 
         $pdf->Ln();
 
 
         // nama pejabat dan penumpang
+        $this->CheckPageBreak(16);
         $row_x  = $pdf->GetX();
         $row_y  = $pdf->GetY();
 
