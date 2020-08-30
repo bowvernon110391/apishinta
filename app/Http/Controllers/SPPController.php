@@ -192,8 +192,8 @@ class SPPController extends ApiController
         }
 
         // are we authorized?
-        if (!canEdit($spp->is_locked, $r->userInfo)) {
-            return $this->errorForbidden("SPP sudah terkunci, dan privilege anda tidak cukup untuk operasi ini");
+        if (/* !canEdit($spp->is_locked, $r->userInfo) */!is_null($spp->pibk)) {
+            return $this->errorForbidden("SPP sudah diselesaikan dengan PIBK");
         }
 
         // attempt deletion

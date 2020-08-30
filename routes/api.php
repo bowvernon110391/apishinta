@@ -114,6 +114,10 @@ Route::put('/cd/{id}', 'CDController@update')
 Route::delete('/cd/{id}', 'CDController@destroy')
         ->middleware( 'role:PDTT,CONSOLE,KASI');
 
+// DELETE /cd/{id}/lock => buka data cd
+Route::delete('/cd/{id}/lock', 'CDController@unlockCD')
+        ->middleware('role:PDTT,CONSOLE,KASI');
+
 // GET /cd/{id}/simulasi
 Route::get('/cd/{id}/simulasi', 'CDController@simulasiHitung')
         ->middleware( 'role');
