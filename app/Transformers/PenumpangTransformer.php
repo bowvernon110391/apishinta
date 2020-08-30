@@ -22,6 +22,7 @@ class PenumpangTransformer extends TransformerAbstract {
             'nama'  => $p->nama,
             'tgl_lahir' => $p->tgl_lahir,
             'no_paspor' => $p->no_paspor,
+            'nik'       => $p->nik,
             'kebangsaan'=> $p->kebangsaan,
             'pekerjaan' => $p->pekerjaan,
 

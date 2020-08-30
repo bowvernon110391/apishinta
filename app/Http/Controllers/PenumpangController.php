@@ -93,6 +93,7 @@ class PenumpangController extends ApiController
         $kebangsaan = $request->get('kebangsaan');
         $no_paspor  = $request->get('no_paspor');
         $pekerjaan  = $request->get('pekerjaan');
+        $nik = $request->get('nik');
 
         // one check after another
         if (!$nama) {
@@ -109,6 +110,9 @@ class PenumpangController extends ApiController
         }
         if (/* !$pekerjaan */false) {
             return $this->errorBadRequest('Pekerjaan tidak valid => ' . $pekerjaan);
+        }
+        if (!(strlen($nik) == 0 || strlen($nik) >= 16) ) {
+            return $this->errorBadRequest("NIK dikosongkan, atau diisi minimal 16 digit");
         }
 
 
@@ -129,6 +133,7 @@ class PenumpangController extends ApiController
             $penumpang->pekerjaan   = $pekerjaan;
             $penumpang->email       = $email;
             $penumpang->phone       = $phone;
+            $penumpang->nik         = $nik;
 
             // coba save
             if (!$penumpang->save())
@@ -195,6 +200,7 @@ class PenumpangController extends ApiController
         $kebangsaan = $request->get('kebangsaan');
         $no_paspor  = $request->get('no_paspor');
         $pekerjaan  = $request->get('pekerjaan');
+        $nik = $request->get('nik');
 
         // check if all parameter exists
         if (!$nama || !$tgl_lahir || !$kebangsaan || !$no_paspor /* || !$pekerjaan */) {
@@ -213,9 +219,11 @@ class PenumpangController extends ApiController
             $penumpang->no_paspor   = $no_paspor;
             $penumpang->kebangsaan  = $kebangsaan;
             $penumpang->pekerjaan   = $pekerjaan;
+            $penumpang->nik         = $nik;
 
             $penumpang->email   = expectSomething($request->get('email'), 'e-mail');
             $penumpang->phone   = expectSomething($request->get('phone'), 'nomor telepon');
+
 
             // coba save
             if (!$penumpang->save())
