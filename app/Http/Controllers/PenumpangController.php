@@ -208,6 +208,10 @@ class PenumpangController extends ApiController
             return $this->errorBadRequest("Data penumpang tidak lengkap. Silahkan lengkapi");
         }
 
+        if (!(strlen($nik) == 0 || strlen($nik) >= 16) ) {
+            return $this->errorBadRequest("NIK dikosongkan, atau diisi minimal 16 digit");
+        }
+
         // attempt to store it
         // use try catch
         try {
