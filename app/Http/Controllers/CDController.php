@@ -635,7 +635,7 @@ class CDController extends ApiController
             }
 
             // update kurs ndpbm to use current kurs, perhaps update its date too
-            $cd->tgl_dok = date('Y-m-d');
+            // $cd->tgl_dok = date('Y-m-d');
             
             // for now, do not update ndpbm. just use what was said first
             /* $kurs_usd = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first();
