@@ -73,6 +73,7 @@ class PdfLembarHitungCD extends PDF_MC_Table {
         $nama_pejabat   = $petugas->name;
         $nama_penumpang = $this->cd->penumpang->nama;
         $nomor_paspor = $this->cd->penumpang->no_paspor;
+        $npwp = $this->cd->npwp ?? '-';
 
         $nomor_lengkap_dok  = $this->cd->nomor_lengkap_dok;
         $tgl_dok        = $this->cd->tgl_dok;
@@ -125,6 +126,12 @@ class PdfLembarHitungCD extends PDF_MC_Table {
         $pdf->Cell(8, 4, ':', 0, 0, 'C');
         $pdf->Cell(0, 4, $nama_penumpang, 0, 1);
         // NPWP PENUMPANG
+        // NPWP PENUMPANG
+        $pdf->SetXY($row_x + 157, $row_y);
+        $pdf->Cell(32, 4, 'NPWP', 0, 0);
+        $pdf->Cell(8, 4, ':', 0, 0, 'C');
+        $pdf->Cell(0, 4, $npwp, 0, 1);
+        // IDENTITAS PENUMPANG
         $row_x  = $pdf->GetX();
         $row_y  = $pdf->GetY();
         $pdf->SetXY($row_x + 7, $row_y);

@@ -41,6 +41,7 @@ class PdfLembarHitungPIBK extends PDF_MC_Table {
         $nama_pejabat   = $petugas->name;
         $nama_penumpang = $payer['nama'];
         $nomor_paspor = $payer['no_identitas'];
+        $npwp = $payer['npwp'] ?? '-';
 
         $nomor_lengkap_dok  = $this->pibk->nomor_lengkap_dok;
         $tgl_dok        = $this->pibk->tgl_dok;
@@ -93,6 +94,11 @@ class PdfLembarHitungPIBK extends PDF_MC_Table {
         $pdf->Cell(8, 4, ':', 0, 0, 'C');
         $pdf->Cell(0, 4, $nama_penumpang, 0, 1);
         // NPWP PENUMPANG
+        $pdf->SetXY($row_x + 157, $row_y);
+        $pdf->Cell(32, 4, 'NPWP', 0, 0);
+        $pdf->Cell(8, 4, ':', 0, 0, 'C');
+        $pdf->Cell(0, 4, $npwp, 0, 1);
+        // IDENTITAS
         $row_x  = $pdf->GetX();
         $row_y  = $pdf->GetY();
         $pdf->SetXY($row_x + 7, $row_y);
