@@ -146,7 +146,31 @@ if (!function_exists('getUserInfo')) {
                     ),
                   ),
                 ),
-              )
+              ),
+
+            // mockup profil pdtt
+            'token_pelaksana_administrasi'  => [
+              "user_id" => "313",
+              "username" => "luky.purdiono",
+              "name" => "Luky Purdiono",
+              "nip" => "19940321201001001",
+              "pangkat" => "Pengatur Tk.1 - II/b",
+              "status" => true,
+              "apps_data" => [
+                3 => [
+                  "app_name" => "AKANG",
+                  "roles" => [
+                    "PEMERIKSA",
+                  ],
+                ],
+                5 => [
+                  "app_name" => "SiBAPE",
+                  "roles" => [
+                    "PELAKSANA_ADMINISTRASI",
+                  ],
+                ],
+              ],
+            ],
         ];
 
         $access_token = app('request')->bearerToken();
