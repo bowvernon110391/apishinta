@@ -626,39 +626,8 @@ class CDController extends ApiController
         try {
             // just unlock it
             $cd = CD::findOrFail($id);
-            $cd->unlock();
-            $cd->refresh();
-
-            // if it's still locked, we're fucked
-            if($cd->is_locked) {
-                throw new \Exception("Failed to unlock CD #{$id}. REASON_UNKNOWN");
-            }
-
-            // update kurs ndpbm to use current kurs, perhaps update its date too
-            // $cd->tgl_dok = date('Y-m-d');
             
-            // for now, do not update ndpbm. just use what was said first
-            /* $kurs_usd = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first();
-            if (!$kurs_usd) {
-                throw new \Exception("Kurs USD per hari ini tidak ditemukan. Coba update data kurs terlebih dahulu");
-            }
-            $cd->ndpbm()->associate($kurs_usd); */
-            $cd->save();
-
-            // for each of its detail, update it to use current kurs too! nope, tell them to use manually
-
-            // log it?
-            AppLog::logWarning("CD #{$id} is unlocked by {$r->userInfo['username']}", $cd);
-
-            // no need to update status I guess? nope add it
-            $cd->appendStatus(
-                "RESTORED",
-                null,
-                null,
-                null,
-                null,
-                SSOUserCache::byId($r->userInfo['user_id'])
-            );
+            $cd->restoreAndRefresh();
 
             DB::commit();
 

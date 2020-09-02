@@ -196,15 +196,23 @@ class SPPController extends ApiController
             return $this->errorForbidden("SPP sudah diselesaikan dengan PIBK");
         }
 
+        DB::beginTransaction();
         // attempt deletion
         try {
             AppLog::logWarning("SPP #{$id} dihapus oleh {$r->userInfo['username']}", $spp, true);
 
+            $cd = $spp->cd;
             $spp->delete();
+            if ($cd) {
+                $cd->restoreAndRefresh();
+            }
+
+            DB::commit();
 
             return $this->setStatusCode(204)
                         ->respondWithEmptyBody();
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
     }

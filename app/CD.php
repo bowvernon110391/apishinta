@@ -559,4 +559,51 @@ IHasPungutan, INotable, IPayable, IGateable
 
     public function syncPungutanNonKomersil() {
     }
+
+    public function restoreAndRefresh() {
+        $r = app('request');
+        $cd = $this;
+
+        $cd->unlock();
+        $cd->refresh();
+
+        // if it's still locked, we're fucked
+        if($cd->is_locked) {
+            throw new \Exception("Failed to unlock CD #{$cd->id}. REASON_UNKNOWN");
+        }
+
+        // update kurs ndpbm to use current kurs, perhaps update its date too
+        $cd->tgl_dok = date('Y-m-d');
+        
+        // for now, do not update ndpbm. just use what was said first
+        $kurs_usd = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first();
+        if (!$kurs_usd) {
+            throw new \Exception("Kurs USD per hari ini tidak ditemukan. Coba update data kurs terlebih dahulu");
+        }
+        $cd->ndpbm()->associate($kurs_usd);
+        $cd->save();
+
+        // for each of its detail, update it to use current kurs too!
+        foreach ($cd->detailBarang as $d) {
+            $newKurs = Kurs::perTanggal($cd->tgl_dok)->kode($d->kurs->kode_valas)->first();
+            if (!$newKurs) {
+                throw new \Exception("KURS terbaru dengan kode {$newKurs->kode_valas} tidak ditemukan!");
+            }
+            $d->kurs()->associate($newKurs);
+            $d->save();
+        }
+
+        // log it?
+        AppLog::logWarning("CD #{$cd->id} is unlocked by {$r->userInfo['username']}", $cd);
+
+        // no need to update status I guess? nope add it
+        $cd->appendStatus(
+            "RESTORED",
+            null,
+            null,
+            null,
+            null,
+            SSOUserCache::byId($r->userInfo['user_id'])
+        );
+    }
 }
