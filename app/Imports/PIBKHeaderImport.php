@@ -8,6 +8,7 @@ use App\PIBK;
 use App\PJT;
 use App\ReferensiJenisDokkap;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -38,12 +39,14 @@ class PIBKHeaderImport implements WithEvents
             AfterSheet::class => function (AfterSheet $e) use ($pibk) {
                 $s = $e->sheet->getDelegate();
 
-                echo "Reading Sheet HEADER";
+                if (App::runningInConsole())
+                    echo "Reading Sheet HEADER\n";
                 // dump($s);
 
                 $pibk->tgl_dok = date('Y-m-d');
 
                 $pibk->importir = new Penumpang();
+                $pibk->importir_type = Penumpang::class;
 
                 $p = $pibk->importir;
                 $p->nama = $s->getCell('B2')->getValue();

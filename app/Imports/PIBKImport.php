@@ -18,7 +18,8 @@ class PIBKImport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            'HEADER' => new PIBKHeaderImport($this->pibk)
+            'HEADER' => new PIBKHeaderImport($this->pibk),
+            'BARANG' => new PIBKBarangImport($this->pibk)
         ];
     }
 
