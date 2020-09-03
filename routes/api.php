@@ -480,6 +480,8 @@ Route::get('/excel/bppm', 'ExcelController@exportBppm')
 Route::post('/excel/billing', 'ExcelController@importBilling')
 ->middleware('role:PERBENDAHARAAN');
 
+Route::post('/excel/pibk', 'ExcelController@importPIBK');
+
 
 //====================================================================================================
 // ENDPOINTS SSOUserCache

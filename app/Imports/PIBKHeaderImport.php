@@ -2,7 +2,10 @@
 
 namespace App\Imports;
 
+use App\Airline;
 use App\Dokkap;
+use App\Negara;
+use App\Pelabuhan;
 use App\Penumpang;
 use App\PIBK;
 use App\PJT;
@@ -52,10 +55,13 @@ class PIBKHeaderImport implements WithEvents
                 $p->nama = $s->getCell('B2')->getValue();
                 $p->no_paspor = trim( preg_replace('/[^0-9A-Za-z]./i', '', $s->getCell('B3')->getValue() ) );
                 $p->pekerjaan = '-';
+                $p->tgl_lahir = date('Y-m-d', Date::excelToTimestamp($s->getCell('B4')->getValue()));
                 $p->nik = $s->getCell('B5')->getValue();
                 $p->kd_negara_asal = $s->getCell('B6')->getValue();
                 $p->email = $s->getCell('B7')->getValue();
                 $p->phone = $s->getCell('B8')->getValue();
+
+                $p->negara()->associate(Negara::byExactCode3($p->kd_negara_asal)->first());
 
                 $pjt = PJT::where('nama', $s->getCell('B10')->getValue())->first();
 
@@ -83,8 +89,13 @@ class PIBKHeaderImport implements WithEvents
                 // kd_pelabuhan_asal
                 $pibk->kd_pelabuhan_asal = $s->getCell('B18')->getValue();
                 $pibk->kd_pelabuhan_tujuan = $s->getCell('B19')->getValue();
-                // tarif_pph
-                $pibk->tarif_pph = (float) $s->getCell('B20')->getValue();
+                // pph_tarif
+                $pibk->pph_tarif = (float) $s->getCell('B20')->getValue();
+
+                // associate
+                $pibk->airline()->associate(Airline::where('kode', $pibk->kd_airline)->first());
+                $pibk->pelabuhanAsal()->associate(Pelabuhan::where('kode', $pibk->kd_pelabuhan_asal)->first());
+                $pibk->pelabuhanTujuan()->associate(Pelabuhan::where('kode', $pibk->kd_pelabuhan_tujuan)->first());
 
                 // no_bc11
                 $pibk->no_bc11 = $s->getCell('B23')->getValue();
