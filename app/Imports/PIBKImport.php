@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\PIBK;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class PIBKImport implements WithMultipleSheets
