@@ -19,6 +19,7 @@ if (!function_exists('grabsKursData')) {
 			'January'	=> '01',
 			'Februari'	=> '02',
 			'February'	=> '02',
+			'Pebruari' 	=> '02',
 			'Maret'		=> '03',
 			'March'		=> '03',
 			'April'		=> '04',
