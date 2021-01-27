@@ -8,6 +8,8 @@ use App\Exports\KursBkfExport;
 use App\Exports\KursExport;
 use App\Imports\BillingImport;
 use App\Imports\KursImportToJson;
+use App\Imports\PIBKImport;
+use App\Transformers\PIBKTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Excel as ExcelExcel;
@@ -97,6 +99,45 @@ class ExcelController extends ApiController
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    public function importPIBK(Request $r) {
+
+        // this is bad. might want to move it to a dedicated middleware
+        $ip = $r->getClientIp();
+        $ipAllowed = false;
+
+        // allowed: local lan (192.168.*), localhost (127.0.0.*), kantor (125.213.132.*)
+        if (preg_match('/^192.168./', $ip) || preg_match('/^127.0.0./', $ip) || preg_match('/^125.213.132./', $ip)) {
+            $ipAllowed = true;
+        }
+
+        try {
+            // is ip allowed?
+            if (!$ipAllowed) {
+                throw new \Exception("Akses dari ip: {$ip} tidak diperbolehkan!");
+            }
+
+            $file = $r->file('file');
+
+            if (!$file) {
+                throw new \Exception("No excel file provided!");
+            }
+
+            // baca file?
+            $p = new PIBKImport();
+            Excel::import($p, $file);
+
+            $pibk = $p->getPIBK();
+
+            if (!$pibk) {
+                throw new \Exception("PIBK null! This shouldn't happen!!!!");
+            }
+
+            return $this->respondWithItem($pibk, new PIBKTransformer);
+        } catch (\Throwable $e) {
             return $this->errorBadRequest($e->getMessage());
         }
     }
