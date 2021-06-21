@@ -13,7 +13,7 @@ if (!function_exists('grabsKursData')) {
 	grabKursData
 		fungsi ini ngambil data dari alamat kurs pajak, dan ngembaliin data yg siap dipake
 	*/
-	function grabKursData() {	
+	function grabKursData() {
 		$monthLookup = array(
 			'Januari'	=> '01',
 			'January'	=> '01',
@@ -38,7 +38,7 @@ if (!function_exists('grabsKursData')) {
 			'November'	=> '11',
 			'Desember'	=> '12',
 			'December'	=> '12'
-			);	
+			);
 		// ssl context (BYPASS SSL)
 		$arrContextOptions=array(
 			"ssl"=>array(
@@ -46,7 +46,7 @@ if (!function_exists('grabsKursData')) {
 				"verify_peer"=>false,
 				"verify_peer_name"=>false,
 			),
-		);  
+		);
 		// source data
 		try {
 			//code...
@@ -61,7 +61,7 @@ if (!function_exists('grabsKursData')) {
 			throw $e;
 			return null;
 		}
-		
+
 
 		// echo $html;
 
@@ -79,7 +79,7 @@ if (!function_exists('grabsKursData')) {
 				$matches[1] = '0'.$matches[1];
 
 			if (strlen($matches[4]) == 1)
-				$matches[4] = '0'.$matches[4];	
+				$matches[4] = '0'.$matches[4];
 
 			$retData = array(
 				'dateStart'	=> $matches[3].'-'.$monthLookup[$matches[2]].'-'.$matches[1],
@@ -93,7 +93,7 @@ if (!function_exists('grabsKursData')) {
 
 		// grab data asli (KODE KURS + NILAI TUKARNYA)
 		// $patKurs = '/\(([A-Z]{3})\).+.+>(.+)\s<img/';
-		$patKurs = '/\((\w{3})\)<\/td>\s.+\s.+\s.+>([0-9]{1,3}\.[0-9]{3}\,[0-9]{2,})<\/div>/';
+		$patKurs = '/\((\w{3})\)<\/td>\s+<td.+>\s+<img.+\/>\s+<div.+>([\d,\.]+)/';
 
 		$result = preg_match_all($patKurs, $html, $matches);
 
@@ -108,7 +108,7 @@ if (!function_exists('grabsKursData')) {
 				$comma = substr($matches[2][$i], -3, 1);
 
 				if ($comma == ',') {
-					// some idiot at BKF decides to use comma as decimal separator					
+					// some idiot at BKF decides to use comma as decimal separator
 					$nilai = str_replace('.', '', $matches[2][$i]);
 					$nilai = str_replace(',', '.', $nilai);
 				} else if ($comma == '.') {
@@ -118,7 +118,7 @@ if (!function_exists('grabsKursData')) {
 					// must be error. throw something
 					throw new \Exception("Unknown decimal separator '{$comma}'", 400);
 				}
-				
+
 
 				$kurs = $nilai * 1;
 
@@ -130,7 +130,7 @@ if (!function_exists('grabsKursData')) {
 
 				// just plug it in I guess
 				$retData['data'][$kdValuta] = sprintf("%.4f", $kurs);
-			}	
+			}
 		} else
 			return null;
 
