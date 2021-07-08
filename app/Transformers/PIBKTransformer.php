@@ -13,14 +13,14 @@ class PIBKTransformer extends TransformerAbstract {
         'pemberitahu',
         'source',
         'lokasi',
-        
+
         'ndpbm',
         'status',
         'lampiran',
         'instruksi_pemeriksaan',
-        
+
         'dokkap',
-        
+
         'bppm',
         'billing',
         'sppb',
@@ -36,14 +36,14 @@ class PIBKTransformer extends TransformerAbstract {
         'pemberitahu',
         // 'source',
         'lokasi',
-        
+
         'ndpbm',
         'status',
         // 'lampiran',
         // 'instruksi_pemeriksaan',
-        
+
         // 'dokkap',
-        
+
         'bppm',
         'billing',
         'sppb',
@@ -58,7 +58,7 @@ class PIBKTransformer extends TransformerAbstract {
             'no_dok' => (int) $p->no_dok,
             'tgl_dok' => $p->tgl_dok,
             'nomor_lengkap' => $p->nomor_lengkap_dok,
-            
+
             // data barang
             'koli' => (int) $p->koli,
 
@@ -105,7 +105,10 @@ class PIBKTransformer extends TransformerAbstract {
             'is_locked' => $p->is_locked,
 
             // last status
-            'last_status' => $p->short_last_status
+            'last_status' => $p->short_last_status,
+
+            // total yg perlu dibayar
+            'total_bayar' => (float) $p->total_bayar
         ];
     }
 
@@ -152,7 +155,7 @@ class PIBKTransformer extends TransformerAbstract {
             return $this->item($l, spawnTransformer($l));
         }
     }
-    
+
     // 'ndpbm',
     public function includeNdpbm(PIBK $p) {
         $n = $p->ndpbm;
@@ -178,12 +181,12 @@ class PIBKTransformer extends TransformerAbstract {
             return $this->item($ip, new InstruksiPemeriksaanTransformer);
         }
     }
-    
+
     // 'dokkap',
     public function includeDokkap(PIBK $p) {
         return $this->collection($p->dokkap, new DokkapTransformer);
     }
-    
+
     // 'bppm', optional
     public function includeBppm(PIBK $p) {
         $b = $p->bppm;

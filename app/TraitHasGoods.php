@@ -14,6 +14,11 @@ trait TraitHasGoods {
         return $this->detailBarang()->count();
     }
 
+    public function getTotalBayarAttribute() {
+        $pungutan = $this->computePungutanImpor();
+        return array_reduce($pungutan['pungutan']['bayar'], function($accum, $e) { return $accum + $e; }, 0.0);
+    }
+
     public function summaryPackage(Collection $barang) {
         $summary = $barang->reduce(function ($acc, $e) {
             // append to $acc if it doesn't exist yet
@@ -56,7 +61,7 @@ trait TraitHasGoods {
             return [
                 'tarif' => $e->valid_tarif,
                 'pungutan' => $e->computePungutanImpor(),
-                
+
                 'uraian' => $e->nice_format,
                 'uraian_print' => $e->print_format,
                 'jumlah_jenis_kemasan' => $e->jumlah_kemasan . ' ' . $e->jenis_kemasan,
@@ -111,13 +116,13 @@ trait TraitHasGoods {
 
         foreach ($barangs as $b) {
             $duplicate = $b->replicate();
-            
+
             // $this->detailBarang()->save($duplicate);
             $duplicate->header()->associate($this);
             // zero out pembebasan
             if ($zeroPembebasan)
                 $duplicate->pembebasan = 0;
-                
+
             $duplicate->save();
 
             // if barang is penetapan, create one too
@@ -129,7 +134,7 @@ trait TraitHasGoods {
             }
 
             // trigger handler
-            
+
             $this->onCreateItem($duplicate);
         }
     }

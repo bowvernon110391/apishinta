@@ -124,7 +124,7 @@ class PIBKController extends ApiController
             // save it
             $pibk->save();
 
-            // sync dokkap 
+            // sync dokkap
             $pibk->syncDokkap($r->get('dokkap')['data']);
 
             // log it
@@ -181,7 +181,7 @@ class PIBKController extends ApiController
         $paginator = $pibk->detailBarang()/* ->isPenetapan() */
                     ->paginate($r->get('number', 10))
                     ->appends($r->except('page'));
-        
+
         return $this->respondWithPagination($paginator, new DetailBarangTransformer);
     }
 
@@ -276,7 +276,7 @@ class PIBKController extends ApiController
             // save it
             $pibk->save();
 
-            // sync dokkap 
+            // sync dokkap
             $pibk->syncDokkap($r->get('dokkap')['data']);
 
             // log it
@@ -312,10 +312,10 @@ class PIBKController extends ApiController
             if (!canEdit($p->is_locked, $r->userInfo)) {
                 throw new \Exception("PIBK #{$id} is locked and you don't have enough privilege to bypass it");
             }
-            
+
             // Log it
             AppLog::logWarning("PIBK #{$p->id} dihapus oleh {$r->userInfo['username']}", $p, true);
-            
+
             $p->delete();
 
             return $this->setStatusCode(204)
@@ -332,7 +332,7 @@ class PIBKController extends ApiController
      */
     public function simulasiHitung(Request $r, $id) {
         $p = PIBK::find($id);
-        
+
         if (!$p) {
             return $this->errorNotFound("PIBK #{$id} was not found");
         }
@@ -381,17 +381,22 @@ class PIBKController extends ApiController
             $tanggung_pemerintah = array_reduce($pungutan['tanggung_pemerintah'], function($acc, $e) { return $acc + $e; }, 0);
 
             // makes sense gk hasil perhitungannya?
-            if ($bayar < 1000.0) {
-                throw new \Exception("Total Pungutan Bayar < Rp 1000!, computed: {$bayar}" );
+            $putusBebas = false;
+            if ($bayar < 1000.0 && ($bebas + $tunda + $tanggung_pemerintah > 0)) {
+                // throw new \Exception("Total Pungutan Bayar < Rp 1000!, computed: {$bayar}" );
+                $putusBebas = true;
             }
 
             // bebas, tunda, tanggung pemerintah harus 0
-            if ($bebas + $tunda + $tanggung_pemerintah > 0) {
+            /* if ($bebas + $tunda + $tanggung_pemerintah > 0) {
                 throw new \Exception("Penetapan PIBK harus bayar full, computed => bebas: {$bebas}, tunda: {$tunda}, tanggung_pemerintah: {$tanggung_pemerintah}");
-            }
+            } */
 
             // grab new data
             $pungutan = $pungutan['bayar'];
+            $bebasan = $data['pungutan']['bebas'];
+            $tundaan = $data['pungutan']['tunda'];
+            $tanggungan = $data['pungutan']['tanggung_pemerintah'];
 
             // #1, SPAWN PUNGUTAN
             foreach ($pungutan as $kode => $jmlPungutan) {
@@ -403,9 +408,9 @@ class PIBKController extends ApiController
 
                 $p = new Pungutan([
                     'bayar' => $jmlPungutan,
-                    'bebas' => 0,
-                    'tunda' => 0,
-                    'tanggung_pemerintah' => 0
+                    'bebas' => $bebasan[$kode],
+                    'tunda' => $tundaan[$kode],
+                    'tanggung_pemerintah' => $tanggungan[$kode]
                 ]);
 
 
@@ -427,10 +432,10 @@ class PIBKController extends ApiController
                 'keterangan' => "Penetapan pungutan PIBK"
             ]);
 
-            
+
             $l->petugas()->associate(SSOUserCache::byId($r->userInfo['user_id']));
             $pibk->lock()->save($l);
-            
+
             // #4, APPEND STATUS
             $pibk->appendStatus(
                 'PENETAPAN',
@@ -440,7 +445,7 @@ class PIBKController extends ApiController
                 null,
                 $l->petugas
             );
-            
+
             // #5, LOG IT
             AppLog::logInfo("PIBK #{$id} ditetapkan pungutannya oleh {$r->userInfo['username']}", $pibk, false);
 
@@ -485,9 +490,9 @@ class PIBKController extends ApiController
 
             // append status
             $pibk->appendStatus(
-                'BPPM', 
-                $r->get('lokasi') ?? $pibk->lokasi->kode ?? null, 
-                "Penerbitan Bukti Penerimaan Pembayaran Manual nomor {$bppm->nomor_lengkap}", 
+                'BPPM',
+                $r->get('lokasi') ?? $pibk->lokasi->kode ?? null,
+                "Penerbitan Bukti Penerimaan Pembayaran Manual nomor {$bppm->nomor_lengkap}",
                 $bppm,
                 null,
                 SSOUserCache::byId($r->userInfo['user_id'])
@@ -499,7 +504,7 @@ class PIBKController extends ApiController
                 $pibk,
                 false
             );
-            
+
             DB::commit();
 
             // return bppm id
@@ -595,9 +600,9 @@ class PIBKController extends ApiController
 
             // #4 append status CD
             $pibk->appendStatus(
-                'SPPB', 
-                null, 
-                "Penerbitan SPPB nomor {$s->nomor_lengkap_dok}", 
+                'SPPB',
+                null,
+                "Penerbitan SPPB nomor {$s->nomor_lengkap_dok}",
                 $s,
                 null,
                 SSOUserCache::byId($r->userInfo['user_id'])
@@ -612,7 +617,7 @@ class PIBKController extends ApiController
             // return empty
             return $this->setStatusCode(204)
                         ->respondWithEmptyBody();
-            
+
         } catch (ModelNotFoundException $e) {
             DB::rollBack();
             return $this->errorNotFound("PIBK #{$id} was not found");

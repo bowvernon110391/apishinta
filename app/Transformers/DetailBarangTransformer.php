@@ -21,7 +21,9 @@ class DetailBarangTransformer extends TransformerAbstract {
 
         'penetapan', // kalau ini detil pengajuan, dan sudah ditetapkan
         'pengajuan', // kalau ini detil penetapan, dan sblmnya ada pengajuan
-        'pejabat' // pejabat penetapan (kalau penetapan)
+        'pejabat', // pejabat penetapan (kalau penetapan)
+
+        'fasilitas' // fasilitas (kalau ada)
     ];
 
     protected $defaultIncludes = [
@@ -30,7 +32,8 @@ class DetailBarangTransformer extends TransformerAbstract {
         'detailSekunder',
         'kemasan',
         'satuan',
-        'tarif'
+        'tarif',
+        'fasilitas'
     ];
 
     // basic transform
@@ -139,5 +142,10 @@ class DetailBarangTransformer extends TransformerAbstract {
                 return $this->item($d->header, new $transformerName);
             }
         }
+    }
+
+    // include all fasilitas
+    public function includeFasilitas(DetailBarang $d) {
+        return $this->collection($d->fasilitas, new FasilitasTransformer);
     }
 }

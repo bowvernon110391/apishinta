@@ -12,7 +12,7 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
     use TraitSpecifiable;
     use TraitTariffable;
     use TraitLoggable;
-    
+
     // settings
     protected $table = 'detail_barang';
 
@@ -60,6 +60,10 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
         return $this->hasMany(DetailSekunder::class, 'detail_barang_id');
     }
 
+    public function fasilitas() {
+        return $this->hasMany(Fasilitas::class, 'detail_barang_id');
+    }
+
     // ATTRIBUTES!!!
 
     public function getKategoriTagsAttribute() {
@@ -75,7 +79,7 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
     }
 
     public function getTarifArrayAttribute() {
-        // grab all tariffs. 
+        // grab all tariffs.
         // 1st, grab basic tariffs from hs
         $tarif = [
             'BM' => [
@@ -124,6 +128,23 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
             ];
         }
 
+        // kalau ada keringanan, override pakek tarif keringanan jadinya
+        foreach ($this->fasilitas as $f) {
+            // kalau jenisnya keringanan saja
+            if ($f->jenis == 'KERINGANAN') {
+                // kalau BM, paksa jadi ADVALORUM
+                if ($f->jenisPungutan->kode == 'BM') {
+                    $tarif['BM']['jenis'] = 'ADVALORUM';
+                }
+                // ambil tarif terendah
+                $tarif[$f->jenisPungutan->kode]['tarif'] = (float) min((float) $tarif[$f->jenisPungutan->kode]['tarif'], (float) $f->tarif_keringanan);
+            } else {
+                // jenis PEMBEBASAN ataupun TIDAK_DIPUNGUT, maka set nilai bebasnya
+                $tarif[$f->jenisPungutan->kode]['bebas'] = 100.0;   // pembebasan 100%
+                $tarif[$f->jenisPungutan->kode]['bayar'] = 0.0;     // tidak ada yg dbayar
+            }
+        }
+
         // return for now
         return $tarif;
     }
@@ -131,7 +152,8 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
     public function getValidTarifAttribute() {
         return array_filter($this->tarif_array, function ($e, $k) {
             // only pass those with nonzero tarif OR if IT's BM
-            return $e['tarif'] > 0.0 || substr($k, 0, 2) == "BM";
+            //return $e['tarif'] > 0.0 || substr($k, 0, 2) == "BM";
+            return true;
         }, ARRAY_FILTER_USE_BOTH);
     }
 
@@ -143,7 +165,7 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
         $tarif_bm = array_filter($valid_tarif, function ($e) {
             return substr($e, 0, 2) == 'BM';
         }, ARRAY_FILTER_USE_KEY);
-        
+
         // filter all pajak tarif
         $tarif_pajak = array_filter($valid_tarif, function ($e) {
             return substr($e, 0, 2) == 'PP';
@@ -151,7 +173,7 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
 
         // PUNGUTAN
         $pungutan = [];
-        
+
         // #1 hitung BEA MASUK dan TOTALNYA
         $total_bm = 0;
 
@@ -163,14 +185,16 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
                 // hitung metode persentase
                 $bm = ceil($this->nilai_pabean * $tbm['tarif'] * 0.01 / 1000.0) * 1000.0;
             }
-            // accumulate first
-            $total_bm += $bm;
+
 
             // compute bayar, bebas, tunda, tanggung_pemerintah
             $bm_bayar = round($bm * ($tbm['bayar'] ?? 100.0) * 0.01, -3);
             $bm_bebas = round($bm * ($tbm['bebas'] ?? 0) * 0.01, -3);
             $bm_tunda = round($bm * ($tbm['tunda'] ?? 0) * 0.01, -3);
             $bm_tanggung_pemerintah = round($bm * ($tbm['tanggung_pemerintah'] ?? 0) * 0.01, -3);
+
+            // accumulate first
+            $total_bm += $bm_bayar;
 
             // spawn new pungutan
             $p = new Pungutan([
@@ -220,7 +244,7 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
         $tarif_bm = array_filter($valid_tarif, function ($e) {
             return substr($e, 0, 2) == 'BM';
         }, ARRAY_FILTER_USE_KEY);
-        
+
         // filter all pajak tarif
         $tarif_pajak = array_filter($valid_tarif, function ($e) {
             return substr($e, 0, 2) == 'PP';
@@ -228,7 +252,7 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
 
         // PUNGUTAN
         $pungutan = [];
-        
+
         // #1 hitung BEA MASUK dan TOTALNYA
         $total_bm = 0;
 
@@ -333,11 +357,24 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
                 $desc .= $ds->referensiJenisDetailSekunder->nama . ' : ' . $ds->data . "\n";
             }
         }
+        // append fasilitas?
+        if ($this->fasilitas()->count()) {
+            $desc.="\n*) fasilitas: [";
+            $afterOne = false;
+            foreach ($this->fasilitas as $f) {
+                if ($afterOne) {
+                    $desc .= ", ";
+                }
+                $desc .= $f->deskripsi;
+                $afterOne = true;
+            }
+            $desc .= "]";
+        }
 
         return $desc;
     }
 
-    // HELPER 
+    // HELPER
     // sync data with request ($d MUST BE EXISTING FOR SECONDARY DATA!!)
 
     /**
@@ -383,6 +420,47 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
         $kategori = Kategori::whereIn('nama', $r->get('kategori_tags', []))->get();
         $this->kategori()->sync($kategori);
 
+        // sync detail sekunder here
+        $this->syncDetailSekunder($r);
+
+        // sync fasilitas here
+        $this->syncFasilitas($r);
+    }
+
+    public function syncFasilitas(Request $r) {
+        $fas = $r->get('fasilitas')['data'] ?? [];
+
+        // 1st update all that has data
+        $toUpdate = array_filter($fas, function ($e) { return $e['id']; });
+
+        foreach ($toUpdate as $f) {
+            $data = Fasilitas::findOrFail($f['id']);
+
+            $data->jenis = $f['jenis'];
+            $data->jenis_pungutan_id = $f['jenis_pungutan_id'];
+            $data->tarif_keringanan = $f['tarif_keringanan'];
+            $data->save();
+        }
+
+        // 2nd, delete anything not included
+        $updateIds = array_map(function($e) { return $e['id']; }, $toUpdate);
+        $this->fasilitas()->whereNotIn('id', $updateIds)->delete();
+
+        // 3rd, save new fasilitas
+        $toInsert = array_filter($fas, function($e) { return !$e['id']; });
+
+        foreach ($toInsert as $f) {
+            $data = new Fasilitas();
+
+            $data->jenis = $f['jenis'];
+            $data->jenis_pungutan_id = $f['jenis_pungutan_id'];
+            $data->tarif_keringanan = $f['tarif_keringanan'];
+
+            $this->fasilitas()->save($data);
+        }
+    }
+
+    public function syncDetailSekunder(Request $r) {
         // sync detail sekunder data??
         $ds = $r->get('detailSekunder')['data'] ?? [];
 
@@ -391,14 +469,15 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
 
         foreach ($toUpdate as $s) {
             $data = DetailSekunder::findOrFail($s['id']);
-            
+
             $data->data = $s['data'];
             $data->referensiJenisDetailSekunder()->associate(ReferensiJenisDetailSekunder::byName($s['jenis'])->first());
             $data->save();
         }
 
         // 2nd, delete the rest that is not included above
-        $this->detailSekunder()->whereNotIn('id', $toUpdate)->delete();
+        $updateIds = array_map(function($e) { return $e['id']; }, $toUpdate);
+        $this->detailSekunder()->whereNotIn('id', $updateIds)->delete();
 
         // 3rd, insert new detail sekunder
         $toInsert = array_filter($ds, function ($e) { return !$e['id']; });
