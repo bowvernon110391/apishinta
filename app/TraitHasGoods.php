@@ -15,6 +15,12 @@ trait TraitHasGoods {
     }
 
     public function getTotalBayarAttribute() {
+        // if there's no goods, do not compute, instead, return 0.0
+        if (!$this->detailBarang()->count()) {
+            return 0.0;
+        }
+
+        // otherwise, do as usual
         $pungutan = $this->computePungutanImpor();
         return array_reduce($pungutan['pungutan']['bayar'], function($accum, $e) { return $accum + $e; }, 0.0);
     }
