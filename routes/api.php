@@ -9,7 +9,7 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-/* 
+/*
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 }); */
@@ -17,7 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // CORS allowed-methods. Biar user gk coba macem2
 
 use Illuminate\Support\Facades\Route;
-/* 
+/*
 $corsGroup = [
     'readOnly'  => 'cors:GET,OPTIONS',  // item yg read only cuman bsa GET sama OPTIONS
     'singleItem'=> 'cors:GET,PUT,DELETE,OPTIONS,PATCH', // single item bsa macem2
@@ -73,7 +73,7 @@ Route::get('/kurs/bkf', 'KursController@getFromBkf')
 // Data penumpang adalah data rahasia, jd kasih guard di endpointsnya
 // asal tokennya dari user yg valid dan aktif, gk masalah
 //====================================================================================================
-        
+
 // GET /penumpang => list data penumpang dgn paginasi + query
 Route::get('/penumpang', 'PenumpangController@index')
         ->middleware( 'role');
@@ -309,7 +309,7 @@ Route::get('/jenis-pungutan', 'ReferensiController@getJenisPungutan')
 // GET /lokasi
 Route::get('/lokasi', 'ReferensiController@getLokasi')
         ;
-        
+
 // GET /tps
 Route::get('/tps', 'ReferensiController@getTps')
         ;
@@ -321,7 +321,7 @@ Route::get('/pjt', 'ReferensiController@getPjt')
 // POST /pjt
 Route::post('/pjt', 'ReferensiController@storePjt')
         ->middleware( 'role');
-        
+
 // GET /gudang
 Route::get('/gudang', 'ReferensiController@getGudang')
         ;
@@ -496,6 +496,9 @@ Route::get('/sso/user/{id}', 'SSOUserCacheController@show')
 // ENDPOINTS DetailBarang (GENERALIZED)
 // kasih guard di endpointnya
 //====================================================================================================
+Route::get('/penetapan', 'DetailBarangController@index')
+->middleware('role');
+
 Route::get('/detailbarang/{id}', 'DetailBarangController@showDetailBarang')
 ->middleware( 'role');
 

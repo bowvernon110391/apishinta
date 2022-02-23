@@ -6,6 +6,7 @@ use App\DetailBarang;
 use App\IHasGoods;
 use App\ISpecifiable;
 use App\Penetapan;
+use App\PIBK;
 use App\Services\Instancer;
 use App\SSOUserCache;
 use App\Transformers\DetailBarangTransformer;
@@ -21,6 +22,37 @@ class DetailBarangController extends ApiController
     {
         parent::__construct($f, $r);
         $this->instancer = $instancer;
+    }
+
+    // index penetapan (barang yg udh dpt penetapan)
+    public function index(Request $r) {
+        // ?doc=cd,pibk
+        $doctype = explode(',', $r->input('doctype', 'cd,pibk'));
+        // resolve it + filter
+        $doctype =
+        array_filter(
+            array_map(function($e){
+                return $this->instancer->resolveClassname($e);
+            }, $doctype)
+            ,
+            function($e){
+                return !is_null($e);
+            }
+        );
+
+        $q = $r->input('q');
+
+        $query = DetailBarang::sudahPenetapan($doctype)
+                ->when($q, function ($q1) use ($q) {
+                    $q1->byHS($q)
+                        ->orWhere('uraian', 'like', "%$q%");
+                })
+                ->latest();
+
+        $paginator = $query
+                    ->paginate($r->input('number', 10))
+                    ->appends($r->except('page'));
+        return $this->respondWithPagination($paginator, new DetailBarangTransformer);
     }
 
     // index the penetapan of a dokumen?
@@ -134,7 +166,7 @@ class DetailBarangController extends ApiController
             $header->onCreateItem($d);
 
             DB::commit();
-            
+
             return $this->respondWithArray([
                 'id' => $d->id,
                 'uri' => '/penetapan/' . $d->id
@@ -200,7 +232,7 @@ class DetailBarangController extends ApiController
             return $this->errorBadRequest($e->getMessage());
         }
     }
-    
+
     // delete penetapan
     public function deletePenetapan(Request $r, $id) {
         DB::beginTransaction();

@@ -491,4 +491,30 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
             $this->detailSekunder()->save($data);
         }
     }
+
+    // SCOPES
+    public function scopeSudahPenetapan($q, $doctype=[CD::class, PIBK::class]) {
+        if (!is_array($doctype)) {
+            $doctype = array(
+                $doctype
+            );
+        }
+        return $q->whereHasMorph('header', $doctype, function ($q) {
+            return $q->whereHas('status', function ($q) {
+                return $q->whereIn('status', ['BPPM','SPPB','PENETAPAN']);
+            });
+        });
+    }
+
+    // digunakan oleh penetapan utk cari barang by kriteria hs
+    public function scopeByHS($q, $hs) {
+        $hs = str_replace(".","", $hs);
+
+        return $q->whereHas('hs', function ($q) use ($hs) {
+            return $q->byHS($hs)
+            ->orWhere(function ($q) use ($hs) {
+                return $q->byFullDesc($hs);
+            });
+        });
+    }
 }
