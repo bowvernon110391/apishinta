@@ -42,6 +42,8 @@ class DetailBarangController extends ApiController
         );
 
         $q = $r->input('q');
+        $from = $r->input('from');
+        $to = $r->input('to');
 
         // eager load header.ndpbm
         $query = DetailBarang::with(['header.ndpbm'])
@@ -49,6 +51,12 @@ class DetailBarangController extends ApiController
                 ->when($q, function ($q1) use ($q) {
                     $q1->byHS($q)
                         ->orWhere('uraian', 'like', "%$q%");
+                })
+                ->when($from, function($qfrom) use ($from) {
+                    $qfrom->where('created_at', '>=', $from);
+                })
+                ->when($to, function($qto) use ($to) {
+                    $qto->where('created_at', '<=', $to);
                 })
                 ->latest();
 
