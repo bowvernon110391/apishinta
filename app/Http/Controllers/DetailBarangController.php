@@ -10,6 +10,7 @@ use App\PIBK;
 use App\Services\Instancer;
 use App\SSOUserCache;
 use App\Transformers\DetailBarangTransformer;
+use App\Transformers\PenetapanTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,9 @@ class DetailBarangController extends ApiController
 
         $q = $r->input('q');
 
-        $query = DetailBarang::sudahPenetapan($doctype)
+        // eager load header.ndpbm
+        $query = DetailBarang::with(['header.ndpbm'])
+                ->sudahPenetapan($doctype)
                 ->when($q, function ($q1) use ($q) {
                     $q1->byHS($q)
                         ->orWhere('uraian', 'like', "%$q%");
@@ -52,7 +55,7 @@ class DetailBarangController extends ApiController
         $paginator = $query
                     ->paginate($r->input('number', 10))
                     ->appends($r->except('page'));
-        return $this->respondWithPagination($paginator, new DetailBarangTransformer);
+        return $this->respondWithPagination($paginator, new PenetapanTransformer);
     }
 
     // index the penetapan of a dokumen?
