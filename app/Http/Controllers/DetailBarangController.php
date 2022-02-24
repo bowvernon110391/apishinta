@@ -44,6 +44,7 @@ class DetailBarangController extends ApiController
         $q = $r->input('q');
         $from = $r->input('from');
         $to = $r->input('to');
+        $cat = $r->input('category', []);
 
         // eager load header.ndpbm
         $query = DetailBarang::with(['header.ndpbm'])
@@ -58,7 +59,11 @@ class DetailBarangController extends ApiController
                 ->when($to, function($qto) use ($to) {
                     $qto->where('created_at', '<=', $to);
                 })
-                ->latest();
+                ->when($cat, function($qcat) use ($cat) {
+                    $qcat->byKategori($cat);
+                })
+                // ->latest();
+                ->orderBy('updated_at', 'DESC');
 
         $paginator = $query
                     ->paginate($r->input('number', 10))

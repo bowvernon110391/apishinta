@@ -12,7 +12,8 @@ class PenetapanTransformer extends TransformerAbstract {
     protected $availableIncludes = [
         'pungutan',
         'tarif',
-        'header_info'
+        'header_info',
+        'kategori'
     ];
 
     protected $defaultIncludes = [
@@ -54,6 +55,10 @@ class PenetapanTransformer extends TransformerAbstract {
 
     public function includeTarif(DetailBarang $e) {
         return $this->primitive(['data' => $e->valid_tarif]);
+    }
+
+    public function includeKategori(DetailBarang $e) {
+        return $this->collection($e->kategori, new KategoriTransformer);
     }
 
     public function includeHeaderInfo(DetailBarang $e) {
