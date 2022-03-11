@@ -138,7 +138,10 @@ class SPP extends AbstractDokumen implements IInstructable, INotable
                         $query->byPejabat($q);
                     })
                     ->orWhere(function ($query) use ($q, $from, $to) {
-                        $query->byCD($q, $from, $to);
+                        // $query->byCD($q, $from, $to);
+                        $query->whereHasMorph('source', [PIBK::class, CD::class], function ($qmorph) use ($q, $from, $to) {
+                            $qmorph->byQuery($q, $from, $to);
+                        });
                     })
                     ->orWhere(function ($query) use ($q) {
                         $query->byNomorLengkap($q);
