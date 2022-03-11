@@ -30,8 +30,13 @@ class SPP extends AbstractDokumen implements IInstructable, INotable
     // =============================================
     // RELATIONS
     // =============================================
-    public function cd() {
+    /* public function cd() {
         return $this->belongsTo('App\CD', 'cd_header_id');
+    } */
+
+    // NEW: source, could be CD or PIBK
+    public function source() {
+        return $this->morphTo();
     }
 
     public function negara() {
@@ -53,7 +58,7 @@ class SPP extends AbstractDokumen implements IInstructable, INotable
     // =============================================
     // TRAIT OVERRIDES
     // =============================================
-    
+
 
     //=================================================================================================
     // COMPUTED PROPERTIES GO HERE!!
@@ -61,7 +66,7 @@ class SPP extends AbstractDokumen implements IInstructable, INotable
     public function getJenisDokumenAttribute() {
         return 'spp';
     }
-    
+
     public function getJenisDokumenLengkapAttribute() {
         return 'Surat Pemberitahuan Penundaan Pengeluaran';
     }

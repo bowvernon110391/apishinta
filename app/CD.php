@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CD extends AbstractDokumen implements 
-IInstructable, IHasGoods, ISpecifiable, ITariffable, 
+class CD extends AbstractDokumen implements
+IInstructable, IHasGoods, ISpecifiable, ITariffable,
 IHasPungutan, INotable, IPayable, IGateable
 {
     // use TraitInspectable;
@@ -88,9 +88,10 @@ IHasPungutan, INotable, IPayable, IGateable
     }
 
     public function spp() {
-        return $this->hasOne('App\SPP', 'cd_header_id');
+        // return $this->hasOne('App\SPP', 'cd_header_id');
+        return $this->morphOne('App\SPP', 'source');
     }
-    
+
     public function st() {
         return $this->hasOne('App\ST', 'cd_header_id');
     }
@@ -118,7 +119,7 @@ IHasPungutan, INotable, IPayable, IGateable
         return $query->where('tgl_dok', '<=', $tgl);
     }
 
-    // scope by penumpang (LIKE penumpang name)    
+    // scope by penumpang (LIKE penumpang name)
     public function scopeByPenumpang($query, $nama) {
         return $query->whereHas('penumpang', function($q) use($nama) {
             $qString = "%{$nama}%";
@@ -201,7 +202,7 @@ IHasPungutan, INotable, IPayable, IGateable
     public function getJenisDokumenAttribute(){
         return 'cd';
     }
-    
+
     public function getJenisDokumenLengkapAttribute(){
         return 'Customs Declaration (BC 2.2)';
     }
@@ -291,7 +292,7 @@ IHasPungutan, INotable, IPayable, IGateable
 
         // ambil hawb klo ada
         $hawb = $this->dokkap()->byKode(740)->first();
-        
+
         return [
             'pemberitahu' => [
                 'npwp' => '-',
@@ -418,7 +419,7 @@ IHasPungutan, INotable, IPayable, IGateable
             return [
                 'tarif' => $e->valid_tarif,
                 'pungutan' => $e->computePungutanImporWithPembebasan(),
-                
+
                 'uraian' => $e->nice_format,
                 'uraian_print' => $e->print_format,
                 'jumlah_jenis_kemasan' => $e->jumlah_kemasan . ' ' . $e->jenis_kemasan,
@@ -574,7 +575,7 @@ IHasPungutan, INotable, IPayable, IGateable
 
         // update kurs ndpbm to use current kurs, perhaps update its date too
         $cd->tgl_dok = date('Y-m-d');
-        
+
         // for now, do not update ndpbm. just use what was said first
         $kurs_usd = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first();
         if (!$kurs_usd) {
