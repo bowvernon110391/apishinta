@@ -6,11 +6,14 @@ use Fpdf\Fpdf;
 
 class PdfSPP extends Fpdf {
     protected $spp = null;
+    protected $penumpang = null;
 
     // constructor follow usual style
     public function __construct(SPP $s, $kota_ttd = null, $tgl_ttd = null)
     {
         $this->spp = $s;
+
+        $this->penumpang = $s->source->penumpang ?? $s->source->importir;
 
         $this->kota_ttd = $kota_ttd ?? "CENGKARENG";
         $this->tgl_ttd = $tgl_ttd ?? date('Y-m-d');
@@ -28,25 +31,26 @@ class PdfSPP extends Fpdf {
         // ========================================================================
         // data surat
         $s  = $this->spp;
+        $p  = $this->penumpang;
 
         $no_lengkap     = $s->nomor_lengkap;    //'200312/SPP/2F/SH/2020';
         $tgl_surat      = formatTanggal($s->tgl_dok);
 
-        $nama   = $s->cd->penumpang->nama;
-        $alamat = str_replace("\n", " ", $s->cd->alamat);  //"GG. MASJID NO 50 A, RT 02/RW 02, KEL. KENANGA, KEC. CIPONDOH, KOTA TANGERANG, BANTEN";
-        $no_paspor  = $s->cd->penumpang->no_paspor; //"290103-2323-22132";
-        $kebangsaan = $s->cd->penumpang->negara->uraian; //"INDONESIA";
-        $no_flight  = "{$s->cd->no_flight} ({$s->cd->airline->uraian})";
+        $nama   = $p->nama;
+        $alamat = str_replace("\n", " ", $s->source->alamat);  //"GG. MASJID NO 50 A, RT 02/RW 02, KEL. KENANGA, KEC. CIPONDOH, KOTA TANGERANG, BANTEN";
+        $no_paspor  = $p->no_paspor; //"290103-2323-22132";
+        $kebangsaan = $p->negara->uraian; //"INDONESIA";
+        $no_flight  = "{$s->source->no_flight} ({$s->source->airline->uraian})";
         $negara_asal    = $s->negara->uraian;
 
-        $total_brutto   = $s->cd->detailBarang->reduce(function ($acc, $e) {
+        $total_brutto   = $s->source->detailBarang->reduce(function ($acc, $e) {
             return $acc + $e->brutto;
         }, 0.0);
         $total_brutto = number_format($total_brutto, 2);
 
-        $summary_jumlah = "{$s->cd->koli} Koli / {$total_brutto} Kg";
+        $summary_jumlah = "{$s->source->koli} Koli / {$total_brutto} Kg";
 
-        $uraian_summary = $s->cd->detailBarang->map(function ($e) {
+        $uraian_summary = $s->source->detailBarang->map(function ($e) {
             return $e->uraian;
         });
 
