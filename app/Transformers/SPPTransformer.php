@@ -8,7 +8,8 @@ class SPPTransformer extends TransformerAbstract {
     use TraitInstructableTransformer;
     // defaultly loaded relations
     protected $defaultIncludes = [
-        'cd',
+        // 'cd',
+        'source',
         // 'pibk',
         'negara_asal',
         'status',
@@ -18,7 +19,8 @@ class SPPTransformer extends TransformerAbstract {
 
     // available relations, default relations not needed to apply
     protected $availableIncludes = [
-        'cd',
+        // 'cd',
+        'source',
         'pibk',
         'negara_asal',
         'status',
@@ -34,16 +36,18 @@ class SPPTransformer extends TransformerAbstract {
             'no_dok'            => $s->no_dok,
             'tgl_dok'           => $s->tgl_dok,
             'nomor_lengkap'     => $s->nomor_lengkap,
-            
+
             'lokasi'            => $s->lokasi->kode ?? null,
 
             'links'             => $s->links,
-            
+
             'last_status'       => $s->short_last_status,
 
             'is_locked'         => $s->is_locked,
 
-            'keterangan'        => $s->keterangan[0]->keterangan ?? null
+            'keterangan'        => $s->keterangan[0]->keterangan ?? null,
+
+            'source_type'       => $s->source_type
         ];
 
         return $result;
@@ -63,17 +67,26 @@ class SPPTransformer extends TransformerAbstract {
     }
 
     // include cd
-    public function includeCD(SPP $s) {
+    /* public function includeCD(SPP $s) {
         $cd = $s->cd;
 
         return $this->item($cd, new CDTransformer);
+    } */
+
+    // include source
+    public function includeSource(SPP $s) {
+        $source = $s->source;
+
+        if ($source) {
+            return $this->item($source, spawnTransformer($source));
+        }
     }
 
     // include pibk
     public function includePIBK(SPP $s) {
         $pibk = $s->pibk;
 
-        if ($pibk) 
+        if ($pibk)
             return $this->item($pibk, new PIBKTransformer);
     }
 }
