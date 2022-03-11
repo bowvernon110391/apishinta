@@ -180,7 +180,7 @@ Route::put('/cd/{id}/spp', 'SPPController@store')
         ->middleware( 'role:PDTT,CONSOLE');
 
 // GET /cd/2/spp_mockup
-Route::get('/cd/{id}/spp_mockup', 'SPPController@generateMockup')
+Route::get('/cd/{id}/spp_mockup', 'SPPController@generateMockupForCD')
         -> middleware( 'role');
 
 // PUT /cd/{id} => update data cd

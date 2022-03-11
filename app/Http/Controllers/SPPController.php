@@ -13,6 +13,7 @@ use App\Transformers\SPPTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class SPPController extends ApiController
@@ -72,10 +73,10 @@ class SPPController extends ApiController
             ]);
 
             // fill in the blanks
-            $spp->cd()->associate($cd);
+            $spp->source()->associate($cd);
             $spp->lokasi()->associate($lokasi);
             $spp->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
-            
+
             // save and then log
             $spp->save();
 
@@ -90,9 +91,9 @@ class SPPController extends ApiController
 
             // add initial status for spp
             $spp->appendStatus(
-                'PENERBITAN', 
-                $nama_lokasi, 
-                "Penerbitan SPP nomor {$spp->nomor_lengkap} dari Customs Declaration nomor {$cd->nomor_lengkap}", 
+                'PENERBITAN',
+                $nama_lokasi,
+                "Penerbitan SPP nomor {$spp->nomor_lengkap} dari Customs Declaration nomor {$cd->nomor_lengkap}",
                 $cd,
                 null,
                 SSOUserCache::byId($r->userInfo['user_id'])
@@ -100,9 +101,9 @@ class SPPController extends ApiController
 
             // add new status for cd
             $cd->appendStatus(
-                'SPP', 
-                $nama_lokasi, 
-                "Dikunci dengan SPP nomor {$spp->nomor_lengkap}", 
+                'SPP',
+                $nama_lokasi,
+                "Dikunci dengan SPP nomor {$spp->nomor_lengkap}",
                 $spp,
                 null,
                 SSOUserCache::byId($r->userInfo['user_id'])
@@ -125,6 +126,7 @@ class SPPController extends ApiController
             DB::rollBack();
             return $this->errorNotFound("CD #{$cdId} was not found");
         } catch (\Exception $e) {
+            Log::error('Error creating SPP from CD', ['exception' => $e]);
             DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
@@ -220,7 +222,7 @@ class SPPController extends ApiController
     /**
      * generateMockup
      */
-    public function generateMockup(Request $r, $cdId) {
+    public function generateMockupForCD(Request $r, $cdId) {
         // use try catch
         try {
             // make sure CD exists
@@ -235,8 +237,8 @@ class SPPController extends ApiController
                 'tgl_dok' => date('Y-m-d'),
                 'kd_negara_asal' => substr($cd->kd_pelabuhan_asal,0,2),
             ]);
-            
-            $spp->cd()->associate($cd);
+
+            $spp->source()->associate($cd);
             $spp->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
             $spp->lokasi()->associate(Lokasi::byKode($r->get('lokasi'))->first() ?? $cd->lokasi);
 
@@ -275,7 +277,7 @@ class SPPController extends ApiController
             }
 
             $p = PIBK::createFromSource($r, $s);
-            
+
             // commit
             DB::commit();
 

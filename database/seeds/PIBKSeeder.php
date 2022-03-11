@@ -29,12 +29,12 @@ class PIBKSeeder extends Seeder
 
         $n = random_int(3,5);
         echo "generating random {$n} PIBK...\n";
-        
+
         $i = 0;
         while($i++ < $n) {
             // just choose random SPP/ST
             // and create PIBK out of it
-            $doctype = $f->randomElement([SPP::class, ST::class]);
+            $doctype = $f->randomElement([SPP::class]);
 
             $doc = $doctype::whereDoesntHave('pibk')->inRandomOrder()->first();
 
