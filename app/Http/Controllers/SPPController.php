@@ -46,16 +46,32 @@ class SPPController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $r, $cdId)
+    public function store(Request $r, $doctype, $id)
     {
         DB::beginTransaction();
 
         try {
-            // ambil data CD dulu
-            $cd = CD::find($cdId);
+            // ambil data dokumen dulu
+            // $doc = $doctype == 'cd' ? CD::find($id) : PIBK::find($id);
+            $doctype = strtoupper($doctype);
+            $doc = null;
+            $docTypename = '';
 
-            if (!$cd) {
-                throw new NotFoundResourceException("CD #{$cdId} was not found");
+            switch($doctype) {
+                case 'cd':
+                case 'CD':
+                    $doc = CD::find($id);
+                    $docTypename = 'Customs Declaration';
+                    break;
+                case 'pibk':
+                case 'PIBK':
+                    $doc = PIBK::find($id);
+                    $docTypename = 'PIBK';
+                    break;
+            }
+
+            if (!$doc) {
+                throw new NotFoundResourceException("{$doctype} #{$id} was not found");
             }
 
             // yang diperlukan hanya catatan,
@@ -69,11 +85,11 @@ class SPPController extends ApiController
             // spawn a SPP from that cd
             $spp = new SPP([
                 'tgl_dok' => date('Y-m-d'),
-                'kd_negara_asal' => substr($cd->kd_pelabuhan_asal,0,2)
+                'kd_negara_asal' => substr($doc->kd_pelabuhan_asal,0,2)
             ]);
 
             // fill in the blanks
-            $spp->source()->associate($cd);
+            $spp->source()->associate($doc);
             $spp->lokasi()->associate($lokasi);
             $spp->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
 
@@ -81,10 +97,10 @@ class SPPController extends ApiController
             $spp->save();
 
             // directly lock spp
-            $spp->lockAndSetNumber('CREATED FROM CD');
+            $spp->lockAndSetNumber("CREATED FROM {$doctype}");
 
-            // lock cd too
-            $cd->lockAndSetNumber('LOCKED BY SPP');
+            // lock doc too
+            $doc->lockAndSetNumber('LOCKED BY SPP');
 
             // log
             AppLog::logInfo("SPP #{$spp->id} diinput oleh {$r->userInfo['username']}", $spp);
@@ -93,14 +109,14 @@ class SPPController extends ApiController
             $spp->appendStatus(
                 'PENERBITAN',
                 $nama_lokasi,
-                "Penerbitan SPP nomor {$spp->nomor_lengkap} dari Customs Declaration nomor {$cd->nomor_lengkap}",
-                $cd,
+                "Penerbitan SPP nomor {$spp->nomor_lengkap} dari {$docTypename} nomor {$doc->nomor_lengkap}",
+                $doc,
                 null,
                 SSOUserCache::byId($r->userInfo['user_id'])
             );
 
             // add new status for cd
-            $cd->appendStatus(
+            $doc->appendStatus(
                 'SPP',
                 $nama_lokasi,
                 "Dikunci dengan SPP nomor {$spp->nomor_lengkap}",
@@ -124,9 +140,9 @@ class SPPController extends ApiController
             ]);
         } catch (NotFoundResourceException $e) {
             DB::rollBack();
-            return $this->errorNotFound("CD #{$cdId} was not found");
+            return $this->errorNotFound("{$doctype} #{$id} was not found");
         } catch (\Exception $e) {
-            Log::error('Error creating SPP from CD', ['exception' => $e]);
+            Log::error("Error creating SPP from {$doctype}", ['exception' => $e]);
             DB::rollBack();
             return $this->errorBadRequest($e->getMessage());
         }
@@ -245,6 +261,35 @@ class SPPController extends ApiController
             return $this->respondWithItem($spp, new SPPTransformer);
         } catch (NotFoundResourceException $e) {
             return $this->errorNotFound("CD #{$cdId} was not found");
+        } catch (\Exception $e) {
+            return $this->errorBadRequest($e->getMessage());
+        }
+    }
+
+    /**
+     *
+     */
+    public function generateMockupForPIBK(Request $r, $pibkId) {
+        try {
+            $pibk = PIBK::find($pibkId);
+
+            if (!$pibk) {
+                throw new NotFoundResourceException("PIBK #{$pibkId} was not found");
+            }
+
+            // generate mockup spp based on that
+            $spp = new SPP([
+                'tgl_dok' => date('Y-m-d'),
+                'kd_negara_asal' => substr($pibk->kd_pelabuhan_asal,0,2),
+            ]);
+
+            $spp->source()->associate($pibk);
+            $spp->pejabat()->associate(SSOUserCache::byId($r->userInfo['user_id']));
+            $spp->lokasi()->associate(Lokasi::byKode($r->get('lokasi'))->first() ?? $pibk->lokasi);
+
+            return $this->respondWithItem($spp, new SPPTransformer);
+        } catch (NotFoundResourceException $e) {
+            return $this->errorNotFound("PIBK #{$pibkId} was not found");
         } catch (\Exception $e) {
             return $this->errorBadRequest($e->getMessage());
         }
