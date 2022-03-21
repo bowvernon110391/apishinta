@@ -253,17 +253,17 @@ IHasPungutan, INotable, IPayable, IGateable
             'lokasi_type' => $lokasi_type,
             'lokasi_id' => $lokasi_id,
 
-            'npwp' => $s->cd->npwp ?? '',
-            'alamat' => $s->cd->alamat ?? '',
+            'npwp' => $s->source->npwp ?? '',
+            'alamat' => $s->source->alamat ?? '',
 
-            'tgl_kedatangan' => $s->cd->tgl_kedatangan,
-            'no_flight' => $s->cd->no_flight,
-            'kd_airline' => $s->cd->kd_airline,
+            'tgl_kedatangan' => $s->source->tgl_kedatangan,
+            'no_flight' => $s->source->no_flight,
+            'kd_airline' => $s->source->kd_airline,
 
-            'kd_pelabuhan_asal' => $s->cd->kd_pelabuhan_asal,
-            'kd_pelabuhan_tujuan' => $s->cd->kd_pelabuhan_tujuan,
+            'kd_pelabuhan_asal' => $s->source->kd_pelabuhan_asal,
+            'kd_pelabuhan_tujuan' => $s->source->kd_pelabuhan_tujuan,
 
-            'pph_tarif' => $s->cd->pph_tarif ?? 15.0
+            'pph_tarif' => $s->source->pph_tarif ?? 15.0
         ]);
 
         // gotta grab kurs
@@ -274,7 +274,7 @@ IHasPungutan, INotable, IPayable, IGateable
         }
 
         // associate with importir, source and ndpbm
-        $p->importir()->associate($s->cd->penumpang);
+        $p->importir()->associate($s->source->penumpang);
         $p->source()->associate($s);
         $p->ndpbm()->associate($ndpbm);
 
@@ -283,8 +283,8 @@ IHasPungutan, INotable, IPayable, IGateable
 
         // duplicate data barang? di controller aja?
         // copy barang dan dokkap dari cd
-        $p->copyDetailBarang($s->cd);
-        $p->copyDokkap($s->cd);
+        $p->copyDetailBarang($s->source);
+        $p->copyDokkap($s->source);
 
         // so just log it
         AppLog::logInfo(
