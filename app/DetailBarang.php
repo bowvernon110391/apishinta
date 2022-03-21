@@ -517,4 +517,34 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
             });
         });
     }
+
+    // by kategori
+    public function scopeByKategori($q, $cat = [], $and = false) {
+        // force array
+        if (!is_array($cat)) {
+            $cat = [$cat];
+        }
+
+        // no cat? pass by
+        if (!count($cat)) {
+            return $q;
+        }
+
+        // well we got contender. let's query in chain
+        // execute the first
+        return $q->whereHas('kategori', function($qcat) use ($cat, $and) {
+            $qret = $qcat->where('nama', $cat[0]);
+            $i = 1;
+            while ($i < count($cat)) {
+                $name = $cat[$i++];
+
+                if ($and) {
+                    $qret = $qret->where('nama', $name);
+                } else {
+                    $qret = $qret->orWhere('nama', $name);
+                }
+            }
+            return $qret;
+        });
+    }
 }

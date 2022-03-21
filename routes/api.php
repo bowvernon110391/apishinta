@@ -35,6 +35,10 @@ Route::options('/{fuckers}', 'ApiController@options')
 //====================================================================================================
 // ENDPOINTS Kurs
 //====================================================================================================
+// GET /kurs/2  => ambil data kurs brdsrkn id
+Route::get('/kurs/{id}', 'KursController@show')
+        ;
+
 // GET /kurs/2019-09-02 => ambil data kurs yg valid per tanggal tsb
 Route::get('/kurs/{tanggal}', 'KursController@showValidKursOnDate')
         ->where('tanggal', '^[\d-]{4,}$')
@@ -42,10 +46,6 @@ Route::get('/kurs/{tanggal}', 'KursController@showValidKursOnDate')
 
 // GET /kurs    => ambil data kurs (collection), bisa handle query
 Route::get('/kurs', 'KursController@index')
-        ;
-
-// GET /kurs/2  => ambil data kurs brdsrkn id
-Route::get('/kurs/{id}', 'KursController@show')
         ;
 
 // POST /kurs   => tambah data kurs {kode_valas, kurs_idr, jenis, tanggal_awal, tanggal_akhir}
@@ -175,12 +175,16 @@ Route::get('/spp/{id}', 'SPPController@show')
 Route::get('/cd/{id}/spp', 'SPPController@showByCD')
         ->middleware( 'role');
 
-// POST /cd/2/spp     => store data cd baru
-Route::put('/cd/{id}/spp', 'SPPController@store')
+// PUT /{pibk|cd}/2/spp     => store data spp(cd) baru
+Route::put('/{doctype}/{id}/spp', 'SPPController@store')
         ->middleware( 'role:PDTT,CONSOLE');
 
 // GET /cd/2/spp_mockup
-Route::get('/cd/{id}/spp_mockup', 'SPPController@generateMockup')
+Route::get('/cd/{id}/spp_mockup', 'SPPController@generateMockupForCD')
+        -> middleware( 'role');
+
+// GET /pibk/2/spp_mockup
+Route::get('/pibk/{id}/spp_mockup', 'SPPController@generateMockupForPIBK')
         -> middleware( 'role');
 
 // PUT /cd/{id} => update data cd

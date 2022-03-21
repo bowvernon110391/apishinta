@@ -31,7 +31,8 @@ class PIBKController extends ApiController
         $from = $r->get('from');
         $to = $r->get('to');
 
-        $query = PIBK::byQuery($q, $from, $to);
+        $query = PIBK::pure()
+                    ->byQuery($q, $from, $to);
 
         $paginator = $query->paginate($r->get('number'))
                             ->appends($r->except('page'));

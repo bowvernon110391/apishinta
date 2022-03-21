@@ -72,7 +72,10 @@ IHasPungutan, INotable, IPayable, IGateable
         return $this->belongsTo(Pelabuhan::class, 'kd_pelabuhan_tujuan', 'kode');
     }
 
-    // scopes
+    public function spp() {
+        // return $this->hasOne('App\SPP', 'cd_header_id');
+        return $this->morphOne('App\SPP', 'source');
+    }
 
     // attributes
     public function getJenisDokumenAttribute()
@@ -179,12 +182,16 @@ IHasPungutan, INotable, IPayable, IGateable
         if (strlen($this->nomor_lengkap_dok) > 0) {
             return $this->nomor_lengkap_dok;
         }
-        
+
         $nomorLengkap = str_pad($this->no_dok, 6,"0", STR_PAD_LEFT);
         return $nomorLengkap;
     }
 
     // scopes
+    public function scopePure($query) {
+        return $query->doesntHave('spp');
+    }
+
     public function scopeByQuery($query, $q='', $from=null, $to=null) {
         return $query->where('npwp', 'like', "%$q%")
         ->orWhere('alamat', 'like', "%$q%")
@@ -245,18 +252,18 @@ IHasPungutan, INotable, IPayable, IGateable
 
             'lokasi_type' => $lokasi_type,
             'lokasi_id' => $lokasi_id,
-            
-            'npwp' => $s->cd->npwp ?? '',
-            'alamat' => $s->cd->alamat ?? '',
 
-            'tgl_kedatangan' => $s->cd->tgl_kedatangan,
-            'no_flight' => $s->cd->no_flight,
-            'kd_airline' => $s->cd->kd_airline,
-            
-            'kd_pelabuhan_asal' => $s->cd->kd_pelabuhan_asal,
-            'kd_pelabuhan_tujuan' => $s->cd->kd_pelabuhan_tujuan,
+            'npwp' => $s->source->npwp ?? '',
+            'alamat' => $s->source->alamat ?? '',
 
-            'pph_tarif' => $s->cd->pph_tarif ?? 15.0
+            'tgl_kedatangan' => $s->source->tgl_kedatangan,
+            'no_flight' => $s->source->no_flight,
+            'kd_airline' => $s->source->kd_airline,
+
+            'kd_pelabuhan_asal' => $s->source->kd_pelabuhan_asal,
+            'kd_pelabuhan_tujuan' => $s->source->kd_pelabuhan_tujuan,
+
+            'pph_tarif' => $s->source->pph_tarif ?? 15.0
         ]);
 
         // gotta grab kurs
@@ -267,7 +274,7 @@ IHasPungutan, INotable, IPayable, IGateable
         }
 
         // associate with importir, source and ndpbm
-        $p->importir()->associate($s->cd->penumpang);
+        $p->importir()->associate($s->source->penumpang);
         $p->source()->associate($s);
         $p->ndpbm()->associate($ndpbm);
 
@@ -276,15 +283,15 @@ IHasPungutan, INotable, IPayable, IGateable
 
         // duplicate data barang? di controller aja?
         // copy barang dan dokkap dari cd
-        $p->copyDetailBarang($s->cd);
-        $p->copyDokkap($s->cd);
+        $p->copyDetailBarang($s->source);
+        $p->copyDokkap($s->source);
 
         // so just log it
         AppLog::logInfo(
             "PIBK #{$p->id} diterbitkan dari SPP #{$s->id} oleh {$r->userInfo['username']}",
             $p
         );
-        
+
         // append status utk source dan pibknya
         // append status pibk
         $p->appendStatus(

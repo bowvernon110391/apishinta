@@ -10,6 +10,7 @@ use App\PIBK;
 use App\Services\Instancer;
 use App\SSOUserCache;
 use App\Transformers\DetailBarangTransformer;
+use App\Transformers\PenetapanTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -41,18 +42,33 @@ class DetailBarangController extends ApiController
         );
 
         $q = $r->input('q');
+        $from = $r->input('from');
+        $to = $r->input('to');
+        $cat = $r->input('category', []);
 
-        $query = DetailBarang::sudahPenetapan($doctype)
+        // eager load header.ndpbm
+        $query = DetailBarang::with(['header.ndpbm'])
+                ->sudahPenetapan($doctype)
                 ->when($q, function ($q1) use ($q) {
                     $q1->byHS($q)
                         ->orWhere('uraian', 'like', "%$q%");
                 })
-                ->latest();
+                ->when($from, function($qfrom) use ($from) {
+                    $qfrom->where('created_at', '>=', $from);
+                })
+                ->when($to, function($qto) use ($to) {
+                    $qto->where('created_at', '<=', $to);
+                })
+                ->when($cat, function($qcat) use ($cat) {
+                    $qcat->byKategori($cat);
+                })
+                // ->latest();
+                ->orderBy('updated_at', 'DESC');
 
         $paginator = $query
                     ->paginate($r->input('number', 10))
                     ->appends($r->except('page'));
-        return $this->respondWithPagination($paginator, new DetailBarangTransformer);
+        return $this->respondWithPagination($paginator, new PenetapanTransformer);
     }
 
     // index the penetapan of a dokumen?
