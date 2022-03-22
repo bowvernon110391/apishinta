@@ -28,7 +28,7 @@ class DetailBarangController extends ApiController
     // index penetapan (barang yg udh dpt penetapan)
     public function index(Request $r) {
         // ?doc=cd,pibk
-        $doctype = explode(',', $r->input('doctype', 'cd,pibk'));
+        $doctype = explode(',', $r->input('doctype', 'cd'));
         // resolve it + filter
         $doctype =
         array_filter(
