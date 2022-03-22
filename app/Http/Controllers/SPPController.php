@@ -219,10 +219,11 @@ class SPPController extends ApiController
         try {
             AppLog::logWarning("SPP #{$id} dihapus oleh {$r->userInfo['username']}", $spp, true);
 
-            $cd = $spp->cd;
+            // $cd = $spp->cd;
+            $src = $spp->source;
             $spp->delete();
-            if ($cd) {
-                $cd->restoreAndRefresh();
+            if ($src) {
+                $src->restoreAndRefresh();
             }
 
             DB::commit();

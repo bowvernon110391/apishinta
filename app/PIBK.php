@@ -314,4 +314,51 @@ IHasPungutan, INotable, IPayable, IGateable
 
         return $p;
     }
+
+    public function restoreAndRefresh() {
+        $r = app('request');
+        $pibk = $this;
+
+        $pibk->unlock();
+        $pibk->refresh();
+
+        // if it's still locked, we're fucked
+        if($pibk->is_locked) {
+            throw new \Exception("Failed to unlock CD #{$pibk->id}. REASON_UNKNOWN");
+        }
+
+        // update kurs ndpbm to use current kurs, perhaps update its date too
+        $pibk->tgl_dok = date('Y-m-d');
+
+        // for now, do not update ndpbm. just use what was said first
+        $kurs_usd = Kurs::perTanggal(date('Y-m-d'))->kode('USD')->first();
+        if (!$kurs_usd) {
+            throw new \Exception("Kurs USD per hari ini tidak ditemukan. Coba update data kurs terlebih dahulu");
+        }
+        $pibk->ndpbm()->associate($kurs_usd);
+        $pibk->save();
+
+        // for each of its detail, update it to use current kurs too!
+        foreach ($pibk->detailBarang as $d) {
+            $newKurs = Kurs::perTanggal($pibk->tgl_dok)->kode($d->kurs->kode_valas)->first();
+            if (!$newKurs) {
+                throw new \Exception("KURS terbaru dengan kode {$newKurs->kode_valas} tidak ditemukan!");
+            }
+            $d->kurs()->associate($newKurs);
+            $d->save();
+        }
+
+        // log it?
+        AppLog::logWarning("PIBK #{$pibk->id} is unlocked by {$r->userInfo['username']}", $pibk);
+
+        // no need to update status I guess? nope add it
+        $pibk->appendStatus(
+            "RESTORED",
+            null,
+            null,
+            null,
+            null,
+            SSOUserCache::byId($r->userInfo['user_id'])
+        );
+    }
 }
