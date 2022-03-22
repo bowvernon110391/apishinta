@@ -17,7 +17,8 @@ class PenetapanTransformer extends TransformerAbstract {
     ];
 
     protected $defaultIncludes = [
-        'tarif'
+        'tarif',
+        'header_info'
     ];
 
     public function transform(DetailBarang $e) {
@@ -62,11 +63,13 @@ class PenetapanTransformer extends TransformerAbstract {
     }
 
     public function includeHeaderInfo(DetailBarang $e) {
+        $valid = $e->header()->exists();
         return $this->primitive(['data' => [
             'header_type' => $e->header_type,
             'header_id' => $e->header_id,
-            'nomor_lengkap' => $e->header->nomor_lengkap,
-            'tgl_dok' => (string) $e->header->tgl_dok
+            'nomor_lengkap' => $valid ? $e->header->nomor_lengkap : null,
+            'tgl_dok' => $valid ? (string) $e->header->tgl_dok : null,
+            'valid' => $valid
         ]]);
     }
 

@@ -50,8 +50,7 @@ class DetailBarangController extends ApiController
         $query = DetailBarang::with(['header.ndpbm'])
                 ->sudahPenetapan($doctype)
                 ->when($q, function ($q1) use ($q) {
-                    $q1->byHS($q)
-                        ->orWhere('uraian', 'like', "%$q%");
+                    $q1->where('uraian', 'like', "%$q%");
                 })
                 ->when($from, function($qfrom) use ($from) {
                     $qfrom->where('created_at', '>=', $from);
