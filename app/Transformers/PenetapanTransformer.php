@@ -23,7 +23,7 @@ class PenetapanTransformer extends TransformerAbstract {
     public function transform(DetailBarang $e) {
         // hopefully the user is smart enough
         // to eager load 'header.ndpbm'
-        $usd = $e->header->ndpbm;
+        // $usd = $e->header->ndpbm;
 
         return [
 
@@ -43,9 +43,9 @@ class PenetapanTransformer extends TransformerAbstract {
             'ndpbm' => (float) $e->kurs->kurs_idr,
 
             // pembebasan
-            'pembebasan' => (float) $e->pembebasan,
+            /* 'pembebasan' => (float) $e->pembebasan,
             'pembebasan_idr' => (float) $e->pembebasan * (float) $usd->kurs_idr,
-            'nilai_dasar' => (float) $e->nilai_pabean - ((float) $e->pembebasan * (float) $usd->kurs_idr),
+            'nilai_dasar' => (float) $e->nilai_pabean - ((float) $e->pembebasan * (float) $usd->kurs_idr), */
 
             // timetstamps
             'created_at' => (string) $e->created_at,
