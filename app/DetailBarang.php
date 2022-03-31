@@ -87,7 +87,7 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
                 'jenis' => $this->hs->jenis_tarif
             ],
             'PPN' => [
-                'tarif' => (float) $this->hs->ppn_tarif ?? 10.0
+                'tarif' => (float) $this->hs->ppn_tarif ?? 11.0
             ],
             'PPnBM' => [
                 'tarif' => (float) $this->hs->ppnbm_tarif
