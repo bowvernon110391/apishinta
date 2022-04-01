@@ -36,7 +36,8 @@ IHasPungutan, INotable, IPayable, IGateable
         'npwp' => '',
         'alamat' => '',
         'no_flight' => '',
-        'koli' => 1
+        'koli' => 1,
+        'ppn_tarif' => 11.0 // per 1 April 2022
     ];
 
     // relations

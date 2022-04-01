@@ -116,6 +116,13 @@ class DetailBarang extends Model implements ISpecifiable, ITariffable
             ];
         }
 
+        // NEW (01/04/2022) Tarif ppn baru, jadi kita coba ambil dari header jg
+        if ($this->header && ($this->header->ppn_tarif ?? $this->header->tarif_ppn)) {
+            $tarif['PPN'] = [
+                'tarif' => (float) $this->header->ppn_tarif ?? $this->header->tarif_ppn
+            ];
+        }
+
         // read all our tariffs entry, and replace accordingly?
         foreach ($this->tarif as $t) {
             $tarif[$t->jenisPungutan->kode] = [
